@@ -47,7 +47,16 @@ function writeJSON(file, data) {
   }
 }
 
+process.on('uncaughtException', (err) => {
+  console.error('[Backend UncaughtException]', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Backend UnhandledRejection]', reason);
+});
+
 const server = http.createServer((req, res) => {
+  req.on('error', (err) => console.warn('[Backend Req Error]', err.message));
+  res.on('error', (err) => console.warn('[Backend Res Error]', err.message));
   // Global CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

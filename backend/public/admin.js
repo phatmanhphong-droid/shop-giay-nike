@@ -418,7 +418,7 @@ function renderProductsTable() {
         </td>
 
         <td class="py-2.5 px-4 text-right font-display font-bold text-obsidian whitespace-nowrap">
-          <div class="inline-flex items-center justify-end gap-1.5 cursor-pointer hover:opacity-80 transition-opacity" onclick="openEditPriceModal('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price || 0})" title="Nhấp để đổi giá">
+          <div class="inline-flex items-center justify-end gap-1.5 cursor-pointer hover:opacity-80 transition-opacity" onclick="openEditPriceModal('${p.id}')" title="Nhấp để đổi giá">
             <span>${(p.price || 0).toLocaleString('vi-VN')} ₫</span>
             <span class="p-1 rounded bg-canvas text-muted hover:text-obsidian">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -437,14 +437,14 @@ function renderProductsTable() {
         <td class="py-2.5 px-4 text-center whitespace-nowrap">
           <div class="flex items-center justify-center gap-1.5">
             <button type="button" 
-              onclick="openEditPriceModal('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price || 0})" 
+              onclick="openEditPriceModal('${p.id}')" 
               class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[11px] font-semibold transition-all shadow-xs" 
               title="Chỉnh sửa giá bán của mẫu giày này">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
               <span>Sửa giá</span>
             </button>
             <button type="button" 
-              onclick="deleteProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')" 
+              onclick="deleteProduct('${p.id}')" 
               class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" 
               title="Xóa mẫu giày này">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -591,7 +591,10 @@ async function submitNewProduct() {
   }
 }
 
-async function deleteProduct(productId, productName) {
+async function deleteProduct(productId) {
+  const p = allProducts.find(x => x.id === productId);
+  const productName = p ? p.name : productId;
+
   if (!confirm(`Bạn có chắc muốn xóa mẫu giày "${productName}" khỏi danh mục shop không?`)) {
     return;
   }
@@ -618,9 +621,12 @@ async function deleteProduct(productId, productName) {
 let editingProductId = null;
 let editingProductOriginalPrice = 0;
 
-function openEditPriceModal(productId, productName, currentPrice) {
+function openEditPriceModal(productId) {
+  const p = allProducts.find(x => x.id === productId);
+  if (!p) return;
+
   editingProductId = productId;
-  editingProductOriginalPrice = parseInt(currentPrice, 10) || 0;
+  editingProductOriginalPrice = parseInt(p.price, 10) || 0;
 
   const modal = document.getElementById('edit-price-modal');
   const idEl = document.getElementById('edit-price-prod-id');
@@ -629,8 +635,8 @@ function openEditPriceModal(productId, productName, currentPrice) {
   const inputEl = document.getElementById('edit-price-input');
 
   if (idEl) idEl.textContent = productId.toUpperCase();
-  if (nameEl) nameEl.textContent = productName;
-  if (currentEl) currentEl.textContent = (editingProductOriginalPrice).toLocaleString('vi-VN') + ' ₫';
+  if (nameEl) nameEl.textContent = p.name;
+  if (currentEl) currentEl.textContent = editingProductOriginalPrice.toLocaleString('vi-VN') + ' ₫';
   if (inputEl) {
     inputEl.value = editingProductOriginalPrice;
     handleEditPriceInput(editingProductOriginalPrice);

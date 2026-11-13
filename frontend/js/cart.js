@@ -23,6 +23,24 @@
   let toastTimer = null;
   let lastPlacedOrder = null;
 
+  // Tự động tải cấu hình ngân hàng VietQR mới nhất từ Backend API
+  async function fetchLiveBankConfig() {
+    try {
+      const apiBase = window.API_BASE_URL || (window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000');
+      const res = await fetch(`${apiBase}/api/config/bank`, { cache: 'no-store' });
+      if (res.ok) {
+        const liveBank = await res.json();
+        if (liveBank && liveBank.accountNo) {
+          BANK_CONFIG.bankId = liveBank.bankCode || 'TCB';
+          BANK_CONFIG.bankName = liveBank.bankName || 'Techcombank';
+          BANK_CONFIG.bankBadge = liveBank.bankCode || 'TCB';
+          BANK_CONFIG.accountNo = liveBank.accountNo;
+          BANK_CONFIG.accountName = liveBank.accountHolder || 'TRAN DUC MANH';
+        }
+      }
+    } catch (e) {}
+  }
+
   function loadCart() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -46,6 +64,8 @@
       ];
       saveCart();
     }
+
+    fetchLiveBankConfig();
   }
 
   function saveCart() {
@@ -56,8 +76,18 @@
   }
 
   function addToCart(id, colorName, size, price, image, name) {
+    let shoe = null;
+    if (window.CATALOG_DATA && Array.isArray(window.CATALOG_DATA)) {
+      shoe = window.CATALOG_DATA.find(p => p.id === id);
+    }
+    const finalName = name || (shoe ? shoe.name : 'Giày Nike Chính Hãng');
+    const finalPrice = typeof price === 'number' && !isNaN(price) ? price : (shoe ? shoe.price : 2990000);
+    const finalColor = colorName || (shoe && shoe.colors && shoe.colors[0] ? shoe.colors[0].name : 'Mặc định');
+    const finalImage = image || (shoe && shoe.colors && shoe.colors[0] ? shoe.colors[0].photo : (shoe ? shoe.image : 'assets/shoes/default-shoe.png'));
+    const finalSize = size || 41;
+
     const existingIndex = cartItems.findIndex(
-      item => item.id === id && item.color === colorName && item.size === size
+      item => item.id === id && item.color === finalColor && item.size === finalSize
     );
 
     if (existingIndex > -1) {
@@ -65,17 +95,17 @@
     } else {
       cartItems.push({
         id,
-        name,
-        color: colorName,
-        size,
-        price,
-        image,
+        name: finalName,
+        color: finalColor,
+        size: finalSize,
+        price: finalPrice,
+        image: finalImage,
         qty: 1
       });
     }
 
     saveCart();
-    showToast(`Đã thêm ${name} vào giỏ hàng!`);
+    showToast(`Đã thêm ${finalName} vào giỏ hàng!`);
     toggleCartDrawer(true);
   }
 
@@ -199,6 +229,11 @@
     // Generate unique Order Code
     currentOrderCode = 'NIKE' + Math.floor(100000 + Math.random() * 900000);
     currentPaymentMethod = 'vietqr';
+
+    // Cập nhật cấu hình tài khoản ngân hàng mới nhất từ Backend trước khi tạo mã QR
+    try {
+      await fetchLiveBankConfig();
+    } catch(e) {}
 
     // Populate order summary
     renderCheckoutSummary();

@@ -1,5 +1,31 @@
 [
   {
+    "orderId": "NIKE975493",
+    "createdAt": "2026-11-13T07:25:56.490Z",
+    "customer": {
+      "fullname": "m",
+      "phone": "0933089270",
+      "address": "ấp hàng gòn phường long thành tp đồng nai",
+      "notes": ""
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-24",
+        "name": "1234",
+        "color": "Mặc định",
+        "size": 41,
+        "price": 10000,
+        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
+        "qty": 1
+      }
+    ],
+    "totalAmount": 10000,
+    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
+    "updatedAt": "2026-11-13T07:26:20.827Z"
+  },
+  {
     "orderId": "NIKE743768",
     "createdAt": "2026-11-13T06:04:39.237Z",
     "customer": {
@@ -22,7 +48,7 @@
       }
     ],
     "totalAmount": 2929000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
+    "updatedAt": "2026-11-13T07:26:24.183Z"
   }
 ]
-

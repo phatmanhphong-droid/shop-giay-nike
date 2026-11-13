@@ -21,7 +21,17 @@ const MIME = {
   '.ico': 'image/x-icon'
 };
 
+process.on('uncaughtException', (err) => {
+  console.error('[Frontend UncaughtException]', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Frontend UnhandledRejection]', reason);
+});
+
 const server = http.createServer((req, res) => {
+  req.on('error', (err) => console.warn('[Frontend Req Error]', err.message));
+  res.on('error', (err) => console.warn('[Frontend Res Error]', err.message));
+
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
