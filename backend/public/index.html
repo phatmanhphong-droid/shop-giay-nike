@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nike Admin Portal — Quản Trị Hệ Thống Backend & Đơn Hàng</title>
+
+  <!-- Google Fonts: Space Grotesk & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif']
+          },
+          colors: {
+            canvas: '#F4F4F5',
+            surface: '#FFFFFF',
+            obsidian: '#111111',
+            muted: '#71717A',
+            hairline: '#E4E4E7'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    * { scrollbar-width: thin; scrollbar-color: #D4D4D8 #F4F4F5; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #71717A; }
+  </style>
+</head>
+<body class="bg-canvas text-obsidian font-sans antialiased min-h-screen flex flex-col selection:bg-obsidian selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-hairline px-4 sm:px-8 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-xl bg-obsidian text-white flex items-center justify-center font-display font-black text-xs tracking-wider">
+        NK
+      </div>
+      <div>
+        <h1 class="font-display font-extrabold text-sm sm:text-base tracking-tight text-obsidian uppercase flex items-center gap-2">
+          <span>NIKE BACKEND PORTAL</span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider">Online • Port 5000</span>
+        </h1>
+        <p class="text-[11px] text-muted">Hệ thống quản trị đơn hàng & dịch vụ thanh toán VietQR</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Direct Link to Customer Frontend -->
+      <a href="http://localhost:8080" target="_blank" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-canvas hover:bg-hairline text-xs font-semibold text-obsidian transition-colors border border-hairline">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        <span>Mở Cửa Hàng (Port 8080)</span>
+      </a>
+
+      <!-- Refresh Button -->
+      <button type="button" onclick="loadDashboardData()" class="w-8 h-8 rounded-full bg-white hover:bg-canvas border border-hairline flex items-center justify-center text-obsidian transition-colors" title="Làm mới dữ liệu">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="flex-1 max-w-[1440px] w-full mx-auto p-4 sm:p-8 space-y-8">
+    
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Total Revenue -->
+      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Tổng Doanh Thu</p>
+          <h3 id="stat-total-revenue" class="font-display font-black text-2xl text-obsidian mt-1">0 ₫</h3>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1">Tất cả đơn hàng</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+
+      <!-- Total Orders -->
+      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Tổng Đơn Hàng</p>
+          <h3 id="stat-total-orders" class="font-display font-black text-2xl text-obsidian mt-1">0</h3>
+          <p class="text-[11px] text-muted font-medium mt-1">Đã lưu trong database</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+      </div>
+
+      <!-- Pending VietQR Orders -->
+      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Chờ Xác Nhận VietQR</p>
+          <h3 id="stat-pending-orders" class="font-display font-black text-2xl text-amber-600 mt-1">0</h3>
+          <p class="text-[11px] text-amber-600 font-medium mt-1">Cần đối soát tài khoản</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+
+      <!-- Bank Techcombank Info -->
+      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Tài Khoản Thụ Hưởng</p>
+          <h3 class="font-mono font-black text-base text-obsidian mt-1">8678686688</h3>
+          <p class="text-[11px] text-red-600 font-bold mt-0.5">Techcombank • TRAN DUC MANH</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-display font-black text-xs">
+          TCB
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="flex items-center gap-3 border-b border-hairline pb-4">
+      <button type="button" onclick="switchTab('orders')" id="tab-btn-orders" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-obsidian text-white shadow-sm transition-all">
+        📦 Quản Lý Đơn Hàng
+      </button>
+      <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all">
+        ⚙️ Cấu Hình Tài Khoản VietQR
+      </button>
+      <button type="button" onclick="switchTab('system')" id="tab-btn-system" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all">
+        🖥️ Trạng Thái Máy Chủ & Docker
+      </button>
+    </div>
+
+    <!-- TAB 1: ORDERS MANAGEMENT -->
+    <section id="tab-orders" class="space-y-4">
+      <!-- Search and Filter Bar -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-hairline shadow-sm">
+        <div class="relative w-full sm:w-80">
+          <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-orders-input" oninput="handleSearchOrders(this.value)" placeholder="Tìm theo Mã đơn, Họ tên, SĐT..." class="w-full pl-9 pr-4 py-2 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian transition-colors">
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <span class="text-xs text-muted font-medium whitespace-nowrap">Trạng thái:</span>
+          <select id="filter-order-status" onchange="handleFilterStatus(this.value)" class="w-full sm:w-auto px-3.5 py-2 text-xs bg-canvas border border-hairline rounded-xl font-semibold text-obsidian focus:outline-none focus:border-obsidian cursor-pointer">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="pending">Chờ xác nhận giao dịch</option>
+            <option value="confirmed">Đã xác nhận thanh toán</option>
+            <option value="shipping">Đang giao hàng</option>
+            <option value="completed">Đã hoàn thành</option>
+            <option value="cancelled">Đã huỷ</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Orders Table Container -->
+      <div class="bg-white rounded-2xl border border-hairline shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
+                <th class="py-3 px-4">Mã Đơn</th>
+                <th class="py-3 px-4">Ngày Đặt</th>
+                <th class="py-3 px-4">Khách Hàng & Địa Chỉ</th>
+                <th class="py-3 px-4">Sản Phẩm</th>
+                <th class="py-3 px-4 text-right">Tổng Tiền</th>
+                <th class="py-3 px-4 text-center">Phương Thức</th>
+                <th class="py-3 px-4 text-center">Trạng Thái</th>
+                <th class="py-3 px-4 text-center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body" class="divide-y divide-hairline">
+              <!-- Rendered via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: BANK SETTINGS -->
+    <section id="tab-settings" class="hidden space-y-6 max-w-2xl bg-white p-6 sm:p-8 rounded-2xl border border-hairline shadow-sm">
+      <div>
+        <h3 class="font-display font-bold text-lg text-obsidian">Cấu Hình Tài Khoản Nhận Tiền VietQR</h3>
+        <p class="text-xs text-muted mt-1">Thông tin tài khoản ngân hàng sẽ được tự động đồng bộ vào mã QR động cho khách quét thanh toán.</p>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Ngân hàng</label>
+          <input type="text" id="bank-name-input" value="Techcombank (Ngân Hàng Kỹ Thương Việt Nam)" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-medium focus:outline-none focus:border-obsidian">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Mã ngân hàng (Bin Code)</label>
+            <input type="text" id="bank-code-input" value="TCB" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-medium focus:outline-none focus:border-obsidian">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Số tài khoản thụ hưởng</label>
+            <input type="text" id="bank-acc-input" value="8678686688" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-mono font-bold focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Tên chủ tài khoản (Viết hoa không dấu)</label>
+          <input type="text" id="bank-holder-input" value="TRAN DUC MANH" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-bold focus:outline-none focus:border-obsidian">
+        </div>
+
+        <div class="pt-4 flex items-center justify-between border-t border-hairline">
+          <span class="text-[11px] text-muted">Dữ liệu được lưu trữ trực tiếp vào cấu hình Backend</span>
+          <button type="button" onclick="saveBankConfig()" class="px-6 py-2.5 rounded-full bg-obsidian hover:bg-black text-white font-bold transition-all shadow-md">
+            Lưu Thay Đổi
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SYSTEM MONITOR -->
+    <section id="tab-system" class="hidden space-y-6 max-w-3xl bg-white p-6 sm:p-8 rounded-2xl border border-hairline shadow-sm">
+      <div>
+        <h3 class="font-display font-bold text-lg text-obsidian">Thông Số Máy Chủ & Môi Trường Hoạt Động</h3>
+        <p class="text-xs text-muted mt-1">Giám sát tài nguyên dịch vụ Backend Node.js và cấu hình Docker</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
+          <span class="text-muted block font-semibold uppercase text-[10px]">Cổng Lắng Nghe (Port)</span>
+          <p class="font-mono font-bold text-sm text-obsidian" id="sys-port">5000 (Backend API)</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
+          <span class="text-muted block font-semibold uppercase text-[10px]">Thời Gian Hoạt Động (Uptime)</span>
+          <p class="font-mono font-bold text-sm text-emerald-700" id="sys-uptime">Đang tính toán...</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
+          <span class="text-muted block font-semibold uppercase text-[10px]">Tập Tin Cơ Sở Dữ Liệu</span>
+          <p class="font-mono text-xs text-obsidian">backend/orders.json</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
+          <span class="text-muted block font-semibold uppercase text-[10px]">Chế Độ Triển Khai Docker</span>
+          <p class="font-mono text-xs text-blue-700 font-bold">docker-compose.yml (2 Containers)</p>
+        </div>
+      </div>
+
+      <!-- Docker Quick Run Guide -->
+      <div class="p-4 rounded-xl bg-obsidian text-white space-y-2 text-xs font-mono">
+        <p class="text-slate-400 font-sans text-xs">Lệnh chạy nhanh Docker Container:</p>
+        <p class="text-emerald-400 select-all">$ docker compose up -d --build</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="admin-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 bg-obsidian text-white rounded-2xl shadow-2xl text-xs font-medium">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="admin-toast-message">Thông báo</span>
+  </div>
+
+  <script src="admin.js?v=1"></script>
+</body>
+</html>
