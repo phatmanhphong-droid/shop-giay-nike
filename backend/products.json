@@ -503,29 +503,6 @@
     ]
   },
   {
-    "id": "nike-22",
-    "series": "MAXIMUM CUSHION • RECOVERY RUNS",
-    "name": "Nike ZoomX Invincible Run 3",
-    "category": "Running",
-    "price": 5190000,
-    "image": "assets/shoes/invincible3-racer.png",
-    "badge": "Êm nhất lịch sử",
-    "description": "Mẫu giày phục hồi cơ bắp đỉnh cao nhất. Đệm bọt ZoomX khổng lồ hấp thụ toàn bộ lực va đập, bảo vệ các khớp xương sau những tuần tập nặng.",
-    "specs": [
-      "Đế giữa ZoomX xếp chồng cực dày đàn hồi tối đa",
-      "Đế đế ngoài cao su viền tổ ong bám đường ướt",
-      "Thân Flyknit cải tiến thoáng khí và khóa gót chắc chắn",
-      "Khung kẹp gót chân mở rộng giữ gót không chao đảo"
-    ],
-    "colors": [
-      {
-        "name": "Racer Blue Xanh Năng Động",
-        "hex": "#2563EB",
-        "photo": "assets/shoes/invincible3-racer.png"
-      }
-    ]
-  },
-  {
     "id": "nike-23",
     "series": "AIR MAX COLLECTION • SPORT ENERGY",
     "name": "Nike Air Max Red Pulse",
@@ -549,13 +526,14 @@
     ]
   },
   {
+    "id": "nike-24",
+    "series": "NIKE SPORTSWEAR • EXCLUSIVE",
     "name": "1234",
-    "series": "nike",
-    "category": "Running",
+    "category": "Lifestyle",
     "price": 1000,
-    "badge": "mới ra",
-    "description": "Sản phẩm giày Nike chính hãng chất lượng cao.",
     "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
+    "badge": "Mới ra mắt",
+    "description": "Sản phẩm giày Nike chính hãng chất lượng cao do Quản trị viên thêm từ Admin Dashboard.",
     "specs": [
       "Chất liệu cao cấp bền đẹp",
       "Bộ đệm êm ái đàn hồi",
@@ -568,7 +546,6 @@
         "hex": "#111111",
         "photo": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg"
       }
-    ],
-    "id": "nike-24"
+    ]
   }
 ]

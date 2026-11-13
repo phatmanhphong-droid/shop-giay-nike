@@ -500,10 +500,7 @@ async function submitNewProduct() {
     showToast('Vui lòng nhập Giá bán hợp lệ!');
     return;
   }
-  if (!selectedImageData) {
-    showToast('Vui lòng chọn hình ảnh sản phẩm từ máy tính!');
-    return;
-  }
+  let imageUrl = 'assets/shoes/airforce1-white.png';
 
   const specs = specsRaw ? specsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [
     'Chất liệu cao cấp bền đẹp',
@@ -514,23 +511,24 @@ async function submitNewProduct() {
 
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = `<span>Đang tải ảnh & lưu...</span>`;
+    btn.innerHTML = `<span>Đang lưu sản phẩm...</span>`;
   }
 
   try {
-    // 1. Upload ảnh
-    let imageUrl = 'assets/shoes/default-shoe.png';
-    const uploadRes = await fetch(`${API_BASE}/api/upload`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        filename: selectedImageFileName || `shoe_${Date.now()}.png`,
-        data: selectedImageData
-      })
-    });
-    const uploadResult = await uploadRes.json();
-    if (uploadResult.success && uploadResult.url) {
-      imageUrl = uploadResult.url;
+    // 1. Upload ảnh nếu có chọn file
+    if (selectedImageData) {
+      const uploadRes = await fetch(`${API_BASE}/api/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: selectedImageFileName || `shoe_${Date.now()}.png`,
+          data: selectedImageData
+        })
+      });
+      const uploadResult = await uploadRes.json();
+      if (uploadResult.success && uploadResult.url) {
+        imageUrl = uploadResult.url;
+      }
     }
 
     // 2. Tạo sản phẩm

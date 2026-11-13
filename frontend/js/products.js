@@ -461,11 +461,11 @@ const HERO_SHOWCASE_IDS = [
 window.CATALOG_DATA = CATALOG_DATA;
 window.HERO_SHOWCASE_IDS = HERO_SHOWCASE_IDS;
 
-// Tự động đồng bộ sản phẩm mới từ Backend API
+// Đồng bộ danh mục từ Backend API nếu sẵn sàng
 (async function syncProductsFromBackend() {
   try {
-    const apiBase = window.API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : '');
-    const res = await fetch(`${apiBase}/api/products`);
+    const apiBase = window.API_BASE_URL || (window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000');
+    const res = await fetch(`${apiBase}/api/products`, { cache: 'no-store' });
     if (res.ok) {
       const liveList = await res.json();
       if (Array.isArray(liveList) && liveList.length) {

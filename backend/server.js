@@ -13,6 +13,7 @@ const BACKEND_UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 // Ensure upload directories exist
 try {
   if (!fs.existsSync(BACKEND_UPLOADS_DIR)) fs.mkdirSync(BACKEND_UPLOADS_DIR, { recursive: true });
+  if (!fs.existsSync(SHOES_ASSETS_DIR)) fs.mkdirSync(SHOES_ASSETS_DIR, { recursive: true });
 } catch (e) {}
 
 const MIME = {
@@ -23,6 +24,8 @@ const MIME = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon'
 };
@@ -180,10 +183,19 @@ const server = http.createServer((req, res) => {
         const buffer = Buffer.from(base64Data, 'base64');
         const cleanName = path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, '_');
 
-        if (fs.existsSync(SHOES_ASSETS_DIR)) {
+        try {
+          if (!fs.existsSync(SHOES_ASSETS_DIR)) fs.mkdirSync(SHOES_ASSETS_DIR, { recursive: true });
           fs.writeFileSync(path.join(SHOES_ASSETS_DIR, cleanName), buffer);
+        } catch (e) {
+          console.warn('[Upload Warn] Không thể ghi vào frontend/assets/shoes:', e.message);
         }
-        fs.writeFileSync(path.join(BACKEND_UPLOADS_DIR, cleanName), buffer);
+
+        try {
+          if (!fs.existsSync(BACKEND_UPLOADS_DIR)) fs.mkdirSync(BACKEND_UPLOADS_DIR, { recursive: true });
+          fs.writeFileSync(path.join(BACKEND_UPLOADS_DIR, cleanName), buffer);
+        } catch (e) {
+          console.warn('[Upload Warn] Không thể ghi vào backend/uploads:', e.message);
+        }
 
         const assetPath = `assets/shoes/${cleanName}`;
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });

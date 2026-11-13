@@ -1,35 +1,112 @@
 // ==========================================================================
 // SHOP GIÀY NIKE — MAIN APPLICATION CONTROLLER
-// Kết nối bộ lọc danh mục, tìm kiếm, hiển thị lưới 23 sản phẩm, khởi chạy
+// Kết nối bộ lọc danh mục, tìm kiếm, hiển thị sản phẩm thời gian thực từ Backend
 // ==========================================================================
 
 (function () {
   let activeCategory = 'Tất cả';
   let searchQuery = '';
+  let isFetching = false;
 
-  const CATEGORIES = [
-    'Tất cả',
-    'Jordan',
-    'Lifestyle',
-    'Running',
-    'Basketball',
-    'Skateboarding',
-    'Air Max'
-  ];
+  // Resolve API Base (hỗ trợ cả chạy qua Frontend reverse proxy lẫn gọi trực tiếp Backend)
+  function getApiBase() {
+    if (window.API_BASE_URL) return window.API_BASE_URL;
+    if (window.location.protocol.startsWith('http')) {
+      // Khi truy cập qua web (port 8080 hoặc bất kỳ port nào), ưu tiên reverse proxy tương đối '/api'
+      return '';
+    }
+    return 'http://localhost:5000';
+  }
 
-  function initApp() {
+  // Tải danh sách sản phẩm thời gian thực từ Backend API
+  async function loadProductsFromBackend(silent = false) {
+    if (isFetching) return;
+    isFetching = true;
+
+    try {
+      const apiBase = getApiBase();
+      let res;
+      try {
+        res = await fetch(`${apiBase}/api/products`, { cache: 'no-store' });
+      } catch (proxyErr) {
+        // Fallback gọi trực tiếp port 5000 nếu proxy chưa sẵn sàng
+        res = await fetch('http://localhost:5000/api/products', { cache: 'no-store' });
+      }
+
+      if (res && res.ok) {
+        const liveProducts = await res.json();
+        if (Array.isArray(liveProducts) && liveProducts.length > 0) {
+          const oldLen = (window.CATALOG_DATA || []).length;
+          window.CATALOG_DATA = liveProducts;
+
+          // Re-render nếu số lượng thay đổi hoặc lần đầu tải
+          if (oldLen !== liveProducts.length || !silent) {
+            renderCategoryFilters();
+            renderCatalogGrid();
+            updateAllCounters();
+          }
+        }
+      }
+    } catch (err) {
+      if (!silent) {
+        console.warn('[Sync] Không thể kết nối Backend API, sử dụng dữ liệu tĩnh:', err.message);
+      }
+    } finally {
+      isFetching = false;
+    }
+  }
+
+  // Cập nhật tất cả các bộ đếm số lượng trên giao diện
+  function updateAllCounters() {
+    const total = (window.CATALOG_DATA || []).length;
+    
+    // Header navigation count
+    const navCountEl = document.getElementById('nav-product-count');
+    if (navCountEl) navCountEl.textContent = total;
+
+    // Collection title count
+    const headerCountEl = document.getElementById('catalog-header-count');
+    if (headerCountEl) headerCountEl.textContent = total;
+  }
+
+  // Khởi chạy ứng dụng
+  async function initApp() {
+    // 1. Tải dữ liệu mới nhất từ Backend trước
+    await loadProductsFromBackend(true);
+
+    // 2. Render giao diện
     renderCategoryFilters();
     renderCatalogGrid();
+    updateAllCounters();
 
-    // Initialize Hero Turntable
+    // 3. Khởi tạo 3D Runway Turntable
     if (window.initTurntable) {
       window.initTurntable();
     }
 
-    // Initialize Cart
+    // 4. Khởi tạo Giỏ hàng
     if (window.renderCart) {
       window.renderCart();
     }
+
+    // 5. Tự động đồng bộ thời gian thực mỗi 4 giây và khi người dùng quay lại tab
+    setInterval(() => loadProductsFromBackend(true), 4000);
+    window.addEventListener('focus', () => loadProductsFromBackend(false));
+  }
+
+  // Lấy danh sách danh mục động từ toàn bộ sản phẩm hiện có
+  function getDynamicCategories() {
+    const data = window.CATALOG_DATA || [];
+    const baseCats = ['Tất cả', 'Jordan', 'Lifestyle', 'Running', 'Basketball', 'Air Max', 'Skateboarding'];
+    const extraCats = [];
+
+    data.forEach(p => {
+      if (p.category && !baseCats.includes(p.category) && !extraCats.includes(p.category)) {
+        extraCats.push(p.category);
+      }
+    });
+
+    return [...baseCats, ...extraCats];
   }
 
   function renderCategoryFilters() {
@@ -37,17 +114,23 @@
     if (!container) return;
 
     const data = window.CATALOG_DATA || [];
+    const categories = getDynamicCategories();
 
-    container.innerHTML = CATEGORIES.map(cat => {
+    container.innerHTML = categories.map(cat => {
       const count = cat === 'Tất cả' 
         ? data.length 
-        : data.filter(p => p.category === cat).length;
+        : data.filter(p => (p.category || '').toLowerCase() === cat.toLowerCase()).length;
 
-      const isActive = cat === activeCategory;
+      // Ẩn các danh mục không có sản phẩm nào (trừ các danh mục chính)
+      if (count === 0 && !['Tất cả', 'Jordan', 'Lifestyle', 'Running'].includes(cat)) {
+        return '';
+      }
+
+      const isActive = cat.toLowerCase() === activeCategory.toLowerCase();
       return `
         <button type="button" 
           onclick="window.setCategory('${cat}')" 
-          class="cat-filter-btn px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all ${
+          class="cat-filter-btn px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
             isActive 
               ? 'bg-obsidian text-white shadow-sm' 
               : 'bg-white text-muted hover:text-obsidian border border-hairline hover:border-obsidian'
@@ -55,7 +138,7 @@
           ${cat} (${count})
         </button>
       `;
-    }).join('');
+    }).filter(Boolean).join('');
   }
 
   function setCategory(category) {
@@ -78,16 +161,16 @@
 
     // Filter by Category
     if (activeCategory !== 'Tất cả') {
-      items = items.filter(p => p.category === activeCategory);
+      items = items.filter(p => (p.category || '').toLowerCase() === activeCategory.toLowerCase());
     }
 
     // Filter by Search Query
     if (searchQuery) {
       items = items.filter(p => 
-        p.name.toLowerCase().includes(searchQuery) ||
-        p.category.toLowerCase().includes(searchQuery) ||
-        p.description.toLowerCase().includes(searchQuery) ||
-        p.series.toLowerCase().includes(searchQuery)
+        (p.name || '').toLowerCase().includes(searchQuery) ||
+        (p.category || '').toLowerCase().includes(searchQuery) ||
+        (p.description || '').toLowerCase().includes(searchQuery) ||
+        (p.series || '').toLowerCase().includes(searchQuery)
       );
     }
 
@@ -106,7 +189,9 @@
     }
 
     grid.innerHTML = items.map(shoe => {
-      const defaultPhoto = shoe.colors && shoe.colors[0] ? shoe.colors[0].photo : shoe.image;
+      const defaultPhoto = shoe.colors && shoe.colors[0] && shoe.colors[0].photo 
+        ? shoe.colors[0].photo 
+        : (shoe.image || 'assets/shoes/default-shoe.png');
 
       // Color swatches HTML
       const colorsHtml = shoe.colors && shoe.colors.length > 1 ? `
@@ -115,9 +200,9 @@
             <button type="button" 
               onclick="window.changeCardColor('${shoe.id}', '${c.photo}', this)" 
               class="card-swatch-btn ${cIdx === 0 ? 'active' : ''}" 
-              style="background-color: ${c.hex};" 
-              title="${c.name}"
-              aria-label="${c.name}">
+              style="background-color: ${c.hex || '#111111'};" 
+              title="${c.name || 'Màu sắc'}"
+              aria-label="${c.name || 'Màu sắc'}">
             </button>
           `).join('')}
         </div>
@@ -128,8 +213,8 @@
           <!-- Top Badge & Category -->
           <div>
             <div class="flex items-center justify-between text-[11px] mb-3">
-              <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category}</span>
-              <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge}</span>
+              <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category || 'Sneaker'}</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
             </div>
 
             <!-- Shoe Image Container -->
@@ -138,7 +223,8 @@
                 alt="${shoe.name}" 
                 id="card-img-${shoe.id}" 
                 class="w-full h-full object-contain filter drop-shadow-md group-hover:scale-108 group-hover:-rotate-3 transition-transform duration-500 will-change-transform" 
-                loading="lazy" />
+                loading="lazy"
+                onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='http://localhost:5000/'+this.getAttribute('src');}" />
             </div>
 
             <!-- Color Swatches -->
@@ -148,14 +234,14 @@
             <h3 class="font-display font-bold text-sm text-obsidian mt-2 group-hover:text-black transition-colors line-clamp-1 cursor-pointer" onclick="window.openQuickView('${shoe.id}')">
               ${shoe.name}
             </h3>
-            <p class="text-xs text-muted mt-1 line-clamp-2">${shoe.description}</p>
+            <p class="text-xs text-muted mt-1 line-clamp-2">${shoe.description || 'Mẫu giày Nike cao cấp chính hãng.'}</p>
           </div>
 
           <!-- Bottom Price & Buttons -->
           <div class="mt-4 pt-3 border-t border-hairline flex items-center justify-between gap-2">
             <div>
               <p class="text-[10px] text-muted uppercase font-medium">Giá niêm yết</p>
-              <p class="font-display font-bold text-sm sm:text-base text-obsidian">${shoe.price.toLocaleString('vi-VN')} ₫</p>
+              <p class="font-display font-bold text-sm sm:text-base text-obsidian">${(shoe.price || 0).toLocaleString('vi-VN')} ₫</p>
             </div>
 
             <div class="flex items-center gap-1.5">
@@ -216,7 +302,10 @@
     }
   }
 
-  // Export to global window
+  // Export to global window so products.js, admin, or external triggers can call
+  window.renderCategoryFilters = renderCategoryFilters;
+  window.renderCatalogGrid = renderCatalogGrid;
+  window.syncProducts = loadProductsFromBackend;
   window.setCategory = setCategory;
   window.handleSearch = handleSearch;
   window.changeCardColor = changeCardColor;
@@ -224,5 +313,9 @@
   window.addActiveHeroToCart = addActiveHeroToCart;
 
   // Run on page load
-  window.addEventListener('DOMContentLoaded', initApp);
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 })();
