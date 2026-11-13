@@ -1,22 +1,22 @@
 {
   "name": "shop-giay-nike",
   "version": "1.0.0",
-  "description": "Website Shop Giày Nike Chính Hãng 2026 - Tích hợp VietQR Techcombank & Node.js Backend",
-  "main": "server.js",
+  "description": "Website Shop Giày Nike Chính Hãng 2026 - Tách biệt Frontend & Backend, Docker & VietQR",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "docker:build": "docker build -t shop-giay-nike:latest .",
-    "docker:run": "docker run -d -p 8080:8080 --name shop-giay-nike-app shop-giay-nike:latest",
-    "docker:compose": "docker compose up -d --build"
+    "start:backend": "node backend/server.js",
+    "start:frontend": "node frontend/server.js",
+    "start": "node backend/server.js",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "keywords": [
     "nike",
-    "sneakers",
     "vietqr",
-    "ecommerce",
+    "techcombank",
+    "docker",
     "nodejs",
-    "docker"
+    "microservices"
   ],
   "author": "TRAN DUC MANH",
   "license": "ISC"

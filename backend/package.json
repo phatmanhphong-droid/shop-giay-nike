@@ -1,0 +1,19 @@
+{
+  "name": "shop-nike-backend",
+  "version": "1.0.0",
+  "description": "Backend API Server cho Shop Giay Nike - VietQR Order Processing & Health Services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "nike",
+    "backend",
+    "api",
+    "nodejs",
+    "vietqr"
+  ],
+  "author": "TRAN DUC MANH",
+  "license": "ISC"
+}

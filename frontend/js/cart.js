@@ -433,9 +433,10 @@
       `;
     }
 
-    // Try saving to backend API
+    // Try saving to backend API (Tách riêng backend tại port 5000)
+    const apiBase = window.API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : '');
     try {
-      await fetch('/api/orders', {
+      await fetch(`${apiBase}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

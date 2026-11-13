@@ -1,18 +1,32 @@
 version: '3.8'
 
 services:
-  shop-giay-nike:
+  # DỊCH VỤ BACKEND REST API (NODE.JS)
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    image: shop-giay-nike:latest
-    container_name: shop-giay-nike-container
+    image: shop-nike-backend:latest
+    container_name: shop-nike-backend
     ports:
-      - "8080:8080"
+      - "5000:5000"
     environment:
-      - PORT=8080
+      - PORT=5000
       - NODE_ENV=production
     volumes:
-      # Mount orders.json ra máy thật để dữ liệu đơn hàng luôn được lưu trữ vĩnh viễn
-      - ./orders.json:/app/orders.json
+      # Lưu trữ dữ liệu đơn hàng lâu dài không lo mất khi restart container
+      - ./backend/orders.json:/app/orders.json
+    restart: unless-stopped
+
+  # DỊCH VỤ FRONTEND GIAO DIỆN (NGINX)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: shop-nike-frontend:latest
+    container_name: shop-nike-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
     restart: unless-stopped

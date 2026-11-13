@@ -1,8 +1,5 @@
-.git
-.gitignore
 node_modules
+*.log
 npm-debug.log*
 .DS_Store
 Thumbs.db
-*.bat
-BAO_CAO_BAN_GIAO.md
