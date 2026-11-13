@@ -1,0 +1,462 @@
+// ==========================================================================
+// SHOP GIÀY NIKE — AUTHENTIC PRODUCT CATALOG DATA (23 SNEAKERS)
+// Khớp chuẩn 100% tên mẫu giày, màu sắc, thông số và hình ảnh thực tế
+// ==========================================================================
+
+const CATALOG_DATA = [
+  {
+    id: 'nike-01',
+    series: 'JORDAN BRAND • BASKETBALL ICON',
+    name: 'Air Jordan 1 Retro High OG',
+    category: 'Jordan',
+    price: 4990000,
+    image: 'assets/shoes/jordan1-chicago.png',
+    badge: 'Huyền thoại',
+    description: 'Đôi sneaker bóng rổ kinh điển ra mắt năm 1985 của Michael Jordan. Chất liệu da bò full-grain thượng hạng cùng đệm khí Air huyền thoại.',
+    specs: [
+      'Chất liệu da bò tự nhiên cao cấp (Full-grain Leather)',
+      'Túi đệm khí Nike Air độc quyền tại gót chân',
+      'Cổ cao đệm mút bảo vệ mắt cá chân tối đa',
+      'Đế ngoài cao su đúc hoa văn tròn chống trơn trượt'
+    ],
+    colors: [
+      { name: 'Chicago Đỏ Trắng', hex: '#B91C1C', photo: 'assets/shoes/jordan1-chicago.png' },
+      { name: 'Royal Xanh Dương', hex: '#1D4ED8', photo: 'assets/shoes/jordan1-royal.png' },
+      { name: 'Volt Neon Vàng Chanh', hex: '#84CC16', photo: 'assets/shoes/jordan1-volt.png' }
+    ]
+  },
+  {
+    id: 'nike-02',
+    series: 'NIKE SPORTSWEAR • STREETWEAR ICON',
+    name: "Air Force 1 '07",
+    category: 'Lifestyle',
+    price: 2929000,
+    image: 'assets/shoes/airforce1-white.png',
+    badge: 'Bán chạy #1',
+    description: 'Biểu tượng văn hóa đường phố toàn cầu. Thiết kế tối giản tinh tế, đế đệm Air êm ái dày 3.5cm giúp nâng chiều cao tự nhiên.',
+    specs: [
+      'Chất liệu da mịn cao cấp dễ lau chùi, vệ sinh',
+      'Đế giữa foam đệm tích hợp túi khí Nike Air',
+      'Đế ngoài cao su chống mài mòn cao với điểm xoay pivot',
+      'Lỗ thoáng khí viền mũi chân giữ giày luôn khô thoáng'
+    ],
+    colors: [
+      { name: 'Triple White Trắng Tinh', hex: '#FFFFFF', photo: 'assets/shoes/airforce1-white.png' },
+      { name: 'Triple Black Đen Huyền', hex: '#18181B', photo: 'assets/shoes/airforce1-black.png' }
+    ]
+  },
+  {
+    id: 'nike-03',
+    series: 'INNOVATION LAB • SMART SNEAKER',
+    name: 'Nike Adapt BB (Tự Thắt Dây)',
+    category: 'Basketball',
+    price: 7990000,
+    image: 'assets/shoes/adaptbb-grey.png',
+    badge: 'Công nghệ cao',
+    description: 'Đôi giày bóng rổ thông minh tự động thắt dây bằng động cơ cảm biến lực. Điều khiển độ ôm chân và màu đèn LED qua ứng dụng điện thoại.',
+    specs: [
+      'Hệ thống động cơ vi cơ điện tử tự siết và nhả dây',
+      'Đèn LED hai bên hông tùy biến màu sắc thông minh',
+      'Sạc không dây chuẩn Qi với bàn sạc từ tính đi kèm',
+      'Thân giày Flyknit co giãn định hình chuẩn xác bàn chân'
+    ],
+    colors: [
+      { name: 'Wolf Grey Xám Đen', hex: '#374151', photo: 'assets/shoes/adaptbb-grey.png' },
+      { name: 'Smart Multi Đa Sắc', hex: '#3B82F6', photo: 'assets/shoes/adaptbb-smart.png' }
+    ]
+  },
+  {
+    id: 'nike-04',
+    series: 'BASKETBALL ARCHIVE • 1996 VINTAGE',
+    name: "Nike Air More Uptempo '96",
+    category: 'Basketball',
+    price: 4890000,
+    image: 'assets/shoes/dunk-panda.png',
+    badge: 'Chữ AIR Huyền Thoại',
+    description: 'Kiệt tác bóng rổ thập niên 90 của Scottie Pippen với chữ AIR khổng lồ phong cách Graffiti hai bên hông giày, đệm Max Air nhìn xuyên thấu toàn bàn chân.',
+    specs: [
+      'Chữ AIR may đắp nổi bật bằng da bò viền cam neon',
+      'Hệ thống đệm khí Air-Sole toàn chiều dài bàn chân',
+      'Dây đai co giãn trên mu bàn chân giữ phom giày vững chãi',
+      'Đế ngoài cao su rãnh sâu bám sân gỗ và bê tông cực tốt'
+    ],
+    colors: [
+      { name: 'Cargo Khaki Xanh Rêu Cam Đen', hex: '#4B5320', photo: 'assets/shoes/dunk-panda.png' }
+    ]
+  },
+  {
+    id: 'nike-05',
+    series: 'AIR MAX COLLECTION • RETRO RUNNER',
+    name: 'Nike Air Max 90 Summit White',
+    category: 'Air Max',
+    price: 3829000,
+    image: 'assets/shoes/airmax90-infrared.png',
+    badge: 'Trắng Xám Thanh Lịch',
+    description: 'Phối màu trắng ngọc và xám khói trang nhã của dòng Air Max 90 kinh điển. Cửa sổ đệm khí Max Air trong suốt tại gót chân mang lại vẻ đẹp cổ điển vượt thời gian.',
+    specs: [
+      'Thân giày kết hợp lưới thoáng khí, da nubuck và TPU cao cấp',
+      'Cửa sổ túi khí Max Air lớn trong suốt tại gót chân',
+      'Đế ngoài bánh quế (Waffle) đặc trưng độ bám vượt trội',
+      'Đệm cổ chân mềm mại ôm trọn mắt cá'
+    ],
+    colors: [
+      { name: 'Summit White Trắng Xám Khói', hex: '#E4E4E7', photo: 'assets/shoes/airmax90-infrared.png' }
+    ]
+  },
+  {
+    id: 'nike-06',
+    series: 'HERITAGE RUNNING • 1972 ORIGINAL',
+    name: 'Nike Cortez Leather Triple Black',
+    category: 'Lifestyle',
+    price: 2490000,
+    image: 'assets/shoes/cortez-classic.png',
+    badge: 'Đen Toàn Phần',
+    description: 'Phiên bản Cortez bọc da bò nguyên tấm phủ sắc đen mờ sang trọng lịch lãm. Đế nêm xốp 2 tầng êm ái cùng dáng mũi tròn thanh thoát dễ phối đồ.',
+    specs: [
+      'Chất liệu da bò nguyên tấm phủ đen mờ bền bỉ',
+      'Đế giữa xốp EVA 2 tầng hình nêm êm ái nâng đỡ',
+      'Đế ngoài răng cưa Herringbone chống trơn trượt',
+      'Form dáng thon gọn kinh điển không bao giờ lỗi mốt'
+    ],
+    colors: [
+      { name: 'Triple Black Đen Mờ', hex: '#18181B', photo: 'assets/shoes/cortez-classic.png' }
+    ]
+  },
+  {
+    id: 'nike-07',
+    series: 'DAILY RUNNING • HIGH ENERGY RETURN',
+    name: 'Nike Pegasus Turbo Next Nature',
+    category: 'Running',
+    price: 3519000,
+    image: 'assets/shoes/pegasus40-blue.png',
+    badge: 'Bật Nảy Năng Động',
+    description: 'Chiến mã chạy bộ tốc độ với bọt đệm ZoomX nảy nhất của Nike phối màu xanh chanh năng động và thân dệt Flyknit siêu thoáng mát.',
+    specs: [
+      'Bộ đệm bọt Nike ZoomX siêu nhẹ và đàn hồi vượt trội',
+      'Thân dệt Flyknit ôm sát thoáng khí từ vật liệu tái chế',
+      'Đế ngoài cao su hình bánh quế bám đường ướt cực tốt',
+      'Thiết kế khí động học hỗ trợ sải bước dài êm ái'
+    ],
+    colors: [
+      { name: 'Lime Green / Trắng Xanh Chanh', hex: '#65A30D', photo: 'assets/shoes/pegasus40-blue.png' }
+    ]
+  },
+  {
+    id: 'nike-08',
+    series: 'MARATHON RACING • WORLD RECORD BREAKER',
+    name: 'Nike ZoomX Vaporfly NEXT% 3',
+    category: 'Running',
+    price: 6639000,
+    image: 'assets/shoes/vaporfly-pink.png',
+    badge: 'Phá kỷ lục',
+    description: 'Vũ khí siêu tốc độ cho cự ly 42km marathon. Tấm đĩa carbon Flyplate toàn chiều dài kết hợp đệm ZoomX hoàn trả năng lượng lên tới 85%.',
+    specs: [
+      'Bọt đệm ZoomX nhẹ nhất và nảy nhất lịch sử Nike',
+      'Tấm sợi Carbon Flyplate uốn cong trợ lực từng bước sải',
+      'Thân giày Flyknit siêu nhẹ và thoáng mát tối đa',
+      'Trọng lượng siêu nhẹ chỉ 198 gram'
+    ],
+    colors: [
+      { name: 'Pink Blast Hồng Cam Laser', hex: '#EC4899', photo: 'assets/shoes/vaporfly-pink.png' }
+    ]
+  },
+  {
+    id: 'nike-09',
+    series: 'FAST PACED RUNNING • TEMPO TRAINING',
+    name: 'Nike Zoom Fly 3 Fast',
+    category: 'Running',
+    price: 4190000,
+    image: 'assets/shoes/zoomfly3-lime.png',
+    badge: 'Tốc độ',
+    description: 'Thiết kế giày luyện tập tốc độ lấy cảm hứng từ dòng Vaporfly. Tấm sợi carbon toàn chiều dài mang lại cảm giác đẩy người về phía trước.',
+    specs: [
+      'Đế giữa Nike React toàn phần êm ái và siêu bền',
+      'Tấm đĩa sợi carbon trợ lực tăng tốc độ sải bước',
+      'Thân trên trong suốt VaporWeave chống thấm nước',
+      'Cổ giày liền co giãn ôm khít mu bàn chân'
+    ],
+    colors: [
+      { name: 'Electric Lime Xanh Chuối', hex: '#84CC16', photo: 'assets/shoes/zoomfly3-lime.png' }
+    ]
+  },
+  {
+    id: 'nike-10',
+    series: 'FITNESS & TRAINING • HIIT SPECIALIST',
+    name: 'Nike Air Zoom SuperRep',
+    category: 'Running',
+    price: 3390000,
+    image: 'assets/shoes/superrep-volt.png',
+    badge: 'Tập Gym/HIIT',
+    description: 'Chuyên dụng cho các bài tập cường độ cao HIIT, nhảy cóc, chống đẩy và chạy nước rút. 2 đệm khí Zoom Air khổng lồ hỗ trợ bật nhảy.',
+    specs: [
+      '2 túi đệm Zoom Air tròn độc lập phía mũi chân',
+      'Khung vòm bướm Flyplate hỗ trợ ổn định chuyển động ngang',
+      'Rãnh xẻ linh hoạt bàn chân hỗ trợ tư thế Plank tự nhiên',
+      'Lưới dập vân tổ ong chịu lực co kéo mạnh'
+    ],
+    colors: [
+      { name: 'Neon Volt Dạ Quang', hex: '#A3E635', photo: 'assets/shoes/superrep-volt.png' }
+    ]
+  },
+  {
+    id: 'nike-11',
+    series: 'TRAINING & WEIGHTLIFTING • WORKOUT BEAST',
+    name: 'Nike Air Max Alpha Trainer 3',
+    category: 'Air Max',
+    price: 2690000,
+    image: 'assets/shoes/alphatr3-black.png',
+    badge: 'Tập tạ nặng',
+    description: 'Dành riêng cho gymer tập tạ nặng và bài tập squat. Đế phẳng bản rộng cùng túi khí Max Air ở gót tạo sự vững chãi tuyệt đối.',
+    specs: [
+      'Đế gót phẳng bản rộng tăng diện tích bám sàn khi nâng tạ',
+      'Túi đệm khí Max Air giảm chấn lực tác động lên khớp gối',
+      'Thân lưới dệt gia cố viền TPU chống mài mòn cao',
+      'Hệ thống xỏ dây liên kết cánh nâng đỡ mu bàn chân'
+    ],
+    colors: [
+      { name: 'Black Wolf Grey Đen Xám', hex: '#3F3F46', photo: 'assets/shoes/alphatr3-black.png' }
+    ]
+  },
+  {
+    id: 'nike-12',
+    series: 'JORDAN BRAND • 1989 LEGEND',
+    name: 'Air Jordan 4 Retro White Cement',
+    category: 'Jordan',
+    price: 6190000,
+    image: 'assets/shoes/jordan4-cement.png',
+    badge: 'Sưu tầm cao',
+    description: 'Kiệt tác năm 1989 với họa tiết vẩy sơn xi măng trứ danh. Thiết kế cánh tam giác TPU và lưới đan đặc trưng của văn hóa hip-hop thế giới.',
+    specs: [
+      'Chất liệu da bò cao cấp bền bỉ vượt thời gian',
+      'Cánh nhựa TPU hỗ trợ cố định và ôm chắc cổ chân',
+      'Túi đệm Air nhìn thấy được ở gót và ẩn ở mũi chân',
+      'Họa tiết xi măng Cement Grey độc bản sang trọng'
+    ],
+    colors: [
+      { name: 'White Cement Xi Măng', hex: '#E4E4E7', photo: 'assets/shoes/jordan4-cement.png' }
+    ]
+  },
+  {
+    id: 'nike-13',
+    series: 'SKATEBOARDING • STREET ATELIER',
+    name: 'Nike SB Dunk Low Pro',
+    category: 'Skateboarding',
+    price: 3690000,
+    image: 'assets/shoes/sbdunk-emerald.png',
+    badge: 'Skater Pro',
+    description: 'Phiên bản Dunk nâng cấp chuyên dụng trượt ván đường phố. Lưỡi gà độn mút dày cùng túi đệm Zoom Air lót dưới đế giúp tiếp đất an toàn.',
+    specs: [
+      'Chất liệu da lộn suede cao cấp dày dặn chống trầy ván',
+      'Lưỡi gà dày đệm mút chống chấn thương mu bàn chân',
+      'Lót giày tích hợp túi khí Zoom Air hấp thụ chấn động',
+      'Đế cao su rãnh xoay tròn bám mặt ván trượt đỉnh cao'
+    ],
+    colors: [
+      { name: 'Emerald Orange Cam Xanh', hex: '#F97316', photo: 'assets/shoes/sbdunk-emerald.png' }
+    ]
+  },
+  {
+    id: 'nike-14',
+    series: 'AIR MAX LIFESTYLE • MODERN COMFORT',
+    name: 'Nike Air Max 270 React',
+    category: 'Air Max',
+    price: 3990000,
+    image: 'assets/shoes/airmax270-green.png',
+    badge: 'Siêu êm ái',
+    description: 'Sự kết hợp hoàn hảo giữa gót khí Air 270 độ dày 32mm lớn nhất và bọt đệm React siêu mềm dẻo. Đi lại cả ngày không biết mỏi.',
+    specs: [
+      'Túi đệm khí Max Air 270 độ lớn nhất tại gót chân',
+      'Đế giữa toàn phần dùng bọt đệm Nike React siêu nhẹ',
+      'Thiết kế không đường may uốn lượn phong cách hiện đại',
+      'Lưới thoáng khí đa lớp mát mẻ quanh năm'
+    ],
+    colors: [
+      { name: 'Electro Green Xanh Lục', hex: '#10B981', photo: 'assets/shoes/airmax270-green.png' }
+    ]
+  },
+  {
+    id: 'nike-15',
+    series: 'AIR MAX FUTURE • MAXIMUM CUSHION',
+    name: 'Nike Air Max 720 Deep Blue',
+    category: 'Lifestyle',
+    price: 4590000,
+    image: 'assets/shoes/airmax720-blue.png',
+    badge: 'Đệm khí 38mm',
+    description: 'Đôi sneaker sở hữu túi đệm khí cao nhất lịch sử Nike (38mm) bao bọc toàn bộ 360 độ đế giày, tạo cảm giác như đang bước đi trên mây.',
+    specs: [
+      'Túi đệm khí 720 độ cao 38mm bao trọn chiều dài bàn chân',
+      'Chứa hơn 75% vật liệu tái chế bảo vệ môi trường',
+      'Đường nét uốn lượn tự nhiên lấy cảm hứng từ sóng âm',
+      'Lót đệm nâng đỡ êm ái đạt chuẩn công thái học'
+    ],
+    colors: [
+      { name: 'Deep Royal Blue Xanh Đậm', hex: '#1E40AF', photo: 'assets/shoes/airmax720-blue.png' }
+    ]
+  },
+  {
+    id: 'nike-16',
+    series: 'LEBRON JAMES SIGNATURE • KING OF THE COURT',
+    name: 'Nike LeBron XXI Tím Vương Giả',
+    category: 'Basketball',
+    price: 5490000,
+    image: 'assets/shoes/lebron21-purple.png',
+    badge: 'King James',
+    description: 'Đôi giày chiến của LeBron James cho mùa giải thứ 21. Cấu trúc lấy cảm hứng từ vỏ sò ngọc trai bảo vệ bàn chân trước những va chạm mãnh liệt.',
+    specs: [
+      'Đệm Zoom Turbo ở mũi chân kết hợp Zoom 13mm ở gót',
+      'Hệ thống cáp 360 độ khóa chặt bàn chân vào mặt đế',
+      'Chất liệu vải dệt cao cấp phủ ánh kim vương giả',
+      'Đế ngoài bám sàn đa hướng xử lý các pha đổi hướng gắt'
+    ],
+    colors: [
+      { name: 'Metallic Purple Tím Ánh Kim', hex: '#7C3AED', photo: 'assets/shoes/lebron21-purple.png' }
+    ]
+  },
+  {
+    id: 'nike-17',
+    series: 'KEVIN DURANT SIGNATURE • SNIPER ELITE',
+    name: 'Nike KD 16 Amber Gold',
+    category: 'Basketball',
+    price: 4390000,
+    image: 'assets/shoes/kd16-gold.png',
+    badge: 'Kevin Durant',
+    description: 'Chế tác riêng cho sát thủ ghi điểm Kevin Durant. Sự kết hợp giữa túi khí Nike Air dạng tổ ong và đệm Zoom Air mũi chân cực nhạy.',
+    specs: [
+      'Đệm khí Nike Air Strobel khâu trực tiếp vào thân giày',
+      'Đệm Zoom Air mũi chân tạo lực bật nhạy bén',
+      'Hệ thống lồng nhựa TPU hai bên sườn chống lật cổ chân',
+      'Mặt đế cao su bánh răng bám chặt mọi mặt sân gỗ'
+    ],
+    colors: [
+      { name: 'Amber Gold Vàng Hổ Phách', hex: '#D97706', photo: 'assets/shoes/kd16-gold.png' }
+    ]
+  },
+  {
+    id: 'nike-18',
+    series: 'GIANNIS SIGNATURE • GREEK FREAK',
+    name: 'Nike Giannis Freak 5 Crimson',
+    category: 'Basketball',
+    price: 3690000,
+    image: 'assets/shoes/giannis-red.png',
+    badge: 'Greek Freak',
+    description: 'Đôi giày bùng nổ sức mạnh cho siêu sao Giannis Antetokounmpo. Dấu Swoosh ngoại cỡ lộn ngược tạo điểm nhấn thị giác cực kỳ cá tính.',
+    specs: [
+      'Túi đệm Zoom Air đặt sát mũi bàn chân phản hồi tức thì',
+      'Hệ thống đai giữ bên trong khóa chân không bị trượt',
+      'Đế ngoài hoa văn địa hình rãnh sâu bám sàn cắt góc',
+      'Trọng lượng tối ưu giúp tăng tốc nước rút'
+    ],
+    colors: [
+      { name: 'Crimson Red Đỏ Rực Lửa', hex: '#DC2626', photo: 'assets/shoes/giannis-red.png' }
+    ]
+  },
+  {
+    id: 'nike-19',
+    series: 'AIR MAX ARCHIVE • TUNED AIR REVOLUTION',
+    name: 'Nike Air Max Plus TN Sunset',
+    category: 'Lifestyle',
+    price: 4790000,
+    image: 'assets/shoes/airmax-tn.png',
+    badge: 'Tuned Air',
+    description: 'Thiết kế lừng danh năm 1998 của Sean McDowell lấy cảm hứng từ cây dừa và hoàng hôn biển Florida. Khung nhựa TPU uốn lượn độc bản.',
+    specs: [
+      'Hệ thống đệm Tuned Air cân bằng áp suất khí từng vùng',
+      'Khung xương TPU nâng đỡ thân giày mô phỏng bóng cây cọ',
+      'Đế giữa vòm cá voi biểu tượng tăng độ ổn định',
+      'Vải dệt chuyển màu gradient hoàng hôn huyền ảo'
+    ],
+    colors: [
+      { name: 'Sunset Hyper Blue Hoàng Hôn', hex: '#0284C7', photo: 'assets/shoes/airmax-tn.png' }
+    ]
+  },
+  {
+    id: 'nike-20',
+    series: 'INJURY PREVENTION • CUSHIONED STABILITY',
+    name: 'Nike React Infinity Run Flyknit',
+    category: 'Running',
+    price: 3990000,
+    image: 'assets/shoes/infinityrun-white.png',
+    badge: 'Chống chấn thương',
+    description: 'Thiết kế khoa học giúp giảm thiểu nguy cơ chấn thương gối khi chạy bộ. Đế rocker hình bập bênh dẫn hướng chuyển động bàn chân mượt mà.',
+    specs: [
+      'Đế bọt Nike React dày hơn 24% so với phiên bản trước',
+      'Hình học bập bênh Rocker hỗ trợ 3 giai đoạn tiếp đất',
+      'Thân Flyknit 3 lớp siêu thoáng ôm khít mu bàn chân',
+      'Đế gót bản rộng chống lật trong khi sải bước dài'
+    ],
+    colors: [
+      { name: 'Platinum White Trắng Bạch Kim', hex: '#F4F4F5', photo: 'assets/shoes/infinityrun-white.png' }
+    ]
+  },
+  {
+    id: 'nike-21',
+    series: 'STREET LUXURY • MINIMALIST ALL-BLACK',
+    name: 'Nike Sneaker Luxe Triple Black',
+    category: 'Lifestyle',
+    price: 3490000,
+    image: 'assets/shoes/sneaker-black.png',
+    badge: 'Đen toàn phần',
+    description: 'Phong cách Stealth bí ẩn và lịch lãm. Toàn bộ đôi giày được phủ sắc đen sâu thẳm, hoàn hảo cho cả môi trường công sở lẫn tiệc đêm.',
+    specs: [
+      'Da cao cấp nguyên tấm phủ đen mờ sang trọng',
+      'Logo Nike ép chìm tinh tế không phản quang',
+      'Lót trong bằng da mềm mang lại sự êm ái tuyệt đối',
+      'Đế cao su nguyên khối chống trơn trượt hiệu quả'
+    ],
+    colors: [
+      { name: 'Triple Black Đen Tuyền', hex: '#09090B', photo: 'assets/shoes/sneaker-black.png' }
+    ]
+  },
+  {
+    id: 'nike-22',
+    series: 'MAXIMUM CUSHION • RECOVERY RUNS',
+    name: 'Nike ZoomX Invincible Run 3',
+    category: 'Running',
+    price: 5190000,
+    image: 'assets/shoes/invincible3-racer.png',
+    badge: 'Êm nhất lịch sử',
+    description: 'Mẫu giày phục hồi cơ bắp đỉnh cao nhất. Đệm bọt ZoomX khổng lồ hấp thụ toàn bộ lực va đập, bảo vệ các khớp xương sau những tuần tập nặng.',
+    specs: [
+      'Đế giữa ZoomX xếp chồng cực dày đàn hồi tối đa',
+      'Đế đế ngoài cao su viền tổ ong bám đường ướt',
+      'Thân Flyknit cải tiến thoáng khí và khóa gót chắc chắn',
+      'Khung kẹp gót chân mở rộng giữ gót không chao đảo'
+    ],
+    colors: [
+      { name: 'Racer Blue Xanh Năng Động', hex: '#2563EB', photo: 'assets/shoes/invincible3-racer.png' }
+    ]
+  },
+  {
+    id: 'nike-23',
+    series: 'AIR MAX COLLECTION • SPORT ENERGY',
+    name: 'Nike Air Max Red Pulse',
+    category: 'Air Max',
+    price: 3790000,
+    image: 'assets/shoes/airmax-red.png',
+    badge: 'Sắc đỏ thể thao',
+    description: 'Năng lượng bùng nổ với sắc đỏ Laser Crimson rực rỡ. Đệm khí Max Air trong suốt mang lại trải nghiệm êm ái cùng vẻ ngoài đậm chất thể thao.',
+    specs: [
+      'Túi đệm Max Air giảm chấn tối ưu tại vùng gót',
+      'Lưới Engineered Mesh phối da tổng hợp bền bỉ',
+      'Cổ giày đệm mút thấp mang lại sự linh hoạt cho mắt cá',
+      'Đế ngoài xẻ rãnh uốn lượn theo chuyển động tự nhiên'
+    ],
+    colors: [
+      { name: 'Laser Crimson Đỏ Laser', hex: '#EF4444', photo: 'assets/shoes/airmax-red.png' }
+    ]
+  }
+];
+
+const HERO_SHOWCASE_IDS = [
+  'nike-01',
+  'nike-02',
+  'nike-03',
+  'nike-04',
+  'nike-05',
+  'nike-06',
+  'nike-12',
+  'nike-08'
+];
+
+window.CATALOG_DATA = CATALOG_DATA;
+window.HERO_SHOWCASE_IDS = HERO_SHOWCASE_IDS;

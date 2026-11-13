@@ -1,0 +1,23 @@
+{
+  "name": "shop-giay-nike",
+  "version": "1.0.0",
+  "description": "Website Shop Giày Nike Chính Hãng 2026 - Tích hợp VietQR Techcombank & Node.js Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "docker:build": "docker build -t shop-giay-nike:latest .",
+    "docker:run": "docker run -d -p 8080:8080 --name shop-giay-nike-app shop-giay-nike:latest",
+    "docker:compose": "docker compose up -d --build"
+  },
+  "keywords": [
+    "nike",
+    "sneakers",
+    "vietqr",
+    "ecommerce",
+    "nodejs",
+    "docker"
+  ],
+  "author": "TRAN DUC MANH",
+  "license": "ISC"
+}

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  shop-giay-nike:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shop-giay-nike:latest
+    container_name: shop-giay-nike-container
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=production
+    volumes:
+      # Mount orders.json ra máy thật để dữ liệu đơn hàng luôn được lưu trữ vĩnh viễn
+      - ./orders.json:/app/orders.json
+    restart: unless-stopped

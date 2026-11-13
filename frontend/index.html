@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Giày Nike — Bộ Sưu Tập Chính Hãng 2026</title>
+
+  <!-- Google Fonts: Space Grotesk & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif']
+          },
+          colors: {
+            canvas: '#F7F7F5',
+            surface: '#FFFFFF',
+            obsidian: '#111111',
+            muted: '#71717A',
+            hairline: '#E4E4E0'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Custom Modular Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css?v=10">
+</head>
+<body class="bg-canvas text-obsidian font-sans antialiased selection:bg-obsidian selection:text-white overflow-x-hidden">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="fixed top-0 inset-x-0 z-40 h-16 bg-canvas/85 backdrop-blur-md border-b border-hairline">
+    <div class="max-w-[1440px] mx-auto h-full px-5 sm:px-10 flex items-center justify-between gap-4">
+      <a href="#top" class="flex items-center gap-2.5 group shrink-0">
+        <span class="w-2.5 h-2.5 rounded-full bg-obsidian transition-transform group-hover:scale-125"></span>
+        <span class="font-display font-bold tracking-[0.16em] text-sm sm:text-base uppercase">SHOP GIÀY NIKE</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-xs font-medium tracking-wide text-muted">
+        <a href="#top" class="text-obsidian hover:opacity-70 transition-opacity">Sàn Trưng Bày 3D</a>
+        <a href="#collection" class="hover:text-obsidian transition-colors">Bộ Sưu Tập (23)</a>
+        <a href="#tech" class="hover:text-obsidian transition-colors">Công Nghệ Đệm</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <!-- Search bar inside header -->
+        <div class="relative hidden sm:flex items-center">
+          <svg class="w-4 h-4 text-muted absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" 
+            placeholder="Tìm 23 mẫu giày..." 
+            oninput="window.handleSearch(this.value)" 
+            class="w-44 lg:w-56 pl-9 pr-4 py-1.5 text-xs bg-white/90 border border-hairline rounded-full focus:outline-none focus:border-obsidian transition-colors">
+        </div>
+
+        <!-- Cart Button -->
+        <button type="button" 
+          onclick="window.toggleCartDrawer(true)" 
+          class="relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-hairline hover:border-obsidian text-xs font-semibold transition-colors" 
+          aria-label="Mở giỏ hàng">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span class="hidden sm:inline">Giỏ hàng</span>
+          <span id="cart-badge" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-obsidian text-white text-[10px] font-bold">1</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION: PURE 3D TURNTABLE RUNWAY (NO CLUTTERED BOTTOM CARD) -->
+  <section id="top" class="relative min-h-[82vh] sm:min-h-[88vh] pt-24 pb-8 flex flex-col justify-center items-center overflow-hidden">
+    <!-- Huge Background Watermark -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+      <span class="font-display font-extrabold text-[18vw] sm:text-[16vw] text-black/[0.03] uppercase tracking-tighter leading-none whitespace-nowrap">
+        NIKE ATELIER
+      </span>
+    </div>
+
+    <!-- Interactive 3D Turntable Stage -->
+    <div class="relative w-full max-w-[1440px] mx-auto px-5 sm:px-10 flex-1 flex flex-col items-center justify-center">
+      
+      <!-- Arrow Nav Buttons -->
+      <button type="button" 
+        onclick="window.prevHeroShoe()" 
+        class="absolute left-4 sm:left-12 z-20 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm border border-hairline shadow-md hover:border-obsidian hover:scale-110 flex items-center justify-center transition-all" 
+        aria-label="Đôi giày trước">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+
+      <button type="button" 
+        onclick="window.nextHeroShoe()" 
+        class="absolute right-4 sm:right-12 z-20 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm border border-hairline shadow-md hover:border-obsidian hover:scale-110 flex items-center justify-center transition-all" 
+        aria-label="Đôi giày kế tiếp">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+
+      <!-- Stage Container for Wheel and Drag -->
+      <div id="hero-stage" class="hero-perspective relative w-full h-[400px] sm:h-[480px] flex items-center justify-center">
+        <div id="hero-turntable-container" class="relative w-full h-full flex items-center justify-center">
+          <!-- Populated by turntable.js -->
+        </div>
+      </div>
+
+      <!-- Controls & Indicator Bar directly below shoes -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 w-full max-w-2xl mt-4 px-4">
+        <!-- Dots indicator -->
+        <div id="hero-dots-container" class="flex items-center gap-2">
+          <!-- Populated by turntable.js -->
+        </div>
+
+        <!-- Mouse Wheel Prompt Cue -->
+        <div class="flex items-center gap-2 text-[11px] font-semibold text-muted uppercase tracking-widest pointer-events-none">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Lăn chuột đổi giày • Nhấp vào giày để xem thông tin</span>
+        </div>
+
+        <!-- Counter -->
+        <span id="hero-counter" class="font-display text-xs font-bold text-obsidian tracking-wider">
+          01 / 08
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG SECTION: 23 SNEAKERS GRID -->
+  <section id="collection" class="max-w-[1440px] mx-auto px-5 sm:px-10 py-20 border-t border-hairline">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <div>
+        <span class="text-xs font-bold tracking-[0.2em] text-muted uppercase">TOÀN BỘ DANH MỤC</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-obsidian tracking-tight mt-1">
+          Bộ Sưu Tập Giày Nike (23 Sản Phẩm)
+        </h2>
+        <p class="text-xs sm:text-sm text-muted mt-2 max-w-xl">
+          Tất cả hình ảnh đều là sản phẩm thật đã tách nền chuẩn xác 100%. Mỗi phối màu đi kèm đúng hình ảnh thực tế của màu đó.
+        </p>
+      </div>
+
+      <p id="catalog-result-count" class="text-xs font-semibold text-muted">
+        Hiển thị 23 / 23 mẫu giày
+      </p>
+    </div>
+
+    <!-- Category Filter Buttons -->
+    <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none mb-8">
+      <!-- Populated by app.js -->
+    </div>
+
+    <!-- 23 Products Grid -->
+    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Populated by app.js -->
+    </div>
+  </section>
+
+  <!-- TECHNOLOGY & INNOVATION SECTION -->
+  <section id="tech" class="bg-white border-t border-hairline py-20">
+    <div class="max-w-[1440px] mx-auto px-5 sm:px-10">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <span class="text-xs font-bold tracking-[0.2em] text-muted uppercase">INNOVATION LAB</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-obsidian tracking-tight mt-1">
+          Ba Đỉnh Cao Công Nghệ Đệm Nike
+        </h2>
+        <p class="text-xs sm:text-sm text-muted mt-3">
+          Sức mạnh đằng sau sự êm ái, bùng nổ tốc độ và bảo vệ tối đa cho từng bước sải.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-2xl bg-canvas border border-hairline">
+          <div class="w-12 h-12 rounded-xl bg-obsidian text-white flex items-center justify-center font-display font-extrabold text-lg mb-6">
+            AIR
+          </div>
+          <h3 class="font-display font-bold text-lg text-obsidian">Nike Air & Zoom Air</h3>
+          <p class="text-xs text-muted mt-2 leading-relaxed">
+            Túi khí nén đàn hồi chứa các sợi co giãn kéo căng, hấp thụ toàn bộ phản lực khi bàn chân tiếp đất và lập tức bung nở tạo lực đẩy.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-canvas border border-hairline">
+          <div class="w-12 h-12 rounded-xl bg-obsidian text-white flex items-center justify-center font-display font-extrabold text-lg mb-6">
+            ZX
+          </div>
+          <h3 class="font-display font-bold text-lg text-obsidian">ZoomX Foam</h3>
+          <p class="text-xs text-muted mt-2 leading-relaxed">
+            Bọt đệm siêu nhẹ có nguồn gốc từ công nghệ hàng không vũ trụ, đạt tỷ lệ hoàn trả năng lượng kỷ lục 85% giúp vận động viên phá vỡ mọi giới hạn.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-canvas border border-hairline">
+          <div class="w-12 h-12 rounded-xl bg-obsidian text-white flex items-center justify-center font-display font-extrabold text-lg mb-6">
+            FK
+          </div>
+          <h3 class="font-display font-bold text-lg text-obsidian">Vải Dệt Flyknit</h3>
+          <p class="text-xs text-muted mt-2 leading-relaxed">
+            Các sợi dệt liên kết chính xác theo bản đồ áp lực chân, mang lại cảm giác ôm sát mềm mại như một chiếc tất da thứ hai mà vẫn thoáng khí tuyệt đối.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-canvas border-t border-hairline py-12 text-xs text-muted">
+    <div class="max-w-[1440px] mx-auto px-5 sm:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-obsidian"></span>
+        <span class="font-display font-bold text-obsidian tracking-wider uppercase text-sm">SHOP GIÀY NIKE</span>
+        <span>•</span>
+        <span>Chính Hãng 100%</span>
+      </div>
+
+      <p class="text-center md:text-right">
+        Thiết kế theo chuẩn Atelier UI &bull; Lăn chuột mượt mà 60fps &bull; Đầy đủ 23 mẫu giày Nike cao cấp.
+      </p>
+    </div>
+  </footer>
+
+  <!-- QUICK VIEW MODAL (POPUP KHUNG THÔNG TIN KHI BẤM VÀO ĐÔI GIÀY) -->
+  <div id="quickview-modal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" style="display: none;">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" onclick="window.closeQuickView()"></div>
+
+    <!-- Modal Content: Pure solid white background with explicit z-10 above backdrop -->
+    <div class="relative z-10 bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 shadow-2xl animate-scale-up" style="background-color: #FFFFFF !important;">
+      <button type="button" 
+        onclick="window.closeQuickView()" 
+        class="absolute top-5 right-5 w-10 h-10 rounded-full bg-canvas hover:bg-hairline flex items-center justify-center transition-colors text-obsidian text-xl font-bold cursor-pointer" 
+        aria-label="Đóng popup">
+        &times;
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Left: Crisp, bright Image Preview (Pure white box, zero dark blur overlay) -->
+        <div class="relative w-full h-72 sm:h-96 bg-white border border-hairline rounded-2xl flex items-center justify-center p-6 overflow-hidden">
+          <img id="qv-img" src="" alt="Giày Nike" class="w-full h-full object-contain" />
+        </div>
+
+        <!-- Right: Info, Color selection, Size selection, Add to Cart -->
+        <div>
+          <span id="qv-badge" class="px-2.5 py-0.5 rounded-full bg-obsidian text-white text-[10px] font-bold tracking-wider uppercase">
+            Huyền thoại
+          </span>
+
+          <h3 id="qv-title" class="font-display font-extrabold text-2xl text-obsidian mt-2">
+            Tên Giày Nike
+          </h3>
+
+          <p id="qv-price" class="font-display font-bold text-2xl text-obsidian mt-1">
+            0 ₫
+          </p>
+
+          <p id="qv-desc" class="text-xs text-muted mt-3 leading-relaxed">
+            Mô tả sản phẩm...
+          </p>
+
+          <!-- Colors -->
+          <div class="mt-5">
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="font-bold text-obsidian uppercase">Phối màu thực tế:</span>
+              <span id="qv-color-name" class="font-semibold text-muted">Màu</span>
+            </div>
+            <div id="qv-colors" class="flex items-center gap-2">
+              <!-- Populated by modal.js -->
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div class="mt-5">
+            <span class="block text-xs font-bold text-obsidian uppercase mb-2">Chọn size giày (EU):</span>
+            <div id="qv-sizes" class="flex flex-wrap gap-2">
+              <!-- Populated by modal.js -->
+            </div>
+          </div>
+
+          <!-- Specs -->
+          <div class="mt-5 pt-4 border-t border-hairline">
+            <span class="block text-[11px] font-bold text-obsidian uppercase mb-1.5">Thông số kỹ thuật:</span>
+            <ul id="qv-specs" class="space-y-1.5">
+              <!-- Populated by modal.js -->
+            </ul>
+          </div>
+
+          <!-- Add to Cart Button inside Modal -->
+          <div class="mt-6 flex items-center gap-3">
+            <button type="button" 
+              onclick="window.confirmModalAddToCart()" 
+              class="w-full py-3.5 rounded-full bg-obsidian hover:bg-black text-white text-xs font-bold tracking-wider uppercase transition-transform hover:scale-102 shadow-md">
+              Thêm Vào Giỏ Hàng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOPPING CART SLIDE-OUT DRAWER -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none">
+    <!-- Backdrop -->
+    <div id="cart-backdrop" 
+      class="fixed inset-0 bg-obsidian/50 backdrop-blur-sm opacity-0 transition-opacity duration-300" 
+      onclick="window.toggleCartDrawer(false)">
+    </div>
+
+    <!-- Panel -->
+    <div id="cart-panel" 
+      class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col justify-between translate-x-full transition-transform duration-300 pointer-events-auto">
+      
+      <!-- Drawer Header -->
+      <div class="p-6 border-b border-hairline flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-obsidian" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <h3 class="font-display font-bold text-lg text-obsidian">Giỏ Hàng Của Bạn</h3>
+        </div>
+        <button type="button" 
+          onclick="window.toggleCartDrawer(false)" 
+          class="w-8 h-8 rounded-full bg-canvas hover:bg-hairline flex items-center justify-center text-obsidian text-base font-bold transition-colors" 
+          aria-label="Đóng giỏ hàng">
+          &times;
+        </button>
+      </div>
+
+      <!-- Drawer Items List -->
+      <div id="cart-items-list" class="flex-1 overflow-y-auto px-6 divide-y divide-hairline">
+        <!-- Populated by cart.js -->
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="p-6 border-t border-hairline bg-canvas">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold text-muted uppercase">Tổng thanh toán:</span>
+          <span id="cart-total-price" class="font-display font-extrabold text-xl text-obsidian">0 ₫</span>
+        </div>
+
+        <button type="button" 
+          onclick="window.handleCheckout()" 
+          class="w-full py-3.5 rounded-full bg-obsidian hover:bg-black text-white text-xs font-bold tracking-wider uppercase transition-transform hover:scale-102 shadow-md">
+          Tiến Hành Đặt Hàng Ngay
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL (VIETQR AUTOMATIC PAYMENT & COD) -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- Backdrop -->
+    <div id="checkout-backdrop" class="fixed inset-0 bg-obsidian/60 backdrop-blur-md" onclick="window.closeCheckoutModal()"></div>
+
+    <!-- Modal Content Box -->
+    <div class="relative w-full max-w-4xl max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10 animate-scale-up">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-obsidian text-white flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base sm:text-lg text-obsidian">Thanh Toán & Đặt Hàng</h3>
+            <p class="text-[11px] text-muted">Hỗ trợ quét mã VietQR tự động Napas247 hoặc COD khi nhận hàng</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeCheckoutModal()" class="w-8 h-8 rounded-full bg-white hover:bg-hairline border border-hairline flex items-center justify-center text-obsidian text-base font-bold transition-colors" aria-label="Đóng thanh toán">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal Body (Two-column layout on Desktop, scrollable) -->
+      <div id="checkout-form-container" class="flex-1 overflow-y-auto p-5 sm:p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <!-- LEFT COLUMN: Shipping info & Payment method (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Section 1: Customer Info -->
+            <div class="space-y-4">
+              <h4 class="font-display font-bold text-xs uppercase tracking-wider text-muted flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-obsidian text-white text-[11px] flex items-center justify-center">1</span>
+                Thông Tin Giao Hàng
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-obsidian mb-1">Họ và tên người nhận <span class="text-rose-500">*</span></label>
+                  <input type="text" id="order-fullname" placeholder="Nguyễn Văn A" class="w-full px-3.5 py-2.5 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian focus:bg-white transition-colors">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-obsidian mb-1">Số điện thoại <span class="text-rose-500">*</span></label>
+                  <input type="tel" id="order-phone" placeholder="0901 234 567" class="w-full px-3.5 py-2.5 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian focus:bg-white transition-colors">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-obsidian mb-1">Địa chỉ nhận hàng chi tiết <span class="text-rose-500">*</span></label>
+                <input type="text" id="order-address" placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố" class="w-full px-3.5 py-2.5 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian focus:bg-white transition-colors">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-obsidian mb-1">Ghi chú đơn hàng (Tuỳ chọn)</label>
+                <input type="text" id="order-notes" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..." class="w-full px-3.5 py-2.5 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian focus:bg-white transition-colors">
+              </div>
+            </div>
+
+            <!-- Section 2: Payment Method Selection -->
+            <div class="space-y-3 pt-2 border-t border-hairline">
+              <h4 class="font-display font-bold text-xs uppercase tracking-wider text-muted flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-obsidian text-white text-[11px] flex items-center justify-center">2</span>
+                Phương Thức Thanh Toán
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Option 1: VietQR -->
+                <label class="payment-method-card relative flex items-start gap-3 p-4 rounded-2xl border-2 border-obsidian bg-white cursor-pointer transition-all shadow-sm" id="pm-card-vietqr">
+                  <input type="radio" name="paymentMethod" value="vietqr" checked onchange="window.handlePaymentMethodChange('vietqr')" class="mt-0.5 text-obsidian focus:ring-0">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-obsidian">Quét Mã VietQR</span>
+                      <span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider">Khuyên dùng</span>
+                    </div>
+                    <p class="text-[11px] text-muted mt-1 leading-snug">Chuyển khoản 24/7 tức thì bằng bất kỳ App Ngân Hàng nào</p>
+                  </div>
+                </label>
+
+                <!-- Option 2: COD -->
+                <label class="payment-method-card relative flex items-start gap-3 p-4 rounded-2xl border border-hairline bg-canvas/50 hover:bg-white cursor-pointer transition-all" id="pm-card-cod">
+                  <input type="radio" name="paymentMethod" value="cod" onchange="window.handlePaymentMethodChange('cod')" class="mt-0.5 text-obsidian focus:ring-0">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-obsidian">Thanh toán khi nhận (COD)</span>
+                    </div>
+                    <p class="text-[11px] text-muted mt-1 leading-snug">Kiểm tra giày đúng mẫu, đúng size trước khi trả tiền mặt</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Section 3: VietQR Payment Box (Shown when VietQR is selected) -->
+            <div id="vietqr-details-box" class="p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/40 border border-emerald-200/70 space-y-4">
+              <div class="flex items-center justify-between border-b border-emerald-200/50 pb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span class="text-xs font-bold text-emerald-950 uppercase tracking-wider">Mã VietQR Thanh Toán Tự Động</span>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">Napas 24/7 Liên Ngân Hàng</span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-center gap-5">
+                <!-- QR Code Image -->
+                <div class="relative shrink-0 p-2.5 bg-white rounded-2xl shadow-md border border-hairline">
+                  <img id="vietqr-image" src="" alt="Mã VietQR" class="w-44 h-44 object-contain rounded-xl" />
+                  <div id="vietqr-spinner" class="absolute inset-0 bg-white/90 rounded-2xl flex flex-col items-center justify-center gap-2">
+                    <div class="w-6 h-6 border-2 border-obsidian border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-[10px] text-muted font-medium">Đang tạo mã QR...</span>
+                  </div>
+                </div>
+
+                <!-- Bank & Account Details -->
+                <div class="flex-1 w-full space-y-2 text-xs">
+                  <div class="p-2.5 rounded-xl bg-white/90 border border-hairline flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-muted block uppercase">Ngân hàng thụ hưởng</span>
+                      <span class="font-bold text-obsidian" id="vietqr-bank-name">Techcombank (Ngân Hàng Kỹ Thương)</span>
+                    </div>
+                    <span id="vietqr-bank-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-50 text-red-600">TCB</span>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white/90 border border-hairline flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-muted block uppercase">Số tài khoản</span>
+                      <span class="font-mono font-bold text-obsidian text-sm" id="vietqr-acc-num">8678686688</span>
+                    </div>
+                    <button type="button" onclick="window.copyAccountNumber()" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-obsidian text-white hover:bg-black transition-colors">
+                      Sao chép
+                    </button>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white/90 border border-hairline flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-muted block uppercase">Chủ tài khoản</span>
+                      <span class="font-bold text-obsidian" id="vietqr-acc-name">TRAN DUC MANH</span>
+                    </div>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white/90 border border-hairline flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-muted block uppercase">Nội dung chuyển khoản (bắt buộc)</span>
+                      <span class="font-mono font-bold text-emerald-800 text-sm" id="vietqr-order-code">NIKE84920</span>
+                    </div>
+                    <button type="button" onclick="window.copyOrderCode()" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                      Sao chép
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-[11px] text-muted bg-white/70 p-3 rounded-xl border border-hairline flex items-start gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Mở App ngân hàng bất kỳ (Vietcombank, MB, Techcombank, VPBank, MoMo...) chọn <strong>Quét mã QR</strong>. Số tiền và nội dung sẽ tự động khớp 100%.</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Order Summary & Confirm (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col justify-between space-y-6 bg-canvas/60 p-5 sm:p-6 rounded-2xl border border-hairline">
+            <div>
+              <h4 class="font-display font-bold text-xs uppercase tracking-wider text-muted mb-3 flex items-center justify-between">
+                <span>Tóm Tắt Đơn Hàng</span>
+                <span id="checkout-items-count" class="text-[11px] font-semibold text-obsidian">0 sản phẩm</span>
+              </h4>
+
+              <!-- Selected Items List -->
+              <div id="checkout-items-list" class="space-y-3 max-h-56 overflow-y-auto pr-1 divide-y divide-hairline">
+                <!-- Injected via cart.js -->
+              </div>
+
+              <!-- Price calculations -->
+              <div class="border-t border-hairline pt-4 mt-4 space-y-2 text-xs">
+                <div class="flex items-center justify-between text-muted">
+                  <span>Tạm tính</span>
+                  <span id="checkout-subtotal" class="font-semibold text-obsidian">0 ₫</span>
+                </div>
+                <div class="flex items-center justify-between text-muted">
+                  <span>Phí giao hàng</span>
+                  <span class="font-semibold text-emerald-600 uppercase text-[11px] tracking-wider">Miễn Phí (Toàn Quốc)</span>
+                </div>
+                <div class="flex items-center justify-between text-muted">
+                  <span>Bảo hành chính hãng</span>
+                  <span class="font-semibold text-obsidian">12 Tháng đổi mới</span>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-hairline">
+                  <span class="font-bold text-obsidian text-sm">Tổng thanh toán</span>
+                  <span id="checkout-total-price" class="font-display font-extrabold text-xl text-obsidian">0 ₫</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button & Guarantee -->
+            <div class="space-y-3 pt-2">
+              <button type="button" 
+                id="btn-confirm-order" 
+                onclick="window.submitOrder()" 
+                class="w-full py-4 rounded-2xl bg-obsidian hover:bg-black text-white text-xs font-bold tracking-wider uppercase transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span id="btn-confirm-text">Xác Nhận Đặt Hàng & Thanh Toán</span>
+              </button>
+
+              <p class="text-[10px] text-center text-muted">
+                🔒 Cam kết chính hãng 100% Nike • Kiểm tra hàng trước khi nhận • Đổi trả trong 7 ngày
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ORDER SUCCESS SCREEN (Initially Hidden) -->
+      <div id="checkout-success-container" class="hidden flex-1 overflow-y-auto p-6 sm:p-10 flex flex-col items-center justify-center text-center">
+        <!-- Injected upon completion via cart.js -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-notify" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 bg-obsidian text-white rounded-2xl shadow-2xl text-xs font-medium">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-message">Đã sao chép!</span>
+  </div>
+
+  <!-- LOAD MODULAR JAVASCRIPT FILES IN ORDER -->
+  <script src="js/products.js?v=11"></script>
+  <script src="js/turntable.js?v=11"></script>
+  <script src="js/modal.js?v=11"></script>
+  <script src="js/cart.js?v=11"></script>
+  <script src="js/app.js?v=11"></script>
+</body>
+</html>

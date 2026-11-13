@@ -1,0 +1,27 @@
+[
+  {
+    "orderId": "NIKE743768",
+    "createdAt": "2026-11-13T06:04:39.237Z",
+    "customer": {
+      "fullname": "trần đức mạnh",
+      "phone": "0908062597",
+      "address": "tổ 1 ấp  xã long phước",
+      "notes": ""
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-02",
+        "name": "Air Force 1 '07",
+        "color": "Triple White Trắng Tinh",
+        "size": 41,
+        "price": 2929000,
+        "image": "assets/shoes/airforce1-white.png",
+        "qty": 1
+      }
+    ],
+    "totalAmount": 2929000,
+    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+  }
+]

@@ -1,0 +1,265 @@
+/* ==========================================================================
+   SHOP GIÀY NIKE — MODULAR STYLESHEET
+   Perspective 3D Turntable, Studio Shadow, Seamless Overlap & Modal
+   ========================================================================== */
+
+:root {
+  --color-canvas: #F7F7F5;
+  --color-surface: #FFFFFF;
+  --color-obsidian: #111111;
+  --color-muted: #71717A;
+  --color-hairline: #E4E4E0;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Custom Minimal Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D4D4D0 var(--color-canvas);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4D4D0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-obsidian);
+}
+
+/* 3D Turntable Perspective Stage */
+.hero-perspective {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+#hero-stage {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#hero-stage.is-grabbing {
+  cursor: grabbing;
+}
+
+.hero-shoe-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  transition: opacity 0.15s linear;
+}
+
+.hero-shoe-spin-wrap {
+  transform-style: preserve-3d;
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.25s ease;
+}
+
+.hero-shoe-spin-wrap:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* 100% Transparent Shoe Image - NO background box */
+.hero-shoe-img {
+  width: min(80vw, 560px);
+  max-height: min(48vh, 380px);
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  pointer-events: auto;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: filter 0.3s ease, opacity 0.2s ease, transform 0.2s ease;
+  will-change: transform, filter;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.14));
+}
+
+/* Floating Click Hint Pill & Action Button */
+.hero-click-hint {
+  position: absolute;
+  bottom: -22px;
+  background: rgba(17, 17, 17, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease;
+  opacity: 0;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  z-index: 10;
+}
+
+.hero-click-hint:hover {
+  transform: scale(1.06) translateY(-2px);
+  background: #000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.hero-shoe-spin-wrap:hover .hero-click-hint {
+  transform: translateY(-2px);
+  background: #000000;
+}
+
+/* Realistic Studio Contact Shadow */
+.hero-floor-shadow {
+  width: min(65vw, 460px);
+  height: 32px;
+  margin-top: 8px;
+  background: radial-gradient(ellipse at center, rgba(17, 17, 17, 0.25) 0%, rgba(17, 17, 17, 0.08) 45%, rgba(17, 17, 17, 0) 72%);
+  filter: blur(7px);
+  will-change: transform, opacity;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Circular Color Buttons & Swatches */
+.hero-color-btn,
+.qv-color-btn,
+.card-swatch-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.hero-color-btn:hover,
+.qv-color-btn:hover,
+.card-swatch-btn:hover {
+  transform: scale(1.2);
+}
+
+.hero-color-btn.active,
+.qv-color-btn.active,
+.card-swatch-btn.active {
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px #111111;
+  transform: scale(1.15);
+}
+
+/* Bottom Dot Indicators */
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #D4D4D0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hero-dot.active {
+  width: 26px;
+  background-color: #111111;
+}
+
+/* Size Buttons */
+.qv-size-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--color-hairline);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-obsidian);
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.qv-size-btn:hover {
+  border-color: var(--color-obsidian);
+}
+
+.qv-size-btn.active {
+  background: var(--color-obsidian);
+  color: #FFFFFF;
+  border-color: var(--color-obsidian);
+}
+
+/* Quick View Modal Guaranteed Highest Stacking & Centering */
+#quickview-modal {
+  z-index: 999999 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+#quickview-modal.is-open {
+  display: flex !important;
+}
+
+#qv-img {
+  filter: none !important;
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+/* Modal Scale-up entrance */
+@keyframes modalScaleUp {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: modalScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Guaranteed Highest Stacking for Checkout & Toast */
+#checkout-modal {
+  z-index: 9999999 !important;
+}
+
+#toast-notify {
+  z-index: 99999999 !important;
+}
+
+/* Custom scrollbar for checkout items */
+#checkout-items-list::-webkit-scrollbar,
+#checkout-form-container::-webkit-scrollbar {
+  width: 5px;
+}
+#checkout-items-list::-webkit-scrollbar-thumb,
+#checkout-form-container::-webkit-scrollbar-thumb {
+  background: #E4E4E0;
+  border-radius: 9999px;
+}
+
+
+
