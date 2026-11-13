@@ -393,6 +393,90 @@
     </div>
   </div>
 
+  <!-- MODAL: EDIT PRICE (CHỈNH SỬA GIÁ BÁN) -->
+  <div id="edit-price-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="fixed inset-0 bg-obsidian/60 backdrop-blur-md" onclick="closeEditPriceModal()"></div>
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base text-obsidian">Chỉnh Sửa Giá Bán</h3>
+            <p class="text-[11px] text-muted">Cập nhật giá niêm yết lập tức lên Web khách hàng</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeEditPriceModal()" class="w-8 h-8 rounded-full bg-white hover:bg-hairline border border-hairline flex items-center justify-center text-obsidian font-bold transition-colors">
+          &times;
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 space-y-4 text-xs">
+        <!-- Product Info Card -->
+        <div class="p-3.5 rounded-2xl bg-canvas border border-hairline flex items-center justify-between gap-3">
+          <div>
+            <span id="edit-price-prod-id" class="text-[10px] font-mono font-bold text-muted uppercase">NIKE-01</span>
+            <h4 id="edit-price-prod-name" class="font-bold text-obsidian text-sm line-clamp-1">Air Jordan 1 Retro High OG</h4>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] text-muted">Giá hiện tại</p>
+            <p id="edit-price-current-display" class="font-display font-bold text-sm text-muted">4.990.000 ₫</p>
+          </div>
+        </div>
+
+        <!-- New Price Input -->
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">
+            Giá bán mới (VNĐ) <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input type="number" 
+              id="edit-price-input" 
+              placeholder="Nhập giá mới (Ví dụ: 3500000)" 
+              step="1000" 
+              min="1000"
+              oninput="handleEditPriceInput(this.value)" 
+              onkeydown="if(event.key==='Enter') submitEditPrice()"
+              class="w-full pl-3.5 pr-12 py-3 bg-canvas border-2 border-hairline rounded-xl focus:outline-none focus:border-obsidian text-base font-display font-bold text-obsidian transition-colors">
+            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted font-bold text-xs pointer-events-none">VNĐ</span>
+          </div>
+          <p id="edit-price-preview-text" class="text-xs text-emerald-600 font-bold mt-1.5 flex items-center gap-1">
+            <span>Sẽ hiển thị:</span>
+            <span id="edit-price-formatted">0 ₫</span>
+          </p>
+        </div>
+
+        <!-- Quick Adjustment Buttons -->
+        <div>
+          <label class="block font-semibold text-muted text-[11px] mb-1.5">Gợi ý điều chỉnh nhanh:</label>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="adjustEditPrice(100000)" class="px-2.5 py-1 rounded-lg bg-canvas hover:bg-hairline border border-hairline font-semibold text-[11px] transition-colors">+100.000 ₫</button>
+            <button type="button" onclick="adjustEditPrice(500000)" class="px-2.5 py-1 rounded-lg bg-canvas hover:bg-hairline border border-hairline font-semibold text-[11px] transition-colors">+500.000 ₫</button>
+            <button type="button" onclick="adjustEditPrice(-100000)" class="px-2.5 py-1 rounded-lg bg-canvas hover:bg-hairline border border-hairline font-semibold text-[11px] transition-colors">-100.000 ₫</button>
+            <button type="button" onclick="applyPercentDiscount(10)" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-[11px] transition-colors">Giảm 10%</button>
+            <button type="button" onclick="applyPercentDiscount(20)" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-[11px] transition-colors">Giảm 20%</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-hairline bg-canvas/40 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeEditPriceModal()" class="px-5 py-2.5 rounded-full border border-hairline hover:bg-canvas text-xs font-semibold text-muted hover:text-obsidian transition-colors">
+          Hủy Bỏ
+        </button>
+        <button type="button" id="btn-save-price" onclick="submitEditPrice()" class="px-6 py-2.5 rounded-full bg-obsidian hover:bg-black text-white text-xs font-bold transition-all shadow-md flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span id="btn-save-price-text">Lưu Giá Mới</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div id="admin-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 bg-obsidian text-white rounded-2xl shadow-2xl text-xs font-medium">
     <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>

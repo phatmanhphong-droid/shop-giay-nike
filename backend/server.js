@@ -136,8 +136,14 @@ const server = http.createServer((req, res) => {
           return;
         }
 
+        if (updateData.price !== undefined) {
+          updateData.price = parseInt(updateData.price, 10) || products[idx].price;
+        }
+
         products[idx] = { ...products[idx], ...updateData };
         writeJSON(PRODUCTS_FILE, products);
+
+        console.log(`[Product API] Đã cập nhật sản phẩm: ${products[idx].name} (${productId}) - Giá mới: ${products[idx].price} ₫`);
 
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, product: products[idx] }));

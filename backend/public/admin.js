@@ -418,7 +418,12 @@ function renderProductsTable() {
         </td>
 
         <td class="py-2.5 px-4 text-right font-display font-bold text-obsidian whitespace-nowrap">
-          ${(p.price || 0).toLocaleString('vi-VN')} ₫
+          <div class="inline-flex items-center justify-end gap-1.5 cursor-pointer hover:opacity-80 transition-opacity" onclick="openEditPriceModal('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price || 0})" title="Nhấp để đổi giá">
+            <span>${(p.price || 0).toLocaleString('vi-VN')} ₫</span>
+            <span class="p-1 rounded bg-canvas text-muted hover:text-obsidian">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </span>
+          </div>
         </td>
 
         <td class="py-2.5 px-4 text-center">
@@ -429,10 +434,22 @@ function renderProductsTable() {
           ${p.colors ? p.colors.length : 1} màu
         </td>
 
-        <td class="py-2.5 px-4 text-center">
-          <button type="button" onclick="deleteProduct('${p.id}', '${p.name}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Xóa mẫu giày này">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          </button>
+        <td class="py-2.5 px-4 text-center whitespace-nowrap">
+          <div class="flex items-center justify-center gap-1.5">
+            <button type="button" 
+              onclick="openEditPriceModal('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price || 0})" 
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[11px] font-semibold transition-all shadow-xs" 
+              title="Chỉnh sửa giá bán của mẫu giày này">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span>Sửa giá</span>
+            </button>
+            <button type="button" 
+              onclick="deleteProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')" 
+              class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" 
+              title="Xóa mẫu giày này">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -592,6 +609,125 @@ async function deleteProduct(productId, productName) {
     }
   } catch (err) {
     showToast('Lỗi mạng: ' + err.message);
+  }
+}
+
+// ==========================================================================
+// EDIT PRODUCT PRICE
+// ==========================================================================
+let editingProductId = null;
+let editingProductOriginalPrice = 0;
+
+function openEditPriceModal(productId, productName, currentPrice) {
+  editingProductId = productId;
+  editingProductOriginalPrice = parseInt(currentPrice, 10) || 0;
+
+  const modal = document.getElementById('edit-price-modal');
+  const idEl = document.getElementById('edit-price-prod-id');
+  const nameEl = document.getElementById('edit-price-prod-name');
+  const currentEl = document.getElementById('edit-price-current-display');
+  const inputEl = document.getElementById('edit-price-input');
+
+  if (idEl) idEl.textContent = productId.toUpperCase();
+  if (nameEl) nameEl.textContent = productName;
+  if (currentEl) currentEl.textContent = (editingProductOriginalPrice).toLocaleString('vi-VN') + ' ₫';
+  if (inputEl) {
+    inputEl.value = editingProductOriginalPrice;
+    handleEditPriceInput(editingProductOriginalPrice);
+  }
+
+  if (modal) {
+    modal.classList.remove('pointer-events-none', 'opacity-0');
+    modal.classList.add('opacity-100');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.select();
+      }
+    }, 150);
+  }
+}
+
+function closeEditPriceModal() {
+  const modal = document.getElementById('edit-price-modal');
+  if (!modal) return;
+  modal.classList.remove('opacity-100');
+  modal.classList.add('opacity-0');
+  setTimeout(() => {
+    modal.classList.add('pointer-events-none');
+    document.body.style.overflow = '';
+  }, 250);
+}
+
+function handleEditPriceInput(val) {
+  const num = parseInt(val, 10);
+  const formattedEl = document.getElementById('edit-price-formatted');
+  if (formattedEl) {
+    if (isNaN(num) || num <= 0) {
+      formattedEl.textContent = '0 ₫';
+    } else {
+      formattedEl.textContent = num.toLocaleString('vi-VN') + ' ₫';
+    }
+  }
+}
+
+function adjustEditPrice(delta) {
+  const inputEl = document.getElementById('edit-price-input');
+  if (!inputEl) return;
+  let currentVal = parseInt(inputEl.value, 10) || editingProductOriginalPrice || 0;
+  let newVal = Math.max(1000, currentVal + delta);
+  inputEl.value = newVal;
+  handleEditPriceInput(newVal);
+}
+
+function applyPercentDiscount(percent) {
+  const inputEl = document.getElementById('edit-price-input');
+  if (!inputEl) return;
+  let basePrice = editingProductOriginalPrice || 1000000;
+  let discounted = Math.round((basePrice * (1 - percent / 100)) / 10000) * 10000;
+  if (discounted < 1000) discounted = 1000;
+  inputEl.value = discounted;
+  handleEditPriceInput(discounted);
+}
+
+async function submitEditPrice() {
+  if (!editingProductId) return;
+
+  const inputEl = document.getElementById('edit-price-input');
+  const btn = document.getElementById('btn-save-price');
+  const btnText = document.getElementById('btn-save-price-text');
+  const newPrice = parseInt(inputEl ? inputEl.value : 0, 10);
+
+  if (!newPrice || isNaN(newPrice) || newPrice <= 0) {
+    showToast('Vui lòng nhập giá bán hợp lệ lớn hơn 0 ₫!');
+    if (inputEl) inputEl.focus();
+    return;
+  }
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = 'Đang lưu...';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/products/${editingProductId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ price: newPrice })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(`Đã cập nhật giá thành công: ${newPrice.toLocaleString('vi-VN')} ₫!`);
+      closeEditPriceModal();
+      await loadDashboardData();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể lưu giá'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối máy chủ: ' + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = 'Lưu Giá Mới';
   }
 }
 
