@@ -212,7 +212,7 @@
     }, 200);
   }
 
-  function openCheckoutModal() {
+  async function openCheckoutModal() {
     const modal = document.getElementById('checkout-modal');
     const formContainer = document.getElementById('checkout-form-container');
     const successContainer = document.getElementById('checkout-success-container');
@@ -703,7 +703,7 @@
   // Initial load
   loadCart();
 
-  if (window.location.search.includes('checkout=1')) {
+  if (window.location && window.location.search && window.location.search.includes('checkout=1')) {
     setTimeout(() => {
       openCheckoutModal();
     }, 400);
