@@ -14,8 +14,10 @@ services:
       - PORT=5000
       - NODE_ENV=production
     volumes:
-      # Lưu trữ dữ liệu đơn hàng lâu dài không lo mất khi restart container
+      # Lưu trữ dữ liệu đơn hàng & sản phẩm không lo mất khi restart container
       - ./backend/orders.json:/app/orders.json
+      - ./backend/products.json:/app/products.json
+      - ./frontend/assets/shoes:/frontend/assets/shoes
     restart: unless-stopped
 
   # DỊCH VỤ FRONTEND GIAO DIỆN (NGINX)

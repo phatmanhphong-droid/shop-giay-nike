@@ -4,16 +4,33 @@
 
 let allOrders = [];
 let filteredOrders = [];
+let allProducts = [];
+let filteredProducts = [];
 let currentSearch = '';
+let currentProductSearch = '';
 let currentFilterStatus = 'all';
+let selectedImageData = null;
+let selectedImageFileName = '';
 
 async function loadDashboardData() {
   try {
-    const res = await fetch('/api/orders');
-    if (!res.ok) throw new Error('Không thể tải đơn hàng');
-    allOrders = await res.json();
-    applyFilters();
-    updateStats();
+    const [resOrders, resProducts] = await Promise.all([
+      fetch('/api/orders'),
+      fetch('/api/products')
+    ]);
+
+    if (resOrders.ok) {
+      allOrders = await resOrders.json();
+      applyFilters();
+      updateStats();
+    }
+
+    if (resProducts.ok) {
+      allProducts = await resProducts.json();
+      applyProductFilters();
+      updateProductCount();
+    }
+
     loadSystemHealth();
   } catch (err) {
     showToast('Lỗi kết nối máy chủ: ' + err.message);
@@ -32,6 +49,17 @@ function updateStats() {
   document.getElementById('stat-pending-orders').textContent = pendingOrders;
 }
 
+function updateProductCount() {
+  const statEl = document.getElementById('stat-total-products');
+  const tabCountEl = document.getElementById('tab-product-count');
+  if (statEl) statEl.textContent = allProducts.length;
+  if (tabCountEl) tabCountEl.textContent = allProducts.length;
+}
+
+// ==========================================================================
+// ORDERS MANAGEMENT
+// ==========================================================================
+
 function handleSearchOrders(query) {
   currentSearch = query.trim().toLowerCase();
   applyFilters();
@@ -44,7 +72,6 @@ function handleFilterStatus(status) {
 
 function applyFilters() {
   filteredOrders = allOrders.filter(order => {
-    // Filter status
     const st = (order.status || '').toLowerCase();
     let matchesStatus = true;
     if (currentFilterStatus === 'pending') {
@@ -59,7 +86,6 @@ function applyFilters() {
       matchesStatus = st.includes('huỷ') || st.includes('hủy');
     }
 
-    // Filter search query
     let matchesSearch = true;
     if (currentSearch) {
       const id = (order.orderId || '').toLowerCase();
@@ -94,7 +120,6 @@ function renderOrdersTable() {
     const items = order.items || [];
     const dateFormatted = order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : 'N/A';
     
-    // Status badges
     let statusClass = 'bg-amber-100 text-amber-800';
     const stLower = (order.status || '').toLowerCase();
     if (stLower.includes('thành công') || stLower.includes('đã thanh toán')) {
@@ -105,7 +130,6 @@ function renderOrdersTable() {
       statusClass = 'bg-rose-100 text-rose-800';
     }
 
-    // Products summary
     const itemsSummary = items.map(i => `
       <div class="flex items-center gap-2 py-0.5">
         <span class="font-bold text-obsidian">${i.name}</span>
@@ -115,34 +139,28 @@ function renderOrdersTable() {
 
     return `
       <tr class="hover:bg-canvas/30 transition-colors">
-        <!-- Order ID -->
         <td class="py-3 px-4 font-mono font-bold text-obsidian">
           #${order.orderId}
         </td>
 
-        <!-- Date -->
         <td class="py-3 px-4 text-muted whitespace-nowrap text-[11px]">
           ${dateFormatted}
         </td>
 
-        <!-- Customer -->
         <td class="py-3 px-4">
           <p class="font-bold text-obsidian">${cust.fullname || 'Khách vãng lai'}</p>
           <p class="text-muted text-[11px] font-mono">${cust.phone || 'N/A'}</p>
           <p class="text-muted text-[10px] truncate max-w-xs" title="${cust.address || ''}">${cust.address || 'Tại cửa hàng'}</p>
         </td>
 
-        <!-- Products -->
         <td class="py-3 px-4 max-w-xs">
           ${itemsSummary || '<span class="text-muted">Không có sản phẩm</span>'}
         </td>
 
-        <!-- Total Price -->
         <td class="py-3 px-4 text-right font-display font-bold text-obsidian whitespace-nowrap">
           ${(order.totalAmount || 0).toLocaleString('vi-VN')} ₫
         </td>
 
-        <!-- Payment Method -->
         <td class="py-3 px-4 text-center">
           <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
             order.paymentMethod === 'vietqr' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-slate-100 text-slate-700'
@@ -151,7 +169,6 @@ function renderOrdersTable() {
           </span>
         </td>
 
-        <!-- Status & Update Dropdown -->
         <td class="py-3 px-4 text-center">
           <select onchange="updateOrderStatus('${order.orderId}', this.value)" class="text-[11px] font-bold px-2 py-1 rounded-lg border border-hairline focus:outline-none cursor-pointer ${statusClass}">
             <option value="Đã quét mã VietQR • Chờ xác nhận giao dịch" ${order.status?.includes('Chờ xác nhận') ? 'selected' : ''}>⏳ Chờ xác nhận VietQR</option>
@@ -162,7 +179,6 @@ function renderOrdersTable() {
           </select>
         </td>
 
-        <!-- Actions -->
         <td class="py-3 px-4 text-center">
           <div class="flex items-center justify-center gap-1.5">
             <button type="button" onclick="printOrderInvoice('${order.orderId}')" class="p-1.5 rounded-lg bg-canvas hover:bg-hairline text-obsidian transition-colors" title="In phiếu gửi hàng">
@@ -187,7 +203,7 @@ async function updateOrderStatus(orderId, newStatus) {
     });
     const data = await res.json();
     if (data.success) {
-      showToast(`Đã cập nhật trạng thái đơn #${orderId}!`);
+      showToast(`Đã cập nhật đơn #${orderId}!`);
       loadDashboardData();
     } else {
       showToast('Lỗi: ' + (data.error || 'Không thể cập nhật'));
@@ -312,6 +328,246 @@ function printOrderInvoice(orderId) {
   printWindow.document.close();
 }
 
+// ==========================================================================
+// PRODUCTS MANAGEMENT
+// ==========================================================================
+
+function handleSearchProducts(query) {
+  currentProductSearch = query.trim().toLowerCase();
+  applyProductFilters();
+}
+
+function applyProductFilters() {
+  if (!currentProductSearch) {
+    filteredProducts = [...allProducts];
+  } else {
+    filteredProducts = allProducts.filter(p => 
+      (p.name || '').toLowerCase().includes(currentProductSearch) ||
+      (p.category || '').toLowerCase().includes(currentProductSearch) ||
+      (p.series || '').toLowerCase().includes(currentProductSearch)
+    );
+  }
+  renderProductsTable();
+}
+
+function renderProductsTable() {
+  const tbody = document.getElementById('products-table-body');
+  if (!tbody) return;
+
+  if (!filteredProducts.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="py-12 text-center text-muted font-medium">
+          Không tìm thấy sản phẩm nào.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filteredProducts.map(p => {
+    // Resolve photo URL (handle relative assets/shoes/...)
+    let photoUrl = p.image || '';
+    if (!photoUrl.startsWith('http') && !photoUrl.startsWith('data:')) {
+      photoUrl = `http://localhost:8080/${photoUrl}`;
+    }
+
+    return `
+      <tr class="hover:bg-canvas/30 transition-colors">
+        <td class="py-2.5 px-4 w-16">
+          <div class="w-12 h-12 rounded-xl bg-canvas p-1 border border-hairline flex items-center justify-center">
+            <img src="${photoUrl}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' fill=\'none\' stroke=\'%23888\' stroke-width=\'2\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/></svg>'" />
+          </div>
+        </td>
+
+        <td class="py-2.5 px-4">
+          <p class="font-bold text-obsidian text-xs">${p.name}</p>
+          <p class="text-[10px] text-muted">${p.series || 'Nike Collection'}</p>
+        </td>
+
+        <td class="py-2.5 px-4 text-center">
+          <span class="px-2 py-0.5 rounded-full bg-canvas text-obsidian text-[10px] font-bold">${p.category}</span>
+        </td>
+
+        <td class="py-2.5 px-4 text-right font-display font-bold text-obsidian whitespace-nowrap">
+          ${(p.price || 0).toLocaleString('vi-VN')} ₫
+        </td>
+
+        <td class="py-2.5 px-4 text-center">
+          <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-semibold">${p.badge || 'Chính hãng'}</span>
+        </td>
+
+        <td class="py-2.5 px-4 text-center font-semibold text-muted text-[11px]">
+          ${p.colors ? p.colors.length : 1} màu
+        </td>
+
+        <td class="py-2.5 px-4 text-center">
+          <button type="button" onclick="deleteProduct('${p.id}', '${p.name}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Xóa mẫu giày này">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openAddProductModal() {
+  const modal = document.getElementById('add-product-modal');
+  if (!modal) return;
+  modal.classList.remove('pointer-events-none', 'opacity-0');
+  modal.classList.add('opacity-100');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAddProductModal() {
+  const modal = document.getElementById('add-product-modal');
+  if (!modal) return;
+  modal.classList.remove('opacity-100');
+  modal.classList.add('opacity-0');
+  setTimeout(() => {
+    modal.classList.add('pointer-events-none');
+    document.body.style.overflow = '';
+  }, 250);
+}
+
+function handleImageFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  selectedImageFileName = file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    selectedImageData = e.target.result;
+    const previewImg = document.getElementById('new-prod-preview-img');
+    const placeholder = document.getElementById('new-prod-preview-placeholder');
+    if (previewImg) {
+      previewImg.src = selectedImageData;
+      previewImg.classList.remove('hidden');
+    }
+    if (placeholder) placeholder.classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitNewProduct() {
+  const name = document.getElementById('new-prod-name')?.value.trim();
+  const series = document.getElementById('new-prod-series')?.value.trim() || 'NIKE SPORTSWEAR • COLLECTION';
+  const category = document.getElementById('new-prod-category')?.value || 'Lifestyle';
+  const price = parseInt(document.getElementById('new-prod-price')?.value, 10);
+  const badge = document.getElementById('new-prod-badge')?.value.trim() || 'Mới ra mắt';
+  const desc = document.getElementById('new-prod-desc')?.value.trim() || 'Sản phẩm giày Nike chính hãng chất lượng cao.';
+  const specsRaw = document.getElementById('new-prod-specs')?.value.trim();
+  const btn = document.getElementById('btn-save-product');
+
+  if (!name) {
+    showToast('Vui lòng nhập Tên mẫu giày!');
+    return;
+  }
+  if (!price || isNaN(price) || price <= 0) {
+    showToast('Vui lòng nhập Giá bán hợp lệ!');
+    return;
+  }
+  if (!selectedImageData) {
+    showToast('Vui lòng chọn hình ảnh sản phẩm từ máy tính!');
+    return;
+  }
+
+  const specs = specsRaw ? specsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [
+    'Chất liệu cao cấp bền đẹp',
+    'Bộ đệm êm ái đàn hồi',
+    'Đế cao su bám đường tốt',
+    'Thiết kế thời thượng năng động'
+  ];
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span>Đang tải ảnh & lưu...</span>`;
+  }
+
+  try {
+    // 1. Upload ảnh
+    let imageUrl = 'assets/shoes/default-shoe.png';
+    const uploadRes = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: selectedImageFileName || `shoe_${Date.now()}.png`,
+        data: selectedImageData
+      })
+    });
+    const uploadResult = await uploadRes.json();
+    if (uploadResult.success && uploadResult.url) {
+      imageUrl = uploadResult.url;
+    }
+
+    // 2. Tạo sản phẩm
+    const newProduct = {
+      name,
+      series,
+      category,
+      price,
+      badge,
+      description: desc,
+      image: imageUrl,
+      specs,
+      colors: [
+        { name: 'Mặc định', hex: '#111111', photo: imageUrl }
+      ]
+    };
+
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProduct)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(`Đã thêm thành công: ${name}!`);
+      closeAddProductModal();
+      // Reset form
+      document.getElementById('new-prod-name').value = '';
+      document.getElementById('new-prod-price').value = '';
+      selectedImageData = null;
+      loadDashboardData();
+    } else {
+      showToast('Lỗi: ' + data.error);
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<span>Lưu & Đăng Sản Phẩm</span>`;
+    }
+  }
+}
+
+async function deleteProduct(productId, productName) {
+  if (!confirm(`Bạn có chắc muốn xóa mẫu giày "${productName}" khỏi danh mục shop không?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/products/${productId}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Đã xóa "${productName}"!`);
+      loadDashboardData();
+    } else {
+      showToast('Lỗi: ' + data.error);
+    }
+  } catch (err) {
+    showToast('Lỗi mạng: ' + err.message);
+  }
+}
+
+// ==========================================================================
+// SYSTEM & TABS
+// ==========================================================================
+
 async function loadSystemHealth() {
   try {
     const res = await fetch('/api/health');
@@ -326,7 +582,7 @@ async function loadSystemHealth() {
 }
 
 function switchTab(tabName) {
-  const tabs = ['orders', 'settings', 'system'];
+  const tabs = ['orders', 'products', 'settings', 'system'];
   tabs.forEach(t => {
     const section = document.getElementById(`tab-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -360,6 +616,6 @@ function showToast(message) {
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
   loadDashboardData();
-  // Poll every 10 seconds for real-time order updates
+  // Poll every 10 seconds for real-time updates
   setInterval(loadDashboardData, 10000);
 });

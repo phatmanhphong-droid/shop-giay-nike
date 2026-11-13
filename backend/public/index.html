@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nike Admin Portal — Quản Trị Hệ Thống Backend & Đơn Hàng</title>
+  <title>Nike Admin Portal — Quản Trị Hệ Thống Backend, Đơn Hàng & Sản Phẩm</title>
 
   <!-- Google Fonts: Space Grotesk & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,7 +53,7 @@
           <span>NIKE BACKEND PORTAL</span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider">Online • Port 5000</span>
         </h1>
-        <p class="text-[11px] text-muted">Hệ thống quản trị đơn hàng & dịch vụ thanh toán VietQR</p>
+        <p class="text-[11px] text-muted">Hệ thống quản trị đơn hàng, sản phẩm & dịch vụ thanh toán VietQR</p>
       </div>
     </div>
 
@@ -82,7 +82,7 @@
         <div>
           <p class="text-xs font-semibold text-muted uppercase tracking-wider">Tổng Doanh Thu</p>
           <h3 id="stat-total-revenue" class="font-display font-black text-2xl text-obsidian mt-1">0 ₫</h3>
-          <p class="text-[11px] text-emerald-600 font-medium mt-1">Tất cả đơn hàng</p>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1">Từ các đơn hàng</p>
         </div>
         <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -101,15 +101,15 @@
         </div>
       </div>
 
-      <!-- Pending VietQR Orders -->
-      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between">
+      <!-- Total Products -->
+      <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm flex items-center justify-between cursor-pointer hover:border-obsidian/30 transition-all" onclick="switchTab('products')">
         <div>
-          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Chờ Xác Nhận VietQR</p>
-          <h3 id="stat-pending-orders" class="font-display font-black text-2xl text-amber-600 mt-1">0</h3>
-          <p class="text-[11px] text-amber-600 font-medium mt-1">Cần đối soát tài khoản</p>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider">Tổng Mẫu Giày</p>
+          <h3 id="stat-total-products" class="font-display font-black text-2xl text-obsidian mt-1">23</h3>
+          <p class="text-[11px] text-blue-600 font-medium mt-1">Bấm để quản lý sản phẩm</p>
         </div>
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
         </div>
       </div>
 
@@ -128,14 +128,17 @@
     </div>
 
     <!-- TABS NAVIGATION -->
-    <div class="flex items-center gap-3 border-b border-hairline pb-4">
-      <button type="button" onclick="switchTab('orders')" id="tab-btn-orders" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-obsidian text-white shadow-sm transition-all">
+    <div class="flex items-center gap-3 border-b border-hairline pb-4 overflow-x-auto scrollbar-none">
+      <button type="button" onclick="switchTab('orders')" id="tab-btn-orders" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-obsidian text-white shadow-sm transition-all shrink-0">
         📦 Quản Lý Đơn Hàng
       </button>
-      <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all">
+      <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
+        👟 Quản Lý Sản Phẩm (<span id="tab-product-count">23</span>)
+      </button>
+      <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
         ⚙️ Cấu Hình Tài Khoản VietQR
       </button>
-      <button type="button" onclick="switchTab('system')" id="tab-btn-system" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all">
+      <button type="button" onclick="switchTab('system')" id="tab-btn-system" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
         🖥️ Trạng Thái Máy Chủ & Docker
       </button>
     </div>
@@ -186,7 +189,44 @@
       </div>
     </section>
 
-    <!-- TAB 2: BANK SETTINGS -->
+    <!-- TAB 2: PRODUCTS MANAGEMENT -->
+    <section id="tab-products" class="hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-hairline shadow-sm">
+        <div class="relative w-full sm:w-80">
+          <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-products-input" oninput="handleSearchProducts(this.value)" placeholder="Tìm kiếm mẫu giày..." class="w-full pl-9 pr-4 py-2 text-xs bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian transition-colors">
+        </div>
+
+        <button type="button" onclick="openAddProductModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-obsidian hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span>Thêm Sản Phẩm Mới</span>
+        </button>
+      </div>
+
+      <!-- Products Table -->
+      <div class="bg-white rounded-2xl border border-hairline shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
+                <th class="py-3 px-4">Ảnh</th>
+                <th class="py-3 px-4">Tên Mẫu Giày & Dòng</th>
+                <th class="py-3 px-4 text-center">Danh Mục</th>
+                <th class="py-3 px-4 text-right">Giá Niêm Yết</th>
+                <th class="py-3 px-4 text-center">Huy Hiệu</th>
+                <th class="py-3 px-4 text-center">Màu Sắc</th>
+                <th class="py-3 px-4 text-center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body" class="divide-y divide-hairline">
+              <!-- Rendered via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: BANK SETTINGS -->
     <section id="tab-settings" class="hidden space-y-6 max-w-2xl bg-white p-6 sm:p-8 rounded-2xl border border-hairline shadow-sm">
       <div>
         <h3 class="font-display font-bold text-lg text-obsidian">Cấu Hình Tài Khoản Nhận Tiền VietQR</h3>
@@ -224,7 +264,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: SYSTEM MONITOR -->
+    <!-- TAB 4: SYSTEM MONITOR -->
     <section id="tab-system" class="hidden space-y-6 max-w-3xl bg-white p-6 sm:p-8 rounded-2xl border border-hairline shadow-sm">
       <div>
         <h3 class="font-display font-bold text-lg text-obsidian">Thông Số Máy Chủ & Môi Trường Hoạt Động</h3>
@@ -244,7 +284,7 @@
 
         <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
           <span class="text-muted block font-semibold uppercase text-[10px]">Tập Tin Cơ Sở Dữ Liệu</span>
-          <p class="font-mono text-xs text-obsidian">backend/orders.json</p>
+          <p class="font-mono text-xs text-obsidian">backend/orders.json & backend/products.json</p>
         </div>
 
         <div class="p-4 rounded-xl bg-canvas border border-hairline space-y-2">
@@ -262,12 +302,103 @@
 
   </main>
 
+  <!-- MODAL: ADD PRODUCT -->
+  <div id="add-product-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="fixed inset-0 bg-obsidian/60 backdrop-blur-md" onclick="closeAddProductModal()"></div>
+    <div class="relative w-full max-w-2xl max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60">
+        <div>
+          <h3 class="font-display font-bold text-base text-obsidian">Thêm Giày Nike Mới</h3>
+          <p class="text-[11px] text-muted">Sản phẩm mới sẽ lập tức xuất hiện trên trang mua sắm Frontend (Port 8080)</p>
+        </div>
+        <button type="button" onclick="closeAddProductModal()" class="w-8 h-8 rounded-full bg-white hover:bg-hairline border border-hairline flex items-center justify-center text-obsidian font-bold">
+          &times;
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Tên mẫu giày <span class="text-rose-500">*</span></label>
+            <input type="text" id="new-prod-name" placeholder="Ví dụ: Air Jordan 4 Retro White Cement" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Dòng sản phẩm (Series)</label>
+            <input type="text" id="new-prod-series" placeholder="Ví dụ: JORDAN BRAND • BASKETBALL ICON" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Danh mục <span class="text-rose-500">*</span></label>
+            <select id="new-prod-category" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-semibold cursor-pointer">
+              <option value="Jordan">Jordan</option>
+              <option value="Lifestyle">Lifestyle</option>
+              <option value="Running">Running</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Air Max">Air Max</option>
+              <option value="Skateboarding">Skateboarding</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Giá bán (VNĐ) <span class="text-rose-500">*</span></label>
+            <input type="number" id="new-prod-price" placeholder="4990000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Huy hiệu</label>
+            <input type="text" id="new-prod-badge" placeholder="Mới ra mắt, Bán chạy #1..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Hình ảnh sản phẩm (Khuyên dùng PNG tách nền) <span class="text-rose-500">*</span></label>
+          <div class="flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed border-hairline hover:border-obsidian/40 bg-canvas/40 transition-colors">
+            <!-- Preview Box -->
+            <div class="w-20 h-20 rounded-xl bg-white border border-hairline flex items-center justify-center p-2 shrink-0">
+              <img id="new-prod-preview-img" src="" alt="Xem trước" class="w-full h-full object-contain hidden" />
+              <svg id="new-prod-preview-placeholder" class="w-8 h-8 text-muted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="flex-1 space-y-1">
+              <input type="file" id="new-prod-file" accept="image/*" onchange="handleImageFileSelect(event)" class="text-xs text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-obsidian file:text-white hover:file:bg-black cursor-pointer">
+              <p class="text-[10px] text-muted">Hỗ trợ JPG, PNG, WEBP. Ảnh tự động lưu vào hệ thống thư mục của shop.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Mô tả sản phẩm</label>
+          <textarea id="new-prod-desc" rows="2" placeholder="Đôi sneaker bóng rổ kinh điển với chất liệu da cao cấp và đệm khí Air..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">4 Thông số kỹ thuật (Mỗi dòng 1 ý)</label>
+          <textarea id="new-prod-specs" rows="3" placeholder="Chất liệu da bò tự nhiên cao cấp&#10;Túi đệm khí Nike Air độc quyền tại gót chân&#10;Đế ngoài cao su đúc hoa văn tròn chống trơn trượt&#10;Cổ cao đệm mút bảo vệ mắt cá chân" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-mono text-[11px]"></textarea>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-hairline bg-canvas/40 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeAddProductModal()" class="px-5 py-2 rounded-full border border-hairline hover:bg-canvas text-xs font-semibold text-muted hover:text-obsidian transition-colors">
+          Hủy Bỏ
+        </button>
+        <button type="button" id="btn-save-product" onclick="submitNewProduct()" class="px-6 py-2 rounded-full bg-obsidian hover:bg-black text-white text-xs font-bold transition-all shadow-md flex items-center gap-2">
+          <span>Lưu & Đăng Sản Phẩm</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div id="admin-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 px-4 py-3 bg-obsidian text-white rounded-2xl shadow-2xl text-xs font-medium">
     <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
     <span id="admin-toast-message">Thông báo</span>
   </div>
 
-  <script src="admin.js?v=1"></script>
+  <script src="admin.js?v=2"></script>
 </body>
 </html>

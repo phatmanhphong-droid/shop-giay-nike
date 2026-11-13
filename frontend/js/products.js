@@ -460,3 +460,21 @@ const HERO_SHOWCASE_IDS = [
 
 window.CATALOG_DATA = CATALOG_DATA;
 window.HERO_SHOWCASE_IDS = HERO_SHOWCASE_IDS;
+
+// Tự động đồng bộ sản phẩm mới từ Backend API
+(async function syncProductsFromBackend() {
+  try {
+    const apiBase = window.API_BASE_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : '');
+    const res = await fetch(`${apiBase}/api/products`);
+    if (res.ok) {
+      const liveList = await res.json();
+      if (Array.isArray(liveList) && liveList.length) {
+        window.CATALOG_DATA = liveList;
+        if (window.renderCategoryFilters) window.renderCategoryFilters();
+        if (window.renderCatalogGrid) window.renderCatalogGrid();
+      }
+    }
+  } catch (e) {
+    // Sử dụng danh mục tĩnh mặc định
+  }
+})();

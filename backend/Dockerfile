@@ -9,8 +9,8 @@ ENV PORT=5000
 # Copy package config
 COPY package.json ./
 
-# Copy mã nguồn backend và giao diện quản trị Admin UI
-COPY server.js orders.json ./
+# Copy mã nguồn backend, dữ liệu đơn hàng, dữ liệu sản phẩm và giao diện Admin UI
+COPY server.js orders.json products.json ./
 COPY public/ ./public/
 
 EXPOSE 5000
