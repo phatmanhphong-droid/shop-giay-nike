@@ -547,5 +547,28 @@
         "photo": "assets/shoes/airmax-red.png"
       }
     ]
+  },
+  {
+    "name": "1234",
+    "series": "nike",
+    "category": "Running",
+    "price": 1000,
+    "badge": "mới ra",
+    "description": "Sản phẩm giày Nike chính hãng chất lượng cao.",
+    "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
+    "specs": [
+      "Chất liệu cao cấp bền đẹp",
+      "Bộ đệm êm ái đàn hồi",
+      "Đế cao su bám đường tốt",
+      "Thiết kế thời thượng năng động"
+    ],
+    "colors": [
+      {
+        "name": "Mặc định",
+        "hex": "#111111",
+        "photo": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg"
+      }
+    ],
+    "id": "nike-24"
   }
 ]

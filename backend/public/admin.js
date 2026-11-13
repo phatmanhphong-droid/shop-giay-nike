@@ -2,6 +2,11 @@
 // NIKE ATELIER — ADMIN DASHBOARD CONTROLLER (BACKEND UI)
 // ==========================================================================
 
+// Tự động nhận diện URL Backend (cho dù mở từ port 5000, 8080 hay file://)
+const API_BASE = (window.location.protocol.startsWith('http') && window.location.port === '5000') 
+  ? '' 
+  : (window.location.hostname ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://localhost:5000');
+
 let allOrders = [];
 let filteredOrders = [];
 let allProducts = [];
@@ -12,11 +17,11 @@ let currentFilterStatus = 'all';
 let selectedImageData = null;
 let selectedImageFileName = '';
 
-async function loadDashboardData() {
+async function loadDashboardData(isManual = false) {
   try {
     const [resOrders, resProducts] = await Promise.all([
-      fetch('/api/orders'),
-      fetch('/api/products')
+      fetch(`${API_BASE}/api/orders`),
+      fetch(`${API_BASE}/api/products`)
     ]);
 
     if (resOrders.ok) {
@@ -31,9 +36,28 @@ async function loadDashboardData() {
       updateProductCount();
     }
 
+    updateConnectionStatus(true);
     loadSystemHealth();
+    if (isManual) showToast('Đã làm mới dữ liệu thành công!');
   } catch (err) {
-    showToast('Lỗi kết nối máy chủ: ' + err.message);
+    console.warn('Lỗi kết nối máy chủ:', err.message);
+    updateConnectionStatus(false);
+    if (isManual) {
+      showToast('Lỗi kết nối máy chủ: ' + err.message);
+    }
+  }
+}
+
+function updateConnectionStatus(isOnline) {
+  const badge = document.getElementById('header-conn-status');
+  if (!badge) return;
+
+  if (isOnline) {
+    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider';
+    badge.textContent = 'Online • Port 5000';
+  } else {
+    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 uppercase tracking-wider animate-pulse';
+    badge.textContent = 'Mất kết nối máy chủ';
   }
 }
 
@@ -44,9 +68,13 @@ function updateStats() {
     (o.status || '').toLowerCase().includes('chờ') || (o.status || '').toLowerCase().includes('quét')
   ).length;
 
-  document.getElementById('stat-total-revenue').textContent = totalRevenue.toLocaleString('vi-VN') + ' ₫';
-  document.getElementById('stat-total-orders').textContent = totalOrders;
-  document.getElementById('stat-pending-orders').textContent = pendingOrders;
+  const revEl = document.getElementById('stat-total-revenue');
+  const ordEl = document.getElementById('stat-total-orders');
+  const pendEl = document.getElementById('stat-pending-orders');
+
+  if (revEl) revEl.textContent = totalRevenue.toLocaleString('vi-VN') + ' ₫';
+  if (ordEl) ordEl.textContent = totalOrders;
+  if (pendEl) pendEl.textContent = pendingOrders;
 }
 
 function updateProductCount() {
@@ -196,7 +224,7 @@ function renderOrdersTable() {
 
 async function updateOrderStatus(orderId, newStatus) {
   try {
-    const res = await fetch(`/api/orders/${orderId}/status`, {
+    const res = await fetch(`${API_BASE}/api/orders/${orderId}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus })
@@ -219,7 +247,7 @@ async function deleteOrder(orderId) {
   }
 
   try {
-    const res = await fetch(`/api/orders/${orderId}`, {
+    const res = await fetch(`${API_BASE}/api/orders/${orderId}`, {
       method: 'DELETE'
     });
     const data = await res.json();
@@ -366,10 +394,10 @@ function renderProductsTable() {
   }
 
   tbody.innerHTML = filteredProducts.map(p => {
-    // Resolve photo URL (handle relative assets/shoes/...)
+    // Tự động resolve URL ảnh (nếu là relative path thì lấy từ API_BASE hoặc '/')
     let photoUrl = p.image || '';
     if (!photoUrl.startsWith('http') && !photoUrl.startsWith('data:')) {
-      photoUrl = `http://localhost:8080/${photoUrl}`;
+      photoUrl = `${API_BASE}/${photoUrl.replace(/^\/+/, '')}`;
     }
 
     return `
@@ -434,6 +462,11 @@ function handleImageFileSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
 
+  if (file.size > 15 * 1024 * 1024) {
+    showToast('Ảnh quá lớn! Vui lòng chọn file dưới 15MB');
+    return;
+  }
+
   selectedImageFileName = file.name;
   const reader = new FileReader();
   reader.onload = function(e) {
@@ -487,7 +520,7 @@ async function submitNewProduct() {
   try {
     // 1. Upload ảnh
     let imageUrl = 'assets/shoes/default-shoe.png';
-    const uploadRes = await fetch('/api/upload', {
+    const uploadRes = await fetch(`${API_BASE}/api/upload`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -515,7 +548,7 @@ async function submitNewProduct() {
       ]
     };
 
-    const res = await fetch('/api/products', {
+    const res = await fetch(`${API_BASE}/api/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct)
@@ -549,7 +582,7 @@ async function deleteProduct(productId, productName) {
   }
 
   try {
-    const res = await fetch(`/api/products/${productId}`, {
+    const res = await fetch(`${API_BASE}/api/products/${productId}`, {
       method: 'DELETE'
     });
     const data = await res.json();
@@ -565,12 +598,57 @@ async function deleteProduct(productId, productName) {
 }
 
 // ==========================================================================
+// BANK SETTINGS
+// ==========================================================================
+
+async function loadBankConfig() {
+  try {
+    const res = await fetch(`${API_BASE}/api/config/bank`);
+    if (res.ok) {
+      const data = await res.json();
+      if (document.getElementById('bank-name-input')) document.getElementById('bank-name-input').value = data.bankName || '';
+      if (document.getElementById('bank-code-input')) document.getElementById('bank-code-input').value = data.bankCode || '';
+      if (document.getElementById('bank-acc-input')) document.getElementById('bank-acc-input').value = data.accountNo || '';
+      if (document.getElementById('bank-holder-input')) document.getElementById('bank-holder-input').value = data.accountHolder || '';
+    }
+  } catch (e) {}
+}
+
+async function saveBankConfig() {
+  const bankName = document.getElementById('bank-name-input')?.value.trim();
+  const bankCode = document.getElementById('bank-code-input')?.value.trim();
+  const accountNo = document.getElementById('bank-acc-input')?.value.trim();
+  const accountHolder = document.getElementById('bank-holder-input')?.value.trim();
+
+  if (!accountNo || !bankCode) {
+    showToast('Vui lòng nhập đầy đủ Số tài khoản và Mã ngân hàng!');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/config/bank`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bankName, bankCode, accountNo, accountHolder })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Đã lưu cấu hình tài khoản VietQR thành công!');
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể lưu'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+// ==========================================================================
 // SYSTEM & TABS
 // ==========================================================================
 
 async function loadSystemHealth() {
   try {
-    const res = await fetch('/api/health');
+    const res = await fetch(`${API_BASE}/api/health`);
     const data = await res.json();
     const upEl = document.getElementById('sys-uptime');
     if (upEl && data.uptimeSeconds !== undefined) {
@@ -616,6 +694,7 @@ function showToast(message) {
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
   loadDashboardData();
-  // Poll every 10 seconds for real-time updates
-  setInterval(loadDashboardData, 10000);
+  loadBankConfig();
+  // Poll every 10 seconds for real-time updates (silently, without toast error)
+  setInterval(() => loadDashboardData(false), 10000);
 });

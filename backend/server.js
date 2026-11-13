@@ -6,6 +6,7 @@ const PORT = parseInt(process.env.PORT, 10) || 5000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
 const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+const BANK_FILE = path.join(__dirname, 'bank.json');
 const SHOES_ASSETS_DIR = path.join(__dirname, '..', 'frontend', 'assets', 'shoes');
 const BACKEND_UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 
@@ -36,7 +37,11 @@ function readJSON(file, defaultVal = []) {
 }
 
 function writeJSON(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
+  try {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {
+    console.error(`[FS Error] Cannot write to ${file}`, e);
+  }
 }
 
 const server = http.createServer((req, res) => {
@@ -53,7 +58,7 @@ const server = http.createServer((req, res) => {
 
   const cleanUrl = req.url.split('?')[0];
 
-  // API 1: HEALTH CHECK
+  // API 1: HEALTH CHECK (Kiểm tra kết nối máy chủ)
   if (cleanUrl === '/api/health') {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({
@@ -74,7 +79,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // API 3: CREATE PRODUCT (POST /api/products) - Thêm sản phẩm mới từ Admin
+  // API 3: CREATE PRODUCT (POST /api/products)
   if (req.method === 'POST' && cleanUrl === '/api/products') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
@@ -83,7 +88,6 @@ const server = http.createServer((req, res) => {
         const product = JSON.parse(body || '{}');
         const products = readJSON(PRODUCTS_FILE, []);
 
-        // Tự động tạo ID tiếp theo (nike-24, nike-25...)
         if (!product.id) {
           const maxNum = products.reduce((max, p) => {
             const m = p.id && p.id.match(/^nike-(\d+)$/);
@@ -101,8 +105,7 @@ const server = http.createServer((req, res) => {
         products.push(product);
         writeJSON(PRODUCTS_FILE, products);
 
-        console.log(`[Product API] Đã thêm sản phẩm mới: ${product.name} (ID: ${product.id}) - Giá: ${product.price} d`);
-
+        console.log(`[Product API] Đã thêm sản phẩm: ${product.name} (${product.id})`);
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, product }));
       } catch (err) {
@@ -133,7 +136,6 @@ const server = http.createServer((req, res) => {
         products[idx] = { ...products[idx], ...updateData };
         writeJSON(PRODUCTS_FILE, products);
 
-        console.log(`[Product API] Đã cập nhật sản phẩm: ${products[idx].name} (${productId})`);
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, product: products[idx] }));
       } catch (err) {
@@ -158,7 +160,6 @@ const server = http.createServer((req, res) => {
     }
 
     writeJSON(PRODUCTS_FILE, products);
-    console.log(`[Product API] Đã xóa sản phẩm ID: ${productId}`);
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({ success: true, productId }));
     return;
@@ -175,21 +176,16 @@ const server = http.createServer((req, res) => {
           throw new Error('Thiếu tên file hoặc dữ liệu ảnh Base64');
         }
 
-        // Tách header base64 (ví dụ: data:image/png;base64,....)
         const base64Data = data.replace(/^data:image\/\w+;base64,/, '');
         const buffer = Buffer.from(base64Data, 'base64');
         const cleanName = path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, '_');
 
-        // Lưu vào thư mục frontend/assets/shoes nếu tồn tại
         if (fs.existsSync(SHOES_ASSETS_DIR)) {
           fs.writeFileSync(path.join(SHOES_ASSETS_DIR, cleanName), buffer);
         }
-        // Lưu dự phòng vào backend uploads
         fs.writeFileSync(path.join(BACKEND_UPLOADS_DIR, cleanName), buffer);
 
         const assetPath = `assets/shoes/${cleanName}`;
-        console.log(`[Upload API] Đã lưu ảnh thành công: ${assetPath}`);
-
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, url: assetPath }));
       } catch (err) {
@@ -213,8 +209,7 @@ const server = http.createServer((req, res) => {
         orders.unshift(order);
         writeJSON(ORDERS_FILE, orders);
 
-        console.log(`[Order API] Đơn hàng mới: #${order.orderId} - Khách: ${order.customer ? order.customer.fullname : 'N/A'} - Tiền: ${order.totalAmount} d`);
-
+        console.log(`[Order API] Đơn mới: #${order.orderId} - Khách: ${order.customer ? order.customer.fullname : 'N/A'}`);
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, orderId: order.orderId }));
       } catch (err) {
@@ -254,7 +249,6 @@ const server = http.createServer((req, res) => {
         order.updatedAt = new Date().toISOString();
         writeJSON(ORDERS_FILE, orders);
 
-        console.log(`[Order API] Cập nhật đơn #${orderId} -> ${order.status}`);
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, order }));
       } catch (err) {
@@ -279,10 +273,59 @@ const server = http.createServer((req, res) => {
     }
 
     writeJSON(ORDERS_FILE, orders);
-    console.log(`[Order API] Đã xóa đơn hàng #${orderId}`);
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({ success: true, orderId }));
     return;
+  }
+
+  // API 11: GET BANK CONFIG (GET /api/config/bank)
+  if (req.method === 'GET' && cleanUrl === '/api/config/bank') {
+    const bank = readJSON(BANK_FILE, {
+      bankName: 'Techcombank (Ngân Hàng Kỹ Thương Việt Nam)',
+      bankCode: 'TCB',
+      accountNo: '8678686688',
+      accountHolder: 'TRAN DUC MANH'
+    });
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(bank));
+    return;
+  }
+
+  // API 12: SAVE BANK CONFIG (POST /api/config/bank)
+  if (req.method === 'POST' && cleanUrl === '/api/config/bank') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const bankData = JSON.parse(body || '{}');
+        writeJSON(BANK_FILE, bankData);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: true, bank: bankData }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // DIRECT ASSET SERVING FOR SHOES IMAGES (Phục vụ ảnh giày trực tiếp từ backend)
+  if (cleanUrl.startsWith('/assets/shoes/') || cleanUrl.startsWith('assets/shoes/')) {
+    const filename = path.basename(cleanUrl);
+    // Check in frontend shoes dir or backend uploads dir
+    let assetPath = path.join(SHOES_ASSETS_DIR, filename);
+    if (!fs.existsSync(assetPath)) {
+      assetPath = path.join(BACKEND_UPLOADS_DIR, filename);
+    }
+    if (fs.existsSync(assetPath)) {
+      const ext = path.extname(assetPath).toLowerCase();
+      res.writeHead(200, {
+        'Content-Type': MIME[ext] || 'image/png',
+        'Cache-Control': 'public, max-age=86400'
+      });
+      fs.createReadStream(assetPath).pipe(res);
+      return;
+    }
   }
 
   // SERVE STATIC ADMIN DASHBOARD UI
