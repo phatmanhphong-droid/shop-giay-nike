@@ -1,72 +1,60 @@
-# SHOP GIÀY NIKE — SNEAKER ATELIER 2026
+# SHOP GIÀY NIKE CHÍNH HÃNG 2026 (ATELIER EDITION)
 
-Dự án website thương mại điện tử giới thiệu 23 mẫu giày Nike cao cấp với hiệu ứng xoay 3D (3D Turntable) và bộ lọc thông minh.
+Website thương mại điện tử chuyên nghiệp trưng bày và bán 23 mẫu giày Nike chính hãng, tích hợp sàn xoay 3D tương tác 60fps, thanh toán quét mã VietQR tự động qua Techcombank và kiến trúc tách biệt hoàn toàn giữa **Frontend** và **Backend (REST API)**.
 
 ---
 
-## 📁 Cấu Trúc Thư Mục (Chuẩn Frontend Tách Lớp Modular)
+## 📁 CẤU TRÚC THƯ MỤC DỰ ÁN
 
 ```
 Shop giày nike/
-├── frontend/                     # Toàn bộ mã nguồn giao diện người dùng
-│   ├── index.html                # Trang HTML ngữ nghĩa
-│   ├── css/
-│   │   └── styles.css            # Stylesheet tùy biến (3D Turntable, bóng Studio, Scrollbar)
-│   ├── js/
-│   │   ├── products.js           # Dữ liệu 23 đôi giày: thông số, giá VNĐ, danh sách phối màu
-│   │   ├── turntable.js          # Logic lăn chuột 60fps Lerp Momentum xoay 3D từ trái sang phải
-│   │   ├── modal.js              # Popup xem nhanh (Quick View), chọn phối màu và chọn size
-│   │   ├── cart.js               # Quản lý giỏ hàng, lưu trữ localStorage, drawer trượt
-│   │   └── app.js                # Bộ điều phối chính: lọc danh mục, tìm kiếm trực tiếp, lưới sản phẩm
-│   └── assets/
-│       ├── logo/
-│       │   └── nike.png          # Logo Nike chính hãng
-│       └── shoes/                # 27 ảnh PNG thật 100%, tách nền trong suốt cho từng phối màu
-│           ├── jordan1-chicago.png
-│           ├── jordan1-royal.png
-│           ├── jordan1-volt.png
-│           ├── airforce1-white.png
-│           ├── airforce1-black.png
-│           ├── dunk-panda.png
-│           ├── airmax90-infrared.png
-│           ├── cortez-classic.png
-│           ├── pegasus40-blue.png
-│           ├── vaporfly-pink.png
-│           ├── zoomfly3-lime.png
-│           ├── superrep-volt.png
-│           ├── alphatr3-black.png
-│           ├── adaptbb-grey.png
-│           ├── adaptbb-smart.png
-│           ├── jordan4-cement.png
-│           ├── sbdunk-emerald.png
-│           ├── airmax270-green.png
-│           ├── airmax720-blue.png
-│           ├── lebron21-purple.png
-│           ├── kd16-gold.png
-│           ├── giannis-red.png
-│           ├── airmax-tn.png
-│           ├── infinityrun-white.png
-│           ├── sneaker-black.png
-│           ├── invincible3-racer.png
-│           └── airmax-red.png
-├── server.js                     # Máy chủ tĩnh Node.js phục vụ thư mục frontend (cổng 8080)
-├── MO_SHOP_NIKE.bat              # Trình khởi động 1-click (chạy server & tự mở Chrome)
-└── README.md                     # Tài liệu hướng dẫn này
+├── backend/                      # MÃ NGUỒN BACKEND REST API (Node.js)
+│   ├── server.js                 # API Server xử lý đơn hàng, healthcheck (Cổng 5000)
+│   ├── orders.json               # Cơ sở dữ liệu lưu trữ đơn hàng
+│   ├── package.json              # Quản lý script backend
+│   ├── Dockerfile                # Dockerfile Node 20 Alpine cho Backend
+│   └── .dockerignore             # File loại trừ Docker backend
+│
+├── frontend/                     # MÃ NGUỒN GIAO DIỆN KHÁCH HÀNG (UI)
+│   ├── index.html                # Giao diện chính (Tailwind CSS, Không viền xám, 3D Hero)
+│   ├── server.js                 # Máy chủ phục vụ file tĩnh UI (Cổng 8080)
+│   ├── css/                      # Stylesheet tùy biến
+│   ├── js/                       # Modular JavaScript (turntable, cart, modal, products, app)
+│   ├── assets/shoes/             # 23 hình ảnh giày tách nền chuẩn 100% mũi hướng trái
+│   ├── Dockerfile                # Dockerfile Nginx Alpine phục vụ Frontend
+│   └── .dockerignore             # File loại trừ Docker frontend
+│
+├── docker-compose.yml            # Điều phối đồng thời cả Frontend và Backend qua Docker
+├── MO_SHOP_NIKE.bat              # Script 1-click khởi chạy đồng thời cả 2 dịch vụ trên Windows
+├── package.json                  # Root package quản trị chung
+├── .gitignore                    # Cấu hình bỏ qua file rác khi đẩy lên Git
+└── BAO_CAO_BAN_GIAO.md           # Báo cáo kỹ thuật chi tiết
 ```
 
 ---
 
-## 🚀 Cách Chạy Website
+## 🚀 HƯỚNG DẪN KHỞI CHẠY HỆ THỐNG
 
-### Cách 1: Bấm trực tiếp từ Desktop
-- Nhấp đúp chuột vào biểu tượng **`Shop Giày Nike`** trên Desktop (địa chỉ `http://localhost:8080`).
+### Cách 1: Khởi động 1-Click trên Windows (Khuyên dùng)
+* Nhấp đúp chuột vào file: **`MO_SHOP_NIKE.bat`**
+* Hệ thống sẽ tự động:
+  1. Khởi chạy **Backend API** tại: `http://localhost:5000`
+  2. Khởi chạy **Frontend UI** tại: `http://localhost:8080`
+  3. Tự động mở trình duyệt web lên trang mua sắm.
 
-### Cách 2: Khởi động qua file BAT
-- Nhấp đúp chuột vào file **`MO_SHOP_NIKE.bat`** trong thư mục `Shop giày nike`.
-
-### Cách 3: Chạy dòng lệnh (CLI)
+### Cách 2: Khởi động bằng Docker Compose
+Khi bạn đã mở Docker Desktop, mở terminal tại thư mục gốc và chạy:
 ```bash
-node server.js
+docker compose up -d --build
 ```
-Truy cập trình duyệt: `http://localhost:8080`
+* **Frontend:** Truy cập tại `http://localhost:8080`
+* **Backend API:** Truy cập tại `http://localhost:5000/api/health`
+* **Dữ liệu đơn hàng:** Được gắn kết (volume mount) ra file `backend/orders.json` trên máy thật nên không bao giờ bị mất khi khởi động lại container.
 
+---
+
+## 💳 TÍCH HỢP THANH TOÁN VIETQR TECHCOMBANK
+* **Ngân hàng:** Techcombank (TCB)
+* **Số tài khoản:** `8678686688`
+* **Chủ tài khoản:** TRAN DUC MANH
+* **Cơ chế:** Khi khách bấm đặt hàng, hệ thống tự động vẽ mã VietQR Napas247 tương ứng với số tiền chính xác và mã đơn hàng duy nhất, hỗ trợ sao chép nhanh STK và in hóa đơn giao hàng.
