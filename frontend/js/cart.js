@@ -703,7 +703,35 @@
           <svg class="w-5 h-5 text-obsidian shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <div>
             <p class="font-semibold text-obsidian">Thời gian giao hàng dự kiến: 1 - 3 ngày làm việc</p>
-            <p class="mt-0.5">Bộ phận CSKH Shop Giày Nike sẽ gọi điện thoại hoặc gửi tin nhắn SMS để xác nhận đơn và gửi mã vận đơn qua Zalo. Hotline hỗ trợ 24/7: <strong>1900 6868</strong></p>
+            <p class="mt-0.5">Bộ phận CSKH Shop Giày Nike sẽ gọi điện thoại hoặc gửi tin nhắn SMS để xác nhận đơn và gửi mã vận đơn qua Zalo. Hotline hỗ trợ 24/7: <strong>0908 062 597</strong></p>
+          </div>
+        </div>
+
+        <!-- DIRECT ZALO & PHONE CONTACT FOR VIETNAMESE SHOPPING -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/70 space-y-3 text-left">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+              <span class="font-bold text-xs text-blue-950 uppercase tracking-wider">Hỗ Trợ Nhanh Qua Zalo & Điện Thoại</span>
+            </div>
+            <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">Trực Tuyến 24/7</span>
+          </div>
+          <p class="text-[11px] text-muted">
+            Quý khách có thể bấm nhắn tin Zalo ngay để shop đóng gói gửi hàng sớm nhất hoặc gọi điện thoại trực tiếp:
+          </p>
+          <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
+            <button type="button" 
+              onclick="window.openZaloOrderChat()" 
+              class="w-full sm:w-auto flex-1 py-3 px-4 rounded-xl bg-[#0068FF] hover:bg-[#0054cc] text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.35 5L2 22l5.22-1.31C8.63 21.49 10.27 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1.09 14.5h-2.18v-4.91h2.18v4.91zm0-6.55h-2.18V7.77h2.18v2.18z"/></svg>
+              <span>Nhắn Zalo Xác Nhận Đơn Liền</span>
+            </button>
+
+            <a href="tel:0908062597" 
+              class="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-slate-50 border border-hairline text-obsidian text-xs font-bold transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <span>Gọi Hotline 0908 062 597</span>
+            </a>
           </div>
         </div>
 
@@ -847,6 +875,16 @@
     }, 400);
   }
 
+  function openZaloOrderChat() {
+    if (!lastPlacedOrder) return;
+    const phone = '0908062597';
+    const text = `Chào Shop Nike, mình vừa đặt đơn hàng #${lastPlacedOrder.orderId} (${lastPlacedOrder.customer.fullname} - ${lastPlacedOrder.customer.phone}). Tổng thanh toán: ${lastPlacedOrder.totalAmount.toLocaleString('vi-VN')} ₫. Nhờ shop kiểm tra và gửi hàng sớm giúp mình nhé!`;
+    copyToClipboard(text, 'Đã sao chép nội dung đơn hàng! Đang mở Zalo...');
+    setTimeout(() => {
+      window.open(`https://zalo.me/${phone}`, '_blank');
+    }, 400);
+  }
+
   // Export to global window
   window.addToCart = addToCart;
   window.updateCartQty = updateCartQty;
@@ -868,4 +906,5 @@
   window.quickApplyVoucher = quickApplyVoucher;
   window.applyDrawerVoucher = applyDrawerVoucher;
   window.applyCheckoutVoucher = applyCheckoutVoucher;
+  window.openZaloOrderChat = openZaloOrderChat;
 })();

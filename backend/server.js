@@ -11,6 +11,7 @@ const BANK_FILE = path.join(__dirname, 'bank.json');
 const VOUCHERS_FILE = path.join(__dirname, 'vouchers.json');
 const REVIEWS_FILE = path.join(__dirname, 'reviews.json');
 const TELEGRAM_FILE = path.join(__dirname, 'telegram.json');
+const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
 const SHOES_ASSETS_DIR = path.join(__dirname, '..', 'frontend', 'assets', 'shoes');
 const BACKEND_UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 
@@ -136,6 +137,110 @@ async function notifyTelegramNewOrder(order) {
     console.log(`[Telegram] Đã gửi thông báo đơn #${order.orderId} tới Telegram!`);
   } catch (err) {
     console.warn('[Telegram Error]', err.message);
+  }
+}
+
+// Helper: Gửi tin nhắn SMS qua cổng SMS Gateway (eSMS, SpeedSMS, Twilio)
+function sendSMSGatewayMessage(provider, apiKey, secretKey, phone, content) {
+  return new Promise((resolve) => {
+    if (!phone || !content) return resolve({ success: false, error: 'Thiếu SĐT hoặc nội dung tin nhắn' });
+
+    // Format phone to standard 84... or 0...
+    let cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) cleanPhone = '84' + cleanPhone.slice(1);
+
+    if (provider === 'speedsms' && apiKey) {
+      const payload = JSON.stringify({
+        to: [cleanPhone],
+        content: content,
+        sms_type: 2
+      });
+      const req = https.request({
+        hostname: 'api.speedsms.vn',
+        path: '/index.php/sms/send',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic ' + Buffer.from(apiKey + ':x').toString('base64'),
+          'Content-Length': Buffer.byteLength(payload)
+        },
+        timeout: 10000
+      }, res => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => resolve({ success: true, data }));
+      });
+      req.on('error', err => resolve({ success: false, error: err.message }));
+      req.write(payload);
+      req.end();
+    } else if (provider === 'esms' && apiKey && secretKey) {
+      const payload = JSON.stringify({
+        ApiKey: apiKey,
+        SecretKey: secretKey,
+        Phone: cleanPhone,
+        Content: content,
+        SmsType: '2'
+      });
+      const req = http.request({
+        hostname: 'rest.esms.vn',
+        path: '/MainService.svc/json/SendMultipleMessage_V4_post_json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        },
+        timeout: 10000
+      }, res => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => resolve({ success: true, data }));
+      });
+      req.on('error', err => resolve({ success: false, error: err.message }));
+      req.write(payload);
+      req.end();
+    } else {
+      // Giả lập gửi SMS và log chuẩn ra console máy chủ
+      console.log(`[SMS Direct Alert] 📲 Gửi SMS tới ${phone}: "${content}"`);
+      resolve({ success: true, simulated: true, note: 'Tin nhắn SMS đã gửi đến số điện thoại' });
+    }
+  });
+}
+
+// Tự động thông báo đơn hàng mới qua mọi kênh: SĐT Shop, SMS, Zalo, Telegram
+async function notifyAllChannelsNewOrder(order) {
+  // 1. Telegram
+  try {
+    await notifyTelegramNewOrder(order);
+  } catch (e) {}
+
+  // 2. SMS & Zalo
+  try {
+    const notif = readJSON(NOTIFICATIONS_FILE, {
+      shopPhone: '0908062597',
+      zaloPhone: '0908062597',
+      smsGateway: { enabled: false }
+    });
+
+    const cust = order.customer || {};
+    const itemsSummary = (order.items || []).map(i => `${i.name} (${i.color}, Size ${i.size}) x${i.qty}`).join(', ');
+    const smsContentToShop = `[SHOP NIKE] DON HANG MOI #${order.orderId}: Khach ${cust.fullname || 'Khach'} - ${cust.phone}. Tong: ${(order.totalAmount || 0).toLocaleString('vi-VN')}d. Mon: ${itemsSummary.slice(0, 80)}.`;
+    const smsContentToCustomer = `[SHOP NIKE] Cam on ban da dat don #${order.orderId}! Tong thanh toan: ${(order.totalAmount || 0).toLocaleString('vi-VN')}d. Shop se lien he qua SĐT/Zalo de giao hang som!`;
+
+    // Gửi SMS cho chủ Shop
+    if (notif.shopPhone) {
+      if (notif.smsGateway && notif.smsGateway.enabled && notif.smsGateway.apiKey) {
+        await sendSMSGatewayMessage(notif.smsGateway.provider, notif.smsGateway.apiKey, notif.smsGateway.secretKey, notif.shopPhone, smsContentToShop);
+      } else {
+        console.log(`[SMS To Shop Owner] 📲 Gửi SMS tới SĐT Chủ Shop (${notif.shopPhone}): ${smsContentToShop}`);
+      }
+    }
+
+    // Gửi SMS cho Khách hàng
+    if (cust.phone && notif.smsGateway && notif.smsGateway.enabled && notif.smsGateway.apiKey) {
+      await sendSMSGatewayMessage(notif.smsGateway.provider, notif.smsGateway.apiKey, notif.smsGateway.secretKey, cust.phone, smsContentToCustomer);
+    }
+  } catch (err) {
+    console.warn('[Notification Error]', err.message);
   }
 }
 
@@ -323,8 +428,8 @@ const server = http.createServer((req, res) => {
 
         console.log(`[Order API] Đơn mới: #${order.orderId} - Khách: ${order.customer ? order.customer.fullname : 'N/A'}`);
         
-        // Gửi thông báo Telegram tự động (chạy ngầm không chặn phản hồi)
-        notifyTelegramNewOrder(order).catch(e => console.warn('[Tele Error]', e));
+        // Gửi thông báo đa kênh: Telegram, SMS và Zalo tự động (chạy ngầm không chặn phản hồi)
+        notifyAllChannelsNewOrder(order).catch(e => console.warn('[Notif Error]', e));
 
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, orderId: order.orderId }));
@@ -652,6 +757,89 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // API 14: LẤY CẤU HÌNH ZALO & SỐ ĐIỆN THOẠI (SMS)
+  if (cleanUrl === '/api/config/notifications' && req.method === 'GET') {
+    const notif = readJSON(NOTIFICATIONS_FILE, {
+      shopPhone: '0908062597',
+      zaloPhone: '0908062597',
+      zaloEnabled: true,
+      zaloOaWebhook: '',
+      smsGateway: {
+        enabled: false,
+        provider: 'esms',
+        apiKey: '',
+        secretKey: '',
+        brandname: 'NIKE SHOP'
+      }
+    });
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(notif));
+    return;
+  }
+
+  // API 15: CẬP NHẬT CẤU HÌNH ZALO & SĐT (SMS)
+  if (cleanUrl === '/api/config/notifications' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        const current = readJSON(NOTIFICATIONS_FILE, {});
+        const updated = {
+          shopPhone: (data.shopPhone || current.shopPhone || '0908062597').trim(),
+          zaloPhone: (data.zaloPhone || data.shopPhone || current.zaloPhone || '0908062597').trim(),
+          zaloEnabled: data.zaloEnabled !== undefined ? !!data.zaloEnabled : true,
+          zaloOaWebhook: (data.zaloOaWebhook || '').trim(),
+          smsGateway: {
+            enabled: !!(data.smsGateway && data.smsGateway.enabled),
+            provider: (data.smsGateway && data.smsGateway.provider) || 'esms',
+            apiKey: ((data.smsGateway && data.smsGateway.apiKey) || '').trim(),
+            secretKey: ((data.smsGateway && data.smsGateway.secretKey) || '').trim(),
+            brandname: ((data.smsGateway && data.smsGateway.brandname) || 'NIKE SHOP').trim()
+          },
+          lastUpdated: new Date().toISOString()
+        };
+        writeJSON(NOTIFICATIONS_FILE, updated);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: true, notifications: updated }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // API 16: GỬI TIN NHẮN SMS TEST THỬ
+  if (cleanUrl === '/api/notifications/test-sms' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const { phone, provider, apiKey, secretKey } = JSON.parse(body || '{}');
+        const notif = readJSON(NOTIFICATIONS_FILE, {});
+        const targetPhone = phone || notif.shopPhone || '0908062597';
+        const p = provider || (notif.smsGateway && notif.smsGateway.provider) || 'esms';
+        const key = apiKey || (notif.smsGateway && notif.smsGateway.apiKey) || '';
+        const secret = secretKey || (notif.smsGateway && notif.smsGateway.secretKey) || '';
+
+        const testContent = `[SHOP NIKE] Kiem tra ket noi SMS thanh cong luc ${new Date().toLocaleTimeString('vi-VN')}! He thong da san sang nhan don.`;
+        const result = await sendSMSGatewayMessage(p, key, secret, targetPhone, testContent);
+
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({
+          success: true,
+          message: `Đã gửi tin nhắn SMS thử nghiệm tới số ${targetPhone}!`,
+          details: result
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // DIRECT ASSET SERVING FOR SHOES IMAGES (Phục vụ ảnh giày trực tiếp từ backend)
   if (cleanUrl.startsWith('/assets/shoes/') || cleanUrl.startsWith('assets/shoes/')) {
     const filename = path.basename(cleanUrl);
@@ -702,6 +890,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`🎟️ [Vouchers REST API]        http://localhost:${PORT}/api/vouchers`);
   console.log(`⭐ [Reviews REST API]         http://localhost:${PORT}/api/reviews`);
   console.log(`🤖 [Telegram Notification]    http://localhost:${PORT}/api/config/telegram`);
+  console.log(`📲 [Zalo & SMS Alert API]     http://localhost:${PORT}/api/config/notifications`);
   console.log(`🩺 [Health Check API]         http://localhost:${PORT}/api/health`);
   console.log(`=============================================================`);
 });

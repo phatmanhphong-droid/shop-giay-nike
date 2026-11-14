@@ -1056,12 +1056,100 @@ function showToast(message) {
   }, 2600);
 }
 
+// ==========================================================================
+// ZALO & SMS PHONE NOTIFICATIONS
+// ==========================================================================
+
+async function loadNotificationConfig() {
+  try {
+    const res = await fetch(`${API_BASE}/api/config/notifications`);
+    if (res.ok) {
+      const data = await res.json();
+      const shopPhoneEl = document.getElementById('notif-shop-phone');
+      const zaloPhoneEl = document.getElementById('notif-zalo-phone');
+      const smsEnabledEl = document.getElementById('notif-sms-enabled');
+      const providerEl = document.getElementById('notif-sms-provider');
+      const apikeyEl = document.getElementById('notif-sms-apikey');
+      const secretEl = document.getElementById('notif-sms-secret');
+
+      if (shopPhoneEl) shopPhoneEl.value = data.shopPhone || '0908062597';
+      if (zaloPhoneEl) zaloPhoneEl.value = data.zaloPhone || data.shopPhone || '0908062597';
+      if (smsEnabledEl) smsEnabledEl.checked = !!(data.smsGateway && data.smsGateway.enabled);
+      if (providerEl && data.smsGateway) providerEl.value = data.smsGateway.provider || 'esms';
+      if (apikeyEl && data.smsGateway) apikeyEl.value = data.smsGateway.apiKey || '';
+      if (secretEl && data.smsGateway) secretEl.value = data.smsGateway.secretKey || data.smsGateway.brandname || '';
+    }
+  } catch (e) {}
+}
+
+async function saveNotificationConfig() {
+  const shopPhone = document.getElementById('notif-shop-phone')?.value.trim() || '0908062597';
+  const zaloPhone = document.getElementById('notif-zalo-phone')?.value.trim() || shopPhone;
+  const smsEnabled = !!document.getElementById('notif-sms-enabled')?.checked;
+  const provider = document.getElementById('notif-sms-provider')?.value || 'esms';
+  const apiKey = document.getElementById('notif-sms-apikey')?.value.trim() || '';
+  const secretKey = document.getElementById('notif-sms-secret')?.value.trim() || '';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/config/notifications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        shopPhone,
+        zaloPhone,
+        zaloEnabled: true,
+        smsGateway: {
+          enabled: smsEnabled,
+          provider,
+          apiKey,
+          secretKey,
+          brandname: 'NIKE SHOP'
+        }
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Đã lưu cấu hình Zalo & SĐT SMS thành công!');
+      loadNotificationConfig();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể lưu'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+async function testSMSNotify() {
+  const phone = document.getElementById('notif-shop-phone')?.value.trim() || '0908062597';
+  const provider = document.getElementById('notif-sms-provider')?.value || 'esms';
+  const apiKey = document.getElementById('notif-sms-apikey')?.value.trim() || '';
+  const secretKey = document.getElementById('notif-sms-secret')?.value.trim() || '';
+
+  showToast(`Đang gửi tin nhắn SMS thử nghiệm tới ${phone}...`);
+  try {
+    const res = await fetch(`${API_BASE}/api/notifications/test-sms`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, provider, apiKey, secretKey })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`📲 ${data.message}`);
+    } else {
+      showToast('Lỗi gửi SMS: ' + (data.error || 'Kiểm tra lại SĐT / API Key'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
   loadDashboardData();
   loadBankConfig();
   loadVouchers();
   loadTelegramConfig();
+  loadNotificationConfig();
   // Poll every 10 seconds for real-time updates (silently, without toast error)
   setInterval(() => loadDashboardData(false), 10000);
 });

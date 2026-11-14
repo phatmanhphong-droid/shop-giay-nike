@@ -301,6 +301,77 @@
         </div>
       </div>
 
+      <!-- ZALO & SMS PHONE NOTIFICATIONS SECTION -->
+      <div class="pt-6 border-t border-hairline space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-display font-bold text-sm text-obsidian flex items-center gap-2">
+              <span>📲 Thông Báo Đơn Hàng Qua Zalo & Số Điện Thoại (SMS)</span>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 uppercase">Khuyên Dùng Tại VN</span>
+            </h4>
+            <p class="text-[11px] text-muted mt-0.5">Nhận đơn hàng tức thì qua Zalo hoặc tin nhắn SMS trực tiếp về điện thoại của chủ shop</p>
+          </div>
+        </div>
+
+        <div class="space-y-3.5 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-obsidian mb-1">Số điện thoại Hotline & Zalo nhận đơn <span class="text-rose-500">*</span></label>
+              <input type="tel" id="notif-shop-phone" value="0908062597" placeholder="Ví dụ: 0908062597" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-mono font-bold focus:outline-none focus:border-obsidian">
+              <p class="text-[10px] text-muted mt-1">Khách sẽ bấm vào để chat Zalo hoặc gọi điện thoại trực tiếp cho số này</p>
+            </div>
+            <div>
+              <label class="block font-semibold text-obsidian mb-1">Số Zalo Shop hiển thị</label>
+              <input type="tel" id="notif-zalo-phone" value="0908062597" placeholder="Ví dụ: 0908062597" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-mono font-bold focus:outline-none focus:border-obsidian">
+              <p class="text-[10px] text-muted mt-1">Đường dẫn Zalo mở tự động: zalo.me/[SĐT]</p>
+            </div>
+          </div>
+
+          <!-- SMS Gateway Config Box -->
+          <div class="p-4 rounded-2xl bg-canvas border border-hairline space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-bold text-obsidian block">Cổng Tin Nhắn SMS Tự Động (SMS Brandname Gateway)</span>
+                <span class="text-[10px] text-muted">Tự động bắn tin nhắn SMS về số điện thoại của Chủ Shop và Khách Hàng khi có đơn</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="notif-sms-enabled" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <label class="block font-semibold text-muted text-[11px] mb-1">Nhà cung cấp SMS</label>
+                <select id="notif-sms-provider" class="w-full px-3 py-2 bg-white border border-hairline rounded-xl font-semibold focus:outline-none focus:border-obsidian">
+                  <option value="esms">eSMS.vn (Việt Nam)</option>
+                  <option value="speedsms">SpeedSMS.vn (Việt Nam)</option>
+                  <option value="twilio">Twilio SMS Quốc Tế</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-muted text-[11px] mb-1">API Key / Token</label>
+                <input type="text" id="notif-sms-apikey" placeholder="Nhập API Key" class="w-full px-3 py-2 bg-white border border-hairline rounded-xl font-mono text-[11px] focus:outline-none focus:border-obsidian">
+              </div>
+              <div>
+                <label class="block font-semibold text-muted text-[11px] mb-1">Secret Key / Brandname</label>
+                <input type="text" id="notif-sms-secret" placeholder="Secret Key hoặc Tên Shop" class="w-full px-3 py-2 bg-white border border-hairline rounded-xl font-mono text-[11px] focus:outline-none focus:border-obsidian">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" onclick="testSMSNotify()" class="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              <span>Gửi SMS Test Thử Về Điện Thoại</span>
+            </button>
+            <button type="button" onclick="saveNotificationConfig()" class="px-5 py-2 rounded-xl bg-obsidian hover:bg-black text-white font-bold text-xs transition-colors">
+              Lưu Cấu Hình Zalo & SĐT
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- TELEGRAM BOT NOTIFICATIONS SECTION -->
       <div class="pt-6 border-t border-hairline space-y-4">
         <div class="flex items-center justify-between">
