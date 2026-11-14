@@ -156,6 +156,24 @@
       </p>
     </div>
 
+    <!-- DYNAMIC VOUCHERS BANNER BAR -->
+    <div id="catalog-vouchers-bar" class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 border border-purple-200/80 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-600 animate-pulse"></span>
+          <h3 class="font-display font-extrabold text-xs uppercase tracking-wider text-purple-950 flex items-center gap-1.5">
+            <span>🏷️ MÃ GIẢM GIÁ & ƯU ĐÃI ĐANG ÁP DỤNG TRONG BỘ SƯU TẬP</span>
+          </h3>
+        </div>
+        <span class="text-[10px] text-purple-700 font-bold bg-white/90 px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
+          Nhấp vào mã bất kỳ để tự động lưu & áp dụng ngay
+        </span>
+      </div>
+      <div id="catalog-vouchers-list" class="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
+        <!-- Rendered dynamically from live vouchers -->
+      </div>
+    </div>
+
     <!-- Category Filter Buttons -->
     <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none mb-8">
       <!-- Populated by app.js -->
@@ -275,9 +293,31 @@
             </span>
           </div>
 
-          <p id="qv-price" class="font-display font-bold text-2xl text-obsidian mt-2">
-            0 ₫
-          </p>
+          <!-- Price with Voucher Display -->
+          <div class="mt-2">
+            <div class="flex items-baseline gap-3">
+              <p id="qv-price" class="font-display font-bold text-2xl text-obsidian">
+                0 ₫
+              </p>
+              <del id="qv-original-price" class="text-sm text-muted hidden">0 ₫</del>
+            </div>
+
+            <!-- Exclusive Voucher Box in Quick View -->
+            <div id="qv-voucher-box" class="hidden mt-3 p-3 rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 text-rose-950 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-rose-900 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                  <span>Ưu Đãi Voucher Cho Mẫu Giày Này</span>
+                </span>
+                <span id="qv-voucher-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+                  -500.000 ₫
+                </span>
+              </div>
+              <p class="text-xs text-rose-800 leading-snug">
+                Nhập mã <strong id="qv-voucher-code" class="font-mono text-sm bg-white px-2 py-0.5 rounded border border-rose-300 font-black text-rose-900">JORDAN500K</strong> khi thanh toán để nhận giá ưu đãi này!
+              </p>
+            </div>
+          </div>
 
           <p id="qv-desc" class="text-xs text-muted mt-3 leading-relaxed">
             Mô tả sản phẩm...

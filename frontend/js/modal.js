@@ -39,7 +39,48 @@
     if (codeEl) codeEl.textContent = currentProduct.code || ('NK-' + (currentProduct.id || '').replace('nike-', ''));
     if (badgeEl) badgeEl.textContent = currentProduct.badge;
     if (titleEl) titleEl.textContent = currentProduct.name;
-    if (priceEl) priceEl.textContent = currentProduct.price.toLocaleString('vi-VN') + ' ₫';
+    // Voucher Callout in Quick View
+    const v = window.getBestVoucherForProduct ? window.getBestVoucherForProduct(currentProduct) : null;
+    const vBox = document.getElementById('qv-voucher-box');
+    const origPriceEl = document.getElementById('qv-original-price');
+    const vCodeEl = document.getElementById('qv-voucher-code');
+    const vBadgeEl = document.getElementById('qv-voucher-badge');
+
+    if (v && v.code !== 'FREESHIP') {
+      let discount = 0;
+      let tag = '';
+      if (v.type === 'percent') {
+        discount = Math.round((currentProduct.price * v.value) / 100);
+        if (v.maxDiscount && discount > v.maxDiscount) discount = v.maxDiscount;
+        tag = `-${v.value}% (Tiết kiệm ${discount.toLocaleString('vi-VN')} ₫)`;
+      } else {
+        discount = v.value;
+        tag = `-${(v.value).toLocaleString('vi-VN')} ₫`;
+      }
+      const discPrice = Math.max(0, currentProduct.price - discount);
+
+      if (priceEl) {
+        priceEl.textContent = discPrice.toLocaleString('vi-VN') + ' ₫';
+        priceEl.className = 'font-display font-extrabold text-2xl sm:text-3xl text-rose-600';
+      }
+      if (origPriceEl) {
+        origPriceEl.classList.remove('hidden');
+        origPriceEl.textContent = currentProduct.price.toLocaleString('vi-VN') + ' ₫';
+      }
+
+      if (vBox) {
+        vBox.classList.remove('hidden');
+        if (vCodeEl) vCodeEl.textContent = v.code;
+        if (vBadgeEl) vBadgeEl.textContent = tag;
+      }
+    } else {
+      if (priceEl) {
+        priceEl.textContent = currentProduct.price.toLocaleString('vi-VN') + ' ₫';
+        priceEl.className = 'font-display font-bold text-2xl text-obsidian';
+      }
+      if (origPriceEl) origPriceEl.classList.add('hidden');
+      if (vBox) vBox.classList.add('hidden');
+    }
     if (descEl) descEl.textContent = currentProduct.description;
 
     // Render colors

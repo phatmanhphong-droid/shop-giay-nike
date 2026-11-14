@@ -7,6 +7,7 @@
   let activeCategory = 'Tất cả';
   let searchQuery = '';
   let isFetching = false;
+  let liveVouchers = [];
 
   // Resolve API Base (hỗ trợ cả chạy qua Frontend reverse proxy lẫn gọi trực tiếp Backend)
   function getApiBase() {
@@ -70,9 +71,129 @@
   }
 
   // Khởi chạy ứng dụng
+  
+  // Tải danh sách Voucher thời gian thực từ Backend
+  async function loadVouchersFromBackend() {
+    try {
+      const apiBase = getApiBase();
+      let res;
+      try {
+        res = await fetch(`${apiBase}/api/vouchers`, { cache: 'no-store' });
+      } catch (proxyErr) {
+        res = await fetch('http://localhost:5000/api/vouchers', { cache: 'no-store' });
+      }
+
+      if (res && res.ok) {
+        liveVouchers = await res.json();
+        window.ALL_VOUCHERS = liveVouchers;
+        renderVouchersBar();
+        renderCatalogGrid();
+      }
+    } catch (e) {
+      console.warn('[Vouchers] Không thể kết nối Backend vouchers:', e.message);
+    }
+  }
+
+  // Tìm mã Voucher tối ưu nhất cho từng đôi giày
+  function getBestVoucherForProduct(shoe) {
+    if (!shoe) return null;
+    const todayStr = new Date().toISOString().split('T')[0];
+    const activeVouchers = (liveVouchers || []).filter(v => {
+      if (v.active === false) return false;
+      if (v.startDate && todayStr < v.startDate) return false;
+      if (v.endDate && todayStr > v.endDate) return false;
+      return true;
+    });
+
+    if (!activeVouchers.length) return null;
+
+    const shoeCode = (shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))).toUpperCase();
+    const shoeId = (shoe.id || '').toUpperCase();
+
+    // 1. Ưu tiên mã áp dụng riêng cho sản phẩm này
+    const specific = activeVouchers.find(v => 
+      v.applyScope === 'specific' && 
+      Array.isArray(v.applicableProductCodes) && 
+      v.applicableProductCodes.some(c => {
+        const cU = c.trim().toUpperCase();
+        return cU === shoeCode || cU === shoeId;
+      })
+    );
+    if (specific) return specific;
+
+    // 2. Tiếp theo là mã giảm giá chung cho tất cả sản phẩm (trừ FREESHIP)
+    const globalDiscounts = activeVouchers.filter(v => v.applyScope === 'all' && v.code !== 'FREESHIP');
+    if (globalDiscounts.length > 0) return globalDiscounts[0];
+
+    const freeShip = activeVouchers.find(v => v.code === 'FREESHIP');
+    return freeShip || null;
+  }
+  window.getBestVoucherForProduct = getBestVoucherForProduct;
+
+  // Render Dải Banner Voucher trên đầu Bộ Sưu Tập
+  function renderVouchersBar() {
+    const bar = document.getElementById('catalog-vouchers-bar');
+    const list = document.getElementById('catalog-vouchers-list');
+    if (!bar || !list) return;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const active = (liveVouchers || []).filter(v => {
+      if (v.active === false) return false;
+      if (v.startDate && todayStr < v.startDate) return false;
+      if (v.endDate && todayStr > v.endDate) return false;
+      return true;
+    });
+
+    if (!active.length) {
+      bar.classList.add('hidden');
+      return;
+    }
+
+    bar.classList.remove('hidden');
+    list.innerHTML = active.map(v => {
+      const isSpecific = v.applyScope === 'specific';
+      const discountTag = v.type === 'percent' ? `Giảm ${v.value}%` : `Giảm ${(v.value).toLocaleString('vi-VN')} ₫`;
+      return `
+        <div onclick="window.quickSaveVoucher('${v.code}')" class="shrink-0 bg-white hover:bg-purple-50/80 border border-purple-200 hover:border-purple-400 p-2.5 rounded-xl cursor-pointer transition-all shadow-xs flex items-center gap-2.5 group">
+          <div class="w-8 h-8 rounded-lg ${isSpecific ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700'} flex items-center justify-center font-bold text-sm shrink-0">
+            ${isSpecific ? '🎯' : '🌍'}
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="font-mono font-extrabold text-xs text-obsidian uppercase group-hover:text-purple-700">#${v.code}</span>
+              <span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 shrink-0">${discountTag}</span>
+            </div>
+            <p class="text-[10px] text-muted truncate max-w-[200px] mt-0.5">
+              ${isSpecific ? `Riêng mã: ${(v.applicableProductCodes||[]).join(', ')}` : (v.description || 'Toàn bộ sản phẩm')}
+            </p>
+          </div>
+          <button type="button" class="text-[10px] font-bold text-purple-700 bg-purple-50 group-hover:bg-purple-600 group-hover:text-white px-2 py-1 rounded-md transition-colors shrink-0">
+            Lưu
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Lưu mã nhanh cho khách
+  window.quickSaveVoucher = function (code) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).catch(() => {});
+    }
+    if (window.showToast) {
+      window.showToast(`🎉 Đã lưu mã #${code}! Mã sẽ tự động áp dụng khi thanh toán.`);
+    }
+    const input = document.getElementById('drawer-voucher-input');
+    if (input) {
+      input.value = code;
+      if (window.applyVoucherCode) window.applyVoucherCode(code, 'drawer');
+    }
+  };
+
   async function initApp() {
     // 1. Tải dữ liệu mới nhất từ Backend trước
     await loadProductsFromBackend(true);
+    await loadVouchersFromBackend();
 
     // 2. Render giao diện
     renderCategoryFilters();
@@ -90,7 +211,7 @@
     }
 
     // 5. Tự động đồng bộ thời gian thực mỗi 4 giây và khi người dùng quay lại tab
-    setInterval(() => loadProductsFromBackend(true), 4000);
+    setInterval(() => { loadProductsFromBackend(true); loadVouchersFromBackend(); }, 4000);
     window.addEventListener('focus', () => loadProductsFromBackend(false));
   }
 
@@ -193,6 +314,57 @@
         ? shoe.colors[0].photo 
         : (shoe.image || 'assets/shoes/default-shoe.png');
 
+      const v = getBestVoucherForProduct(shoe);
+      let voucherBadgeHtml = '';
+      let priceHtml = '';
+
+      if (v && v.code !== 'FREESHIP') {
+        let discount = 0;
+        let tagText = '';
+        if (v.type === 'percent') {
+          discount = Math.round((shoe.price * v.value) / 100);
+          if (v.maxDiscount && discount > v.maxDiscount) discount = v.maxDiscount;
+          tagText = `-${v.value}%`;
+        } else {
+          discount = v.value;
+          tagText = `-${Math.round(v.value / 1000)}k`;
+        }
+        if (discount > shoe.price) discount = shoe.price;
+        const discountedPrice = Math.max(0, shoe.price - discount);
+
+        voucherBadgeHtml = `
+          <div class="mt-2.5 p-2 rounded-xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 text-rose-800 flex items-center justify-between gap-1 shadow-2xs">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="text-xs">🏷️</span>
+              <span class="text-[10px] font-bold truncate">Mã <strong class="font-mono text-rose-900 bg-white/90 px-1.5 py-0.2 rounded border border-rose-300 font-black">${v.code}</strong></span>
+              <span class="text-[10px] font-black text-rose-600 shrink-0">(${tagText})</span>
+            </div>
+            <button type="button" onclick="event.stopPropagation(); window.quickSaveVoucher('${v.code}')" class="text-[10px] font-bold text-rose-700 hover:text-rose-950 underline shrink-0 cursor-pointer">
+              Lưu mã
+            </button>
+          </div>
+        `;
+
+        priceHtml = `
+          <div>
+            <p class="text-[10px] text-rose-600 uppercase font-bold flex items-center gap-1">
+              <span>Giá sau voucher</span>
+            </p>
+            <div class="flex items-baseline gap-1.5 sm:gap-2">
+              <span class="font-display font-extrabold text-base sm:text-lg text-rose-600">${discountedPrice.toLocaleString('vi-VN')} ₫</span>
+              <del class="text-xs text-muted font-normal">${shoe.price.toLocaleString('vi-VN')} ₫</del>
+            </div>
+          </div>
+        `;
+      } else {
+        priceHtml = `
+          <div>
+            <p class="text-[10px] text-muted uppercase font-medium">Giá niêm yết</p>
+            <p class="font-display font-bold text-sm sm:text-base text-obsidian">${shoe.price.toLocaleString('vi-VN')} ₫</p>
+          </div>
+        `;
+      }
+
       // Color swatches HTML
       const colorsHtml = shoe.colors && shoe.colors.length > 1 ? `
         <div class="flex items-center gap-1.5 mt-3">
@@ -232,6 +404,9 @@
 
             <!-- Color Swatches -->
             ${colorsHtml}
+
+            <!-- Active Voucher Highlight Tag on Card -->
+            ${voucherBadgeHtml}
 
             <!-- Shoe Title & Price -->
             <h3 class="font-display font-bold text-sm text-obsidian mt-2 group-hover:text-black transition-colors line-clamp-1 cursor-pointer" onclick="window.openQuickView('${shoe.id}')">
