@@ -236,8 +236,25 @@
 
     const data = window.CATALOG_DATA || [];
     const categories = getDynamicCategories();
+    const saleItems = data.filter(p => {
+      const v = getBestVoucherForProduct(p);
+      return v && v.code !== 'FREESHIP';
+    });
 
-    container.innerHTML = categories.map(cat => {
+    const saleBtnHtml = saleItems.length > 0 ? `
+      <button type="button" 
+        onclick="window.setCategory('🔥 Đang Giảm Giá')" 
+        class="cat-filter-btn px-4 py-2 rounded-full text-xs font-black tracking-wide transition-all whitespace-nowrap flex items-center gap-1.5 ${
+          activeCategory === '🔥 Đang Giảm Giá' 
+            ? 'bg-rose-600 text-white shadow-md' 
+            : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
+        }">
+        <span>🔥 Đang Giảm Giá</span>
+        <span class="px-1.5 py-0.2 rounded-full ${activeCategory === '🔥 Đang Giảm Giá' ? 'bg-white text-rose-600' : 'bg-rose-200 text-rose-900'} text-[10px] font-black">${saleItems.length}</span>
+      </button>
+    ` : '';
+
+    container.innerHTML = saleBtnHtml + categories.map(cat => {
       const count = cat === 'Tất cả' 
         ? data.length 
         : data.filter(p => (p.category || '').toLowerCase() === cat.toLowerCase()).length;
@@ -281,7 +298,12 @@
     let items = window.CATALOG_DATA || [];
 
     // Filter by Category
-    if (activeCategory !== 'Tất cả') {
+    if (activeCategory === '🔥 Đang Giảm Giá') {
+      items = items.filter(p => {
+        const v = getBestVoucherForProduct(p);
+        return v && v.code !== 'FREESHIP';
+      });
+    } else if (activeCategory !== 'Tất cả') {
       items = items.filter(p => (p.category || '').toLowerCase() === activeCategory.toLowerCase());
     }
 
@@ -315,12 +337,12 @@
         : (shoe.image || 'assets/shoes/default-shoe.png');
 
       const v = getBestVoucherForProduct(shoe);
-      let voucherBadgeHtml = '';
-      let priceHtml = '';
+      const hasSale = v && v.code !== 'FREESHIP';
+      let discount = 0;
+      let tagText = '';
+      let discountedPrice = shoe.price;
 
-      if (v && v.code !== 'FREESHIP') {
-        let discount = 0;
-        let tagText = '';
+      if (hasSale) {
         if (v.type === 'percent') {
           discount = Math.round((shoe.price * v.value) / 100);
           if (v.maxDiscount && discount > v.maxDiscount) discount = v.maxDiscount;
@@ -330,40 +352,39 @@
           tagText = `-${Math.round(v.value / 1000)}k`;
         }
         if (discount > shoe.price) discount = shoe.price;
-        const discountedPrice = Math.max(0, shoe.price - discount);
-
-        voucherBadgeHtml = `
-          <div class="mt-2.5 p-2 rounded-xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 text-rose-800 flex items-center justify-between gap-1 shadow-2xs">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <span class="text-xs">🏷️</span>
-              <span class="text-[10px] font-bold truncate">Mã <strong class="font-mono text-rose-900 bg-white/90 px-1.5 py-0.2 rounded border border-rose-300 font-black">${v.code}</strong></span>
-              <span class="text-[10px] font-black text-rose-600 shrink-0">(${tagText})</span>
-            </div>
-            <button type="button" onclick="event.stopPropagation(); window.quickSaveVoucher('${v.code}')" class="text-[10px] font-bold text-rose-700 hover:text-rose-950 underline shrink-0 cursor-pointer">
-              Lưu mã
-            </button>
-          </div>
-        `;
-
-        priceHtml = `
-          <div>
-            <p class="text-[10px] text-rose-600 uppercase font-bold flex items-center gap-1">
-              <span>Giá sau voucher</span>
-            </p>
-            <div class="flex items-baseline gap-1.5 sm:gap-2">
-              <span class="font-display font-extrabold text-base sm:text-lg text-rose-600">${discountedPrice.toLocaleString('vi-VN')} ₫</span>
-              <del class="text-xs text-muted font-normal">${shoe.price.toLocaleString('vi-VN')} ₫</del>
-            </div>
-          </div>
-        `;
-      } else {
-        priceHtml = `
-          <div>
-            <p class="text-[10px] text-muted uppercase font-medium">Giá niêm yết</p>
-            <p class="font-display font-bold text-sm sm:text-base text-obsidian">${shoe.price.toLocaleString('vi-VN')} ₫</p>
-          </div>
-        `;
+        discountedPrice = Math.max(0, shoe.price - discount);
       }
+
+      const voucherBadgeHtml = hasSale ? `
+        <div class="mt-2.5 p-2 rounded-xl bg-gradient-to-r from-rose-50 via-red-50 to-orange-50 border border-rose-200 text-rose-950 flex items-center justify-between gap-1 shadow-2xs">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+            <span class="text-[11px] font-bold text-rose-950 truncate">Mã <strong class="font-mono text-rose-700 bg-white px-1.5 py-0.5 rounded border border-rose-300 font-black">${v.code}</strong></span>
+            <span class="text-[10px] font-black text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded shrink-0">${tagText}</span>
+          </div>
+          <button type="button" onclick="event.stopPropagation(); window.quickSaveVoucher('${v.code}')" class="text-[10px] font-bold text-white bg-rose-600 hover:bg-rose-700 px-2 py-1 rounded-md transition-all shrink-0 cursor-pointer shadow-xs">
+            Lưu Mã
+          </button>
+        </div>
+      ` : '';
+
+      const priceHtml = hasSale ? `
+        <div>
+          <div class="flex items-center gap-1 text-[10px] font-bold text-rose-600 uppercase">
+            <span>Giá có voucher</span>
+            <span class="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[9px] font-black">Tiết kiệm ${(discount).toLocaleString('vi-VN')} ₫</span>
+          </div>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span class="font-display font-black text-base sm:text-lg text-rose-600">${discountedPrice.toLocaleString('vi-VN')} ₫</span>
+            <del class="text-xs text-muted font-medium">${shoe.price.toLocaleString('vi-VN')} ₫</del>
+          </div>
+        </div>
+      ` : `
+        <div>
+          <p class="text-[10px] text-muted uppercase font-medium">Giá niêm yết</p>
+          <p class="font-display font-bold text-sm sm:text-base text-obsidian">${shoe.price.toLocaleString('vi-VN')} ₫</p>
+        </div>
+      `;
 
       // Color swatches HTML
       const colorsHtml = shoe.colors && shoe.colors.length > 1 ? `
@@ -381,7 +402,7 @@
       ` : `<div class="h-6 mt-3"></div>`;
 
       return `
-        <div class="group relative bg-white border border-hairline rounded-2xl p-5 hover:border-obsidian/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between" id="card-${shoe.id}">
+        <div class="group relative bg-white ${hasSale ? 'border-rose-200 ring-1 ring-rose-100 hover:border-rose-500' : 'border-hairline hover:border-obsidian/40'} rounded-2xl p-5 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between" id="card-${shoe.id}">
           <!-- Top Badge & Category -->
           <div>
             <div class="flex items-center justify-between text-[11px] mb-3">
@@ -389,11 +410,22 @@
                 <span class="px-2 py-0.5 rounded-md bg-obsidian text-white font-mono font-bold text-[10px] tracking-wider shadow-xs" title="Mã số riêng của sản phẩm">${shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))}</span>
                 <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category || 'Sneaker'}</span>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
+              ${hasSale ? `
+                <span class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-[10px] tracking-wider uppercase shadow-xs flex items-center gap-1 animate-pulse">
+                  🔥 GIẢM ${tagText.replace('-', '')}
+                </span>
+              ` : `
+                <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
+              `}
             </div>
 
             <!-- Shoe Image Container -->
             <div class="relative w-full h-48 sm:h-52 flex items-center justify-center p-3 overflow-hidden cursor-pointer" onclick="window.openQuickView('${shoe.id}')">
+              ${hasSale ? `
+                <div class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-lg bg-rose-600 text-white font-black text-[10px] uppercase shadow-md flex items-center gap-1">
+                  <span>${tagText}</span>
+                </div>
+              ` : ''}
               <img src="${defaultPhoto}" 
                 alt="${shoe.name}" 
                 id="card-img-${shoe.id}" 
