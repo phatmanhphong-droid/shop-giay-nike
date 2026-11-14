@@ -932,23 +932,17 @@ function renderVouchers() {
           ${v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '0 ₫'}
         </td>
 
-        <!-- Cột 6: Báo Lên Web (Sale) -->
+        <!-- Cột 6: Trạng Thái (BẬT / TẮT VOUCHER) -->
         <td class="py-3 px-4 text-center">
-          <button type="button" onclick="toggleVoucherShowCatalog('${v.code}')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-2xs flex items-center justify-center gap-1 mx-auto ${
-            v.showOnCatalog 
-              ? 'bg-rose-600 text-white hover:bg-rose-700 ring-2 ring-rose-200' 
+          <button type="button" onclick="toggleVoucherActive('${v.code}')" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 mx-auto ${
+            v.active 
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200 ring-2 ring-emerald-200' 
               : 'bg-canvas hover:bg-hairline text-muted hover:text-obsidian border border-hairline'
-          }" title="Bấm để Bật hoặc Tắt việc báo giảm giá lên Bộ sưu tập">
-            <span>${v.showOnCatalog ? '📢 Đang Báo Giảm' : '🔒 Chỉ Nhập Mã'}</span>
-          </button>
-        </td>
-
-        <!-- Cột 7: Bật/Tắt Mã -->
-        <td class="py-3 px-4 text-center">
-          <button type="button" onclick="toggleVoucherActive('${v.code}')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shadow-2xs ${
-            v.active ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }" title="Bấm để kích hoạt hoặc tạm dừng mã voucher">
-            ${v.active ? '● Hoạt động' : '○ Khóa'}
+          }" title="Bấm để Bật hoặc Tắt voucher (Khi bật: ngoài web sẽ hiện giảm giá, khi tắt: ngoài web sẽ ẩn)">
+            ${v.active 
+              ? '<span class="w-2 h-2 rounded-full bg-white animate-pulse"></span><span>Đang Bật (Hiện Web)</span>' 
+              : '<span>○ Đã Tắt (Đang Ẩn)</span>'
+            }
           </button>
         </td>
 
@@ -1175,7 +1169,11 @@ async function toggleVoucherActive(code) {
     const res = await fetch(`${API_BASE}/api/vouchers/${code}/toggle-active`, { method: 'PUT' });
     const data = await res.json();
     if (data.success) {
-      showToast(`Đã ${data.voucher.active ? 'BẬT' : 'TẮT'} voucher ${code}!`);
+      if (data.voucher.active) {
+        showToast(`🟢 Đã BẬT voucher #${code}! Ngoài Frontend Bộ Sưu Tập đã hiển thị giảm giá.`);
+      } else {
+        showToast(`⚪ Đã TẮT voucher #${code}! Ngoài Frontend Bộ Sưu Tập đã ẩn giảm giá (về giá gốc).`);
+      }
       loadVouchers();
     } else {
       showToast('Lỗi: ' + data.error);

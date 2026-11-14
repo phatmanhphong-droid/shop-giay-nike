@@ -10,8 +10,7 @@
     "endDate": "2026-12-14",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true,
-    "showOnCatalog": false
+    "active": false
   },
   {
     "code": "JORDAN500K",
@@ -26,8 +25,7 @@
     "applicableProductCodes": [
       "NK-01"
     ],
-    "active": true,
-    "showOnCatalog": false
+    "active": false
   },
   {
     "code": "AIRFORCE15",
@@ -42,8 +40,7 @@
     "applicableProductCodes": [
       "NK-02"
     ],
-    "active": true,
-    "showOnCatalog": false
+    "active": false
   },
   {
     "code": "NIKE10",
@@ -56,8 +53,7 @@
     "endDate": "2026-12-31",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true,
-    "showOnCatalog": false
+    "active": false
   },
   {
     "code": "FREESHIP",
@@ -70,7 +66,6 @@
     "endDate": "2026-12-31",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true,
-    "showOnCatalog": false
+    "active": false
   }
 ]

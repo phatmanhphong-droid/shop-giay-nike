@@ -94,28 +94,28 @@
     }
   }
 
-  // Tìm mã giảm giá được ADMIN BÁO LÊN GIẢM (showOnCatalog === true)
+  // Tìm mã giảm giá đang BẬT bên Admin (v.active === true)
+  // Khi Admin BẬT voucher -> Frontend sẽ BẬT hiển thị giảm giá
+  // Khi Admin TẮT voucher -> Frontend sẽ TẮT và KHÔNG HIỆN giảm giá nữa (về giá gốc)
   function getBestVoucherForProduct(shoe) {
     if (!shoe) return null;
     const todayStr = new Date().toISOString().split('T')[0];
     
-    // CHỈ LẤY CÁC MÃ ĐƯỢC ADMIN BÁO LÊN GIẢM (showOnCatalog === true)
-    // Các mã giảm giá nhập tay thông thường (showOnCatalog !== true) sẽ KHÔNG hiện lên web
-    const activeSaleVouchers = (liveVouchers || []).filter(v => {
-      if (v.active === false) return false;
-      if (v.showOnCatalog !== true) return false; // <<<< CHỈ KHI ADMIN BÁO LÊN GIẢM THÌ MỚI HIỆN
+    // CHỈ LẤY CÁC VOUCHER ĐANG BẬT (active === true) VÀ TRONG THỜI HẠN
+    const activeVouchers = (liveVouchers || []).filter(v => {
+      if (v.active !== true) return false; // <<<< ADMIN TẮT THÌ KHÔNG HIỆN!
       if (v.startDate && todayStr < v.startDate) return false;
       if (v.endDate && todayStr > v.endDate) return false;
       return true;
     });
 
-    if (!activeSaleVouchers.length) return null;
+    if (!activeVouchers.length) return null;
 
     const shoeCode = (shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))).toUpperCase();
     const shoeId = (shoe.id || '').toUpperCase();
 
-    // 1. Ưu tiên mã được Admin báo giảm riêng cho sản phẩm này
-    const specific = activeSaleVouchers.find(v => 
+    // 1. Ưu tiên mã voucher áp dụng riêng cho sản phẩm này
+    const specific = activeVouchers.find(v => 
       v.applyScope === 'specific' && 
       Array.isArray(v.applicableProductCodes) && 
       v.applicableProductCodes.some(c => {
@@ -125,8 +125,8 @@
     );
     if (specific) return specific;
 
-    // 2. Tiếp theo là chương trình giảm giá toàn sàn mà Admin chủ động Báo Lên Web
-    const globalDiscounts = activeSaleVouchers.filter(v => v.applyScope === 'all' && v.code !== 'FREESHIP');
+    // 2. Nếu không có mã riêng, kiểm tra mã voucher toàn bộ sản phẩm đang BẬT
+    const globalDiscounts = activeVouchers.filter(v => v.applyScope === 'all' && v.code !== 'FREESHIP');
     if (globalDiscounts.length > 0) return globalDiscounts[0];
 
     return null;
@@ -141,8 +141,7 @@
 
     const todayStr = new Date().toISOString().split('T')[0];
     const active = (liveVouchers || []).filter(v => {
-      if (v.active === false) return false;
-      if (v.showOnCatalog !== true) return false; // Chỉ hiện mã Admin báo lên web
+      if (v.active !== true) return false; // Admin BẬT thì mới hiện trên banner
       if (v.startDate && todayStr < v.startDate) return false;
       if (v.endDate && todayStr > v.endDate) return false;
       return true;
