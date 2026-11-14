@@ -468,6 +468,9 @@
           </div>
 
           <div class="flex items-center gap-2">
+            <button type="button" onclick="openAddProductModal()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5">
+              <span>➕ Thêm Mẫu Mới Vào Kho</span>
+            </button>
             <button type="button" onclick="switchTab('inventory')" class="px-3.5 py-2 rounded-xl bg-canvas hover:bg-hairline text-obsidian font-bold text-xs border border-hairline transition-all flex items-center gap-1.5">
               <span>Xem Toàn Bộ Kho Hàng &rarr;</span>
             </button>
@@ -852,6 +855,10 @@
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             <span>Làm Mới</span>
           </button>
+          <button type="button" onclick="openAddProductModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span>➕ Thêm Mẫu Mới Vào Kho</span>
+          </button>
           <a href="/api/inventory/export-csv" class="px-4 py-2 rounded-xl bg-obsidian hover:bg-black text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             <span>📥 Xuất Báo Cáo Kho (Excel / CSV)</span>
@@ -1176,8 +1183,19 @@
             </select>
           </div>
           <div>
-            <label class="block font-semibold text-obsidian mb-1">Giá bán (VNĐ) <span class="text-rose-500">*</span></label>
+            <label class="block font-semibold text-obsidian mb-1">Giá bán lẻ (VNĐ) <span class="text-rose-500">*</span></label>
             <input type="number" id="new-prod-price" placeholder="4990000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-bold">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Giá vốn nhập kho (VNĐ) <span class="text-rose-500">*</span></label>
+            <input type="number" id="new-prod-cost-price" placeholder="Ví dụ: 2750000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-mono font-bold text-obsidian">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Số lượng nhập kho ban đầu (đôi) <span class="text-rose-500">*</span></label>
+            <input type="number" id="new-prod-initial-stock" value="30" placeholder="30" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian font-bold">
           </div>
           <div>
             <label class="block font-semibold text-obsidian mb-1">Huy hiệu</label>

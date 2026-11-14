@@ -659,8 +659,36 @@
     ],
     "code": "NK-24",
     "costPrice": 0,
-    "initialStock": 80,
+    "initialStock": 100,
     "sold": 11,
-    "stock": 69
+    "stock": 89
+  },
+  {
+    "name": "Nike Air Jordan 3 Retro Reimagined",
+    "series": "JORDAN BRAND • RETRO CLASSIC",
+    "category": "Jordan",
+    "price": 4990000,
+    "badge": "Mới về kho",
+    "description": "Huyền thoại Air Jordan 3 kinh điển với họa tiết vân voi Elephant Print đặc trưng cùng đệm khí Air êm ái.",
+    "image": "assets/shoes/t_i_xu_ng.jfif",
+    "specs": [
+      "Chất liệu da bò thật cao cấp đục lỗ thoáng khí",
+      "Họa tiết vân voi Elephant Print biểu tượng kinh điển",
+      "Túi đệm khí Nike Air nhìn thấy được tại gót chân",
+      "Cổ giày đệm mút bảo vệ mắt cá chân vận động êm ái"
+    ],
+    "colors": [
+      {
+        "name": "White Cement",
+        "hex": "#E5E7EB",
+        "photo": "assets/shoes/t_i_xu_ng.jfif"
+      }
+    ],
+    "id": "nike-24",
+    "stock": 25,
+    "initialStock": 25,
+    "code": "NK-24",
+    "costPrice": 2750000,
+    "sold": 0
   }
 ]

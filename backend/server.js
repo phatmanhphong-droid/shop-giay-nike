@@ -307,6 +307,14 @@ const server = http.createServer((req, res) => {
         }
 
         product.price = parseInt(product.price, 10) || 2990000;
+        if (!product.code) {
+          const num = product.id.replace('nike-', '');
+          product.code = `NK-${num.padStart(2, '0')}`;
+        }
+        product.costPrice = parseInt(product.costPrice, 10) || Math.round(product.price * 0.55);
+        product.stock = parseInt(product.stock, 10) || 20;
+        product.initialStock = parseInt(product.initialStock, 10) || product.stock;
+        product.sold = parseInt(product.sold, 10) || 0;
         product.colors = product.colors && product.colors.length ? product.colors : [
           { name: 'Mặc định', hex: '#111111', photo: product.image || 'assets/shoes/airforce1-white.png' }
         ];

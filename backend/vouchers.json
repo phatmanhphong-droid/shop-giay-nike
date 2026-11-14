@@ -4,12 +4,72 @@
     "description": "Toàn bộ sản phẩm - Giảm 50% (Tối đa 2.000.000 ₫)",
     "type": "percent",
     "value": 50,
-    "minOrder": 3,
+    "minOrder": 0,
     "maxDiscount": 2000000,
-    "startDate": "2026-11-14",
-    "endDate": "2026-12-14",
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": false
+    "active": true,
+    "showOnCatalog": true
+  },
+  {
+    "code": "NIKE10",
+    "description": "Giảm 10% tổng đơn hàng (Tối đa 500.000 ₫)",
+    "type": "percent",
+    "value": 10,
+    "minOrder": 1000000,
+    "maxDiscount": 500000,
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
+    "applyScope": "all",
+    "applicableProductCodes": [],
+    "active": true,
+    "showOnCatalog": false
+  },
+  {
+    "code": "FREESHIP",
+    "description": "Miễn phí vận chuyển toàn quốc (-50.000 ₫)",
+    "type": "fixed",
+    "value": 50000,
+    "minOrder": 0,
+    "maxDiscount": 0,
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
+    "applyScope": "all",
+    "applicableProductCodes": [],
+    "active": true,
+    "showOnCatalog": false
+  },
+  {
+    "code": "WELCOME2026",
+    "description": "Ưu đãi năm mới 2026 - Giảm ngay 200.000 ₫ cho đơn từ 2.000.000 ₫",
+    "type": "fixed",
+    "value": 200000,
+    "minOrder": 2000000,
+    "maxDiscount": 0,
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
+    "applyScope": "all",
+    "applicableProductCodes": [],
+    "active": true,
+    "showOnCatalog": false
+  },
+  {
+    "code": "JORDAN500K",
+    "description": "Giảm ngay 500.000 ₫ cho các dòng Air Jordan",
+    "type": "fixed",
+    "value": 500000,
+    "minOrder": 3000000,
+    "maxDiscount": 0,
+    "startDate": "2026-01-01",
+    "endDate": "2026-12-31",
+    "applyScope": "specific",
+    "applicableProductCodes": [
+      "NK-01",
+      "NK-02"
+    ],
+    "active": true,
+    "showOnCatalog": false
   }
 ]

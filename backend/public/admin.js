@@ -264,6 +264,8 @@ async function deleteOrder(orderId) {
     if (data.success) {
       showToast(`Đã xóa đơn hàng #${orderId}!`);
       loadDashboardData();
+      loadInventoryData();
+      loadDashboardAllData();
     } else {
       showToast('Lỗi: ' + data.error);
     }
@@ -562,12 +564,19 @@ async function submitNewProduct() {
       }
     }
 
+    const costPrice = parseInt(document.getElementById('new-prod-cost-price')?.value, 10) || Math.round(price * 0.55);
+    const stock = parseInt(document.getElementById('new-prod-initial-stock')?.value, 10) || 30;
+
     // 2. Tạo sản phẩm
     const newProduct = {
       name,
       series,
       category,
       price,
+      costPrice,
+      stock,
+      initialStock: stock,
+      sold: 0,
       badge,
       description: desc,
       image: imageUrl,
