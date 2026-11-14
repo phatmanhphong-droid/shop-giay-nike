@@ -1,0 +1,14 @@
+[
+  {
+    "id": "RESTOCK-1794647255385",
+    "productId": "nike-08",
+    "productCode": "NK-08",
+    "productName": "Nike ZoomX Vaporfly NEXT% 3",
+    "addedQty": 15,
+    "previousStock": 3,
+    "newStock": 18,
+    "costPrice": 3650000,
+    "note": "Test restock for AF1 LV8",
+    "timestamp": "2026-11-14T09:07:35.385Z"
+  }
+]

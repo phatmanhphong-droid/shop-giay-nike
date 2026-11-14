@@ -814,7 +814,7 @@ async function loadSystemHealth() {
 }
 
 function switchTab(tabName) {
-  const tabs = ['orders', 'products', 'vouchers', 'settings', 'system'];
+  const tabs = ['orders', 'products', 'vouchers', 'finance', 'inventory', 'settings', 'system'];
   tabs.forEach(t => {
     const section = document.getElementById(`tab-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -828,6 +828,9 @@ function switchTab(tabName) {
       btn?.classList.remove('bg-obsidian', 'text-white', 'shadow-sm');
     }
   });
+
+  if (tabName === 'finance') loadFinanceData();
+  if (tabName === 'inventory') loadInventoryData();
 }
 
 // ==========================================================================
@@ -1410,8 +1413,14 @@ window.addEventListener('DOMContentLoaded', () => {
   loadVouchers();
   loadTelegramConfig();
   loadNotificationConfig();
+  loadFinanceData();
+  loadInventoryData();
   // Poll every 10 seconds for real-time updates (silently, without toast error)
-  setInterval(() => loadDashboardData(false), 10000);
+  setInterval(() => {
+    loadDashboardData(false);
+    loadFinanceData(false);
+    loadInventoryData(false);
+  }, 10000);
 });
 
 
@@ -1439,4 +1448,494 @@ Em nhắn tin qua Zalo để gửi ảnh thật giày và gửi mã vận đơn 
 
   const cleanPhone = cust.phone.replace(/[^0-9]/g, '');
   window.open(`https://zalo.me/${cleanPhone}`, '_blank');
+}
+
+
+// ==========================================================================
+// FEATURE 5: FINANCE DASHBOARD, BAR CHARTS, TAX CALCULATION & INVENTORY
+// ==========================================================================
+
+let financeStatsCache = null;
+
+async function loadFinanceData(isManual = false) {
+  try {
+    const res = await fetch(`${API_BASE}/api/finance/stats`);
+    if (!res.ok) throw new Error('Không thể tải thống kê tài chính');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Dữ liệu không hợp lệ');
+
+    financeStatsCache = data;
+    renderFinanceSummary(data.summary);
+    renderFinanceBarChart(data.dailyBars);
+
+    if (isManual) showToast('Đã làm mới báo cáo doanh thu & tài chính thành công!');
+  } catch (err) {
+    console.warn('[Finance Load Error]', err.message);
+    if (isManual) showToast('Lỗi tải dữ liệu tài chính: ' + err.message);
+  }
+}
+
+function renderFinanceSummary(sum) {
+  if (!sum) return;
+
+  const revEl = document.getElementById('finance-gross-revenue');
+  const ordText = document.getElementById('finance-orders-count-text');
+  const cogsEl = document.getElementById('finance-total-cogs');
+  const cogsMarginText = document.getElementById('finance-cogs-margin-text');
+  const taxEl = document.getElementById('finance-estimated-tax');
+  const taxRateText = document.getElementById('finance-tax-rate-text');
+  const profitEl = document.getElementById('finance-net-profit');
+  const netMarginText = document.getElementById('finance-net-margin-text');
+
+  if (revEl) revEl.textContent = (sum.grossRevenue || 0).toLocaleString('vi-VN') + ' ₫';
+  if (ordText) ordText.textContent = `${sum.validOrdersCount || 0} đơn hàng thành công (${sum.totalItemsSold || 0} đôi)`;
+
+  if (cogsEl) cogsEl.textContent = (sum.totalCOGS || 0).toLocaleString('vi-VN') + ' ₫';
+  const cogsPct = sum.grossRevenue > 0 ? (((sum.totalCOGS || 0) / sum.grossRevenue) * 100).toFixed(1) : '0';
+  if (cogsMarginText) cogsMarginText.textContent = `Chiếm ${cogsPct}% trên tổng doanh thu`;
+
+  if (taxEl) taxEl.textContent = (sum.estimatedTax || 0).toLocaleString('vi-VN') + ' ₫';
+  if (taxRateText) taxRateText.textContent = sum.taxFormula || 'Thuế TMĐT 1.5%';
+
+  if (profitEl) profitEl.textContent = (sum.netProfit || 0).toLocaleString('vi-VN') + ' ₫';
+  if (netMarginText) netMarginText.textContent = `Tỷ suất sinh lời: ${sum.netMargin || 0}% sau thuế`;
+
+  // Populate Tax Inputs if present
+  const cfg = sum.financeConfig || {};
+  const radIndiv = document.querySelector('input[name="tax-business-type"][value="individual"]');
+  const radCorp = document.querySelector('input[name="tax-business-type"][value="corporate"]');
+  if (cfg.businessType === 'corporate' && radCorp) {
+    radCorp.checked = true;
+  } else if (radIndiv) {
+    radIndiv.checked = true;
+  }
+  toggleTaxModeUI();
+
+  const taxInput = document.getElementById('tax-rate-input');
+  if (taxInput && cfg.taxRate !== undefined) taxInput.value = cfg.taxRate;
+
+  const vatInput = document.getElementById('tax-vat-rate-input');
+  if (vatInput && cfg.vatRate !== undefined) vatInput.value = cfg.vatRate;
+
+  const citInput = document.getElementById('tax-cit-rate-input');
+  if (citInput && cfg.citRate !== undefined) citInput.value = cfg.citRate;
+
+  updateFormulaPreview();
+}
+
+function renderFinanceBarChart(dailyBars) {
+  const chartContainer = document.getElementById('finance-bar-chart');
+  if (!chartContainer) return;
+
+  if (!dailyBars || !Array.isArray(dailyBars) || dailyBars.length === 0) {
+    chartContainer.innerHTML = `<div class="text-center w-full py-16 text-muted text-xs">Chưa có dữ liệu giao dịch trong 7 ngày gần nhất</div>`;
+    return;
+  }
+
+  // Find max revenue among all days to scale height
+  const maxRevenue = Math.max(...dailyBars.map(d => d.revenue || 0), 1000000);
+
+  let html = '';
+  dailyBars.forEach(d => {
+    const rev = d.revenue || 0;
+    const profit = Math.max(0, d.profit || 0);
+    const cogs = d.cogs || 0;
+
+    // Height percentage relative to max (min 6% for visibility if 0)
+    const revHeightPct = Math.max(rev > 0 ? Math.round((rev / maxRevenue) * 92) : 4, 4);
+    const profitHeightPct = Math.max(profit > 0 ? Math.round((profit / maxRevenue) * 92) : 2, 2);
+
+    html += `
+      <div class="flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer">
+        <!-- Interactive Floating Tooltip -->
+        <div class="absolute -top-28 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-30 bg-obsidian text-white text-[11px] rounded-xl px-3.5 py-2.5 shadow-xl whitespace-nowrap min-w-[170px] space-y-1">
+          <div class="font-bold border-b border-white/10 pb-1 text-center text-slate-300">
+            ${d.dayName} (${d.displayDate})
+          </div>
+          <div class="flex items-center justify-between text-slate-200">
+            <span>Doanh thu:</span>
+            <span class="font-bold text-white">${rev.toLocaleString('vi-VN')} ₫</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Giá vốn:</span>
+            <span>${cogs.toLocaleString('vi-VN')} ₫</span>
+          </div>
+          <div class="flex items-center justify-between text-emerald-400 font-bold border-t border-white/10 pt-1">
+            <span>Lợi nhuận:</span>
+            <span>${profit.toLocaleString('vi-VN')} ₫</span>
+          </div>
+          <div class="text-[9px] text-slate-400 text-center pt-0.5">
+            ${d.ordersCount || 0} đơn hàng
+          </div>
+        </div>
+
+        <!-- Bar Pair (Revenue & Profit) -->
+        <div class="w-full flex items-end justify-center gap-1 sm:gap-2 h-48 border-b border-hairline pb-1 px-1">
+          <!-- Revenue Bar (Obsidian) -->
+          <div class="w-1/2 max-w-[28px] rounded-t-lg bg-obsidian group-hover:bg-black transition-all relative" style="height: ${revHeightPct}%;">
+            ${rev > 0 ? `<span class="hidden sm:block absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-bold text-obsidian whitespace-nowrap">${Math.round(rev / 1000000 * 10) / 10}M</span>` : ''}
+          </div>
+          <!-- Profit Bar (Emerald) -->
+          <div class="w-1/2 max-w-[28px] rounded-t-lg bg-emerald-500 group-hover:bg-emerald-600 transition-all relative" style="height: ${profitHeightPct}%;">
+          </div>
+        </div>
+
+        <!-- Date Label -->
+        <div class="pt-2 text-center">
+          <span class="block text-xs font-bold ${d.dayName === 'Hôm nay' ? 'text-blue-600' : 'text-obsidian'}">${d.dayName}</span>
+          <span class="block text-[10px] text-muted">${d.displayDate}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  chartContainer.innerHTML = html;
+}
+
+// TAX SETTINGS & PLANNING
+function toggleTaxModeUI() {
+  const selectedType = document.querySelector('input[name="tax-business-type"]:checked')?.value || 'individual';
+  const indivBox = document.getElementById('tax-individual-fields');
+  const corpBox = document.getElementById('tax-corporate-fields');
+
+  if (selectedType === 'corporate') {
+    indivBox?.classList.add('hidden');
+    corpBox?.classList.remove('hidden');
+  } else {
+    indivBox?.classList.remove('hidden');
+    corpBox?.classList.add('hidden');
+  }
+  updateFormulaPreview();
+}
+
+function setQuickTaxRate(rate) {
+  const input = document.getElementById('tax-rate-input');
+  if (input) {
+    input.value = rate;
+    updateFormulaPreview();
+  }
+}
+
+function updateFormulaPreview() {
+  const selectedType = document.querySelector('input[name="tax-business-type"]:checked')?.value || 'individual';
+  const formulaEl = document.getElementById('finance-formula-preview');
+  if (!formulaEl) return;
+
+  if (selectedType === 'corporate') {
+    const vat = document.getElementById('tax-vat-rate-input')?.value || '8';
+    const cit = document.getElementById('tax-cit-rate-input')?.value || '20';
+    formulaEl.textContent = `= (Doanh Thu x ${vat}%) + (Lợi Nhuận x ${cit}%)`;
+  } else {
+    const rate = document.getElementById('tax-rate-input')?.value || '1.5';
+    formulaEl.textContent = `= Doanh Thu x ${rate}%`;
+  }
+}
+
+async function saveTaxConfig() {
+  const businessType = document.querySelector('input[name="tax-business-type"]:checked')?.value || 'individual';
+  const taxRate = parseFloat(document.getElementById('tax-rate-input')?.value || '1.5');
+  const vatRate = parseFloat(document.getElementById('tax-vat-rate-input')?.value || '8');
+  const citRate = parseFloat(document.getElementById('tax-cit-rate-input')?.value || '20');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/finance/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessType, taxRate, vatRate, citRate })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Đã lưu cấu hình thuế kinh doanh thành công!');
+      loadFinanceData();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể lưu thuế'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+// ==========================================================================
+// INVENTORY CONTROLLER & RESTOCK MODAL
+// ==========================================================================
+
+let allInventoryProducts = [];
+let filteredInventoryProducts = [];
+let currentInventorySearch = '';
+let currentInventoryStatus = 'all';
+let currentRestockProductId = null;
+
+async function loadInventoryData(isManual = false) {
+  try {
+    const res = await fetch(`${API_BASE}/api/products`);
+    if (!res.ok) throw new Error('Không thể tải danh sách kho hàng');
+    allInventoryProducts = await res.json();
+
+    updateInventoryStats();
+    applyInventoryFilters();
+
+    if (isManual) showToast('Đã làm mới dữ liệu kho hàng thành công!');
+  } catch (err) {
+    console.warn('[Inventory Load Error]', err.message);
+    if (isManual) showToast('Lỗi tải dữ liệu kho: ' + err.message);
+  }
+}
+
+function updateInventoryStats() {
+  let totalStockUnits = 0;
+  let totalStockValue = 0;
+  let totalSold = 0;
+  let lowStockCount = 0;
+
+  allInventoryProducts.forEach(p => {
+    const stock = p.stock || 0;
+    const cost = p.costPrice || 0;
+    totalStockUnits += stock;
+    totalStockValue += stock * cost;
+    totalSold += (p.sold || 0);
+    if (stock < 5) lowStockCount++;
+  });
+
+  const modelsEl = document.getElementById('inv-total-models');
+  const stockEl = document.getElementById('inv-total-stock');
+  const soldText = document.getElementById('inv-total-sold-text');
+  const valEl = document.getElementById('inv-total-stock-value');
+  const lowEl = document.getElementById('inv-low-stock-count');
+  const lowPill = document.getElementById('inventory-low-stock-pill');
+  const alertBadge = document.getElementById('tab-inventory-alert-badge');
+
+  if (modelsEl) modelsEl.textContent = allInventoryProducts.length;
+  if (stockEl) stockEl.textContent = totalStockUnits.toLocaleString('vi-VN') + ' đôi';
+  if (soldText) soldText.textContent = `Đã bán ${totalSold.toLocaleString('vi-VN')} đôi giày`;
+  if (valEl) valEl.textContent = totalStockValue.toLocaleString('vi-VN') + ' ₫';
+  if (lowEl) lowEl.textContent = lowStockCount;
+
+  if (lowStockCount > 0) {
+    lowPill?.classList.remove('hidden');
+    lowPill?.classList.add('inline-block');
+    alertBadge?.classList.remove('hidden');
+    alertBadge?.classList.add('inline-block');
+  } else {
+    lowPill?.classList.add('hidden');
+    alertBadge?.classList.add('hidden');
+  }
+}
+
+function handleSearchInventory(query) {
+  currentInventorySearch = query.trim().toLowerCase();
+  applyInventoryFilters();
+}
+
+function handleFilterInventory(status) {
+  currentInventoryStatus = status;
+  applyInventoryFilters();
+}
+
+function applyInventoryFilters() {
+  filteredInventoryProducts = allInventoryProducts.filter(p => {
+    const codeMatch = (p.code || '').toLowerCase().includes(currentInventorySearch);
+    const nameMatch = (p.name || '').toLowerCase().includes(currentInventorySearch);
+    const catMatch = (p.category || '').toLowerCase().includes(currentInventorySearch);
+    const matchesSearch = !currentInventorySearch || codeMatch || nameMatch || catMatch;
+
+    const stock = p.stock || 0;
+    let matchesStatus = true;
+    if (currentInventoryStatus === 'low') matchesStatus = stock > 0 && stock < 5;
+    else if (currentInventoryStatus === 'normal') matchesStatus = stock >= 10;
+    else if (currentInventoryStatus === 'out') matchesStatus = stock === 0;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  renderInventoryTable();
+}
+
+function renderInventoryTable() {
+  const tbody = document.getElementById('inventory-table-body');
+  if (!tbody) return;
+
+  if (filteredInventoryProducts.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center py-12 text-muted text-xs">
+          Không tìm thấy mẫu giày nào phù hợp với bộ lọc tìm kiếm.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filteredInventoryProducts.map(p => {
+    const stock = p.stock || 0;
+    const cost = p.costPrice || 0;
+    const totalVal = stock * cost;
+
+    let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    let badgeText = `● Còn ${stock} đôi`;
+    if (stock === 0) {
+      badgeClass = 'bg-rose-100 text-rose-800 border-rose-300 font-bold animate-pulse';
+      badgeText = '🔴 HẾT HÀNG';
+    } else if (stock < 5) {
+      badgeClass = 'bg-amber-100 text-amber-900 border-amber-300 font-bold';
+      badgeText = `⚠️ Sắp hết (${stock} đôi)`;
+    }
+
+    return `
+      <tr class="hover:bg-canvas/40 transition-colors">
+        <td class="py-3 px-4 text-center font-mono font-bold text-obsidian text-xs">
+          <span class="inline-block px-2 py-0.5 rounded-md bg-canvas border border-hairline">${p.code || 'NK'}</span>
+        </td>
+
+        <td class="py-3 px-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-canvas border border-hairline overflow-hidden p-1 shrink-0 flex items-center justify-center">
+              <img src="${p.image}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.src='assets/shoes/airforce1-white.png'">
+            </div>
+            <div>
+              <p class="font-bold text-obsidian line-clamp-1">${p.name}</p>
+              <p class="text-[10px] text-muted">${p.series || 'Nike Collection'}</p>
+            </div>
+          </div>
+        </td>
+
+        <td class="py-3 px-4 text-center">
+          <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-canvas text-muted border border-hairline">
+            ${p.category || 'Sneaker'}
+          </span>
+        </td>
+
+        <td class="py-3 px-4 text-right font-display font-semibold text-obsidian">
+          ${(p.price || 0).toLocaleString('vi-VN')} ₫
+        </td>
+
+        <td class="py-3 px-4 text-right font-mono text-muted font-medium">
+          ${cost.toLocaleString('vi-VN')} ₫
+        </td>
+
+        <td class="py-3 px-4 text-center font-bold text-blue-600">
+          ${p.sold || 0}
+        </td>
+
+        <td class="py-3 px-4 text-center">
+          <span class="inline-block px-2.5 py-1 rounded-full text-[11px] border ${badgeClass}">
+            ${badgeText}
+          </span>
+        </td>
+
+        <td class="py-3 px-4 text-right font-mono font-bold text-obsidian">
+          ${totalVal.toLocaleString('vi-VN')} ₫
+        </td>
+
+        <td class="py-3 px-4 text-center">
+          <button type="button" onclick="openRestockModal('${p.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition-colors flex items-center gap-1 mx-auto shadow-sm">
+            <span>➕</span>
+            <span>Nhập Hàng</span>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// RESTOCK MODAL FUNCTIONS
+function openRestockModal(productId) {
+  const p = allInventoryProducts.find(x => x.id === productId);
+  if (!p) return;
+
+  currentRestockProductId = p.id;
+  const codeEl = document.getElementById('restock-prod-code');
+  const nameEl = document.getElementById('restock-prod-name');
+  const stockEl = document.getElementById('restock-current-stock');
+  const qtyInput = document.getElementById('restock-qty-input');
+  const costInput = document.getElementById('restock-cost-input');
+  const noteInput = document.getElementById('restock-note-input');
+
+  if (codeEl) codeEl.textContent = p.code || 'NK';
+  if (nameEl) nameEl.textContent = p.name;
+  if (stockEl) stockEl.textContent = `${p.stock || 0} đôi`;
+  if (qtyInput) qtyInput.value = '20';
+  if (costInput) costInput.value = p.costPrice || '';
+  if (noteInput) noteInput.value = `Nhập thêm lô hàng mới cho ${p.name}`;
+
+  const modal = document.getElementById('restock-modal');
+  if (modal) {
+    modal.classList.remove('pointer-events-none', 'opacity-0');
+    modal.classList.add('opacity-100');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      if (qtyInput) {
+        qtyInput.focus();
+        qtyInput.select();
+      }
+    }, 150);
+  }
+}
+
+function closeRestockModal() {
+  const modal = document.getElementById('restock-modal');
+  if (!modal) return;
+  modal.classList.remove('opacity-100');
+  modal.classList.add('opacity-0');
+  setTimeout(() => {
+    modal.classList.add('pointer-events-none');
+    document.body.style.overflow = '';
+  }, 250);
+}
+
+function setRestockQuickQty(qty) {
+  const input = document.getElementById('restock-qty-input');
+  if (input) input.value = qty;
+}
+
+async function submitRestock() {
+  if (!currentRestockProductId) return;
+
+  const qtyInput = document.getElementById('restock-qty-input');
+  const costInput = document.getElementById('restock-cost-input');
+  const noteInput = document.getElementById('restock-note-input');
+  const btn = document.getElementById('btn-submit-restock');
+  const btnText = document.getElementById('btn-submit-restock-text');
+
+  const addStock = parseInt(qtyInput ? qtyInput.value : 0, 10);
+  const newCostPrice = parseInt(costInput ? costInput.value : 0, 10) || null;
+  const note = noteInput ? noteInput.value.trim() : '';
+
+  if (!addStock || isNaN(addStock) || addStock <= 0) {
+    showToast('Vui lòng nhập số lượng đôi cần nhập lớn hơn 0!');
+    if (qtyInput) qtyInput.focus();
+    return;
+  }
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = 'Đang xử lý nhập kho...';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/inventory/restock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: currentRestockProductId,
+        addStock,
+        newCostPrice,
+        note
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`🎉 Đã nhập thêm +${addStock} đôi cho ${data.product.name}! Tồn kho mới: ${data.product.stock} đôi.`);
+      closeRestockModal();
+      await Promise.all([
+        loadInventoryData(),
+        loadDashboardData(),
+        loadFinanceData()
+      ]);
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể nhập hàng'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối máy chủ: ' + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = 'Xác Nhận Nhập Kho';
+  }
 }

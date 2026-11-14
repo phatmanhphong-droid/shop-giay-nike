@@ -12,6 +12,8 @@ const VOUCHERS_FILE = path.join(__dirname, 'vouchers.json');
 const REVIEWS_FILE = path.join(__dirname, 'reviews.json');
 const TELEGRAM_FILE = path.join(__dirname, 'telegram.json');
 const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
+const FINANCE_FILE = path.join(__dirname, 'finance.json');
+const RESTOCK_LOG_FILE = path.join(__dirname, 'restock-history.json');
 const SHOES_ASSETS_DIR = path.join(__dirname, '..', 'frontend', 'assets', 'shoes');
 const BACKEND_UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 
@@ -435,6 +437,27 @@ const server = http.createServer((req, res) => {
         let orders = readJSON(ORDERS_FILE, []);
         orders.unshift(order);
         writeJSON(ORDERS_FILE, orders);
+
+        // Tự động trừ tồn kho và tăng số lượng đã bán
+        try {
+          const products = readJSON(PRODUCTS_FILE, []);
+          let prodUpdated = false;
+          if (Array.isArray(order.items)) {
+            order.items.forEach(it => {
+              const qty = parseInt(it.qty, 10) || 1;
+              const p = products.find(prod => prod.id === it.id || prod.code === it.code || prod.name === it.name);
+              if (p) {
+                p.stock = Math.max(0, (p.stock || 0) - qty);
+                p.sold = (p.sold || 0) + qty;
+                it.costPrice = it.costPrice || p.costPrice || Math.round((p.price || 0) * 0.55);
+                prodUpdated = true;
+              }
+            });
+          }
+          if (prodUpdated) writeJSON(PRODUCTS_FILE, products);
+        } catch (stockErr) {
+          console.warn('[Stock Deduct Error]', stockErr.message);
+        }
 
         console.log(`[Order API] Đơn mới: #${order.orderId} - Khách: ${order.customer ? order.customer.fullname : 'N/A'}`);
         
@@ -963,6 +986,337 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: false, error: err.message }));
       }
     });
+    return;
+  }
+
+  
+  // =========================================================================
+  // FEATURE 5: DOANH THU, BIỂU ĐỒ CỘT, THUẾ MÁ & QUẢN LÝ KHO HÀNG
+  // =========================================================================
+
+  // API F1: GET FINANCE STATS & DAILY CHART (GET /api/finance/stats)
+  if (req.method === 'GET' && cleanUrl === '/api/finance/stats') {
+    const orders = readJSON(ORDERS_FILE, []);
+    const products = readJSON(PRODUCTS_FILE, []);
+    const financeConfig = readJSON(FINANCE_FILE, {
+      businessType: 'individual',
+      businessTypeName: 'Hộ Kinh Doanh Cá Thể (Thương Mại Điện Tử)',
+      taxRate: 1.5,
+      vatRate: 8,
+      citRate: 20
+    });
+
+    let grossRevenue = 0;
+    let totalCOGS = 0;
+    let validOrdersCount = 0;
+    let totalItemsSold = 0;
+
+    // Daily breakdown for the last 7 days
+    const dailyMap = {};
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const ymd = d.toISOString().split('T')[0];
+      const dParts = ymd.split('-');
+      const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+      const dayName = i === 0 ? 'Hôm nay' : dayNames[d.getDay()];
+      dailyMap[ymd] = {
+        date: ymd,
+        dayName: dayName,
+        displayDate: `${dParts[2]}/${dParts[1]}`,
+        revenue: 0,
+        cogs: 0,
+        profit: 0,
+        ordersCount: 0
+      };
+    }
+
+    orders.forEach(order => {
+      // Exclude cancelled orders
+      const st = (order.status || '').toLowerCase();
+      if (st.includes('hủy') || st.includes('cancel')) return;
+
+      validOrdersCount++;
+      const rev = order.totalAmount || 0;
+      grossRevenue += rev;
+
+      let orderCOGS = 0;
+      (order.items || []).forEach(it => {
+        const qty = parseInt(it.qty, 10) || 1;
+        totalItemsSold += qty;
+        const p = products.find(prod => prod.id === it.id || prod.code === it.code || prod.name === it.name);
+        const cost = (p && p.costPrice) ? p.costPrice : (it.costPrice || Math.round((it.price || 0) * 0.55));
+        orderCOGS += cost * qty;
+      });
+      totalCOGS += orderCOGS;
+
+      // Group into daily series
+      const orderDate = (order.createdAt || '').split('T')[0];
+      if (dailyMap[orderDate]) {
+        dailyMap[orderDate].revenue += rev;
+        dailyMap[orderDate].cogs += orderCOGS;
+        dailyMap[orderDate].profit += (rev - orderCOGS);
+        dailyMap[orderDate].ordersCount++;
+      }
+    });
+
+    const grossProfit = grossRevenue - totalCOGS;
+    const grossMargin = grossRevenue > 0 ? ((grossProfit / grossRevenue) * 100).toFixed(1) : '0.0';
+
+    // Tính thuế kinh doanh theo quy định VN
+    let estimatedTax = 0;
+    let taxFormula = '';
+    if (financeConfig.businessType === 'corporate') {
+      const vatAmount = Math.round((grossRevenue * (financeConfig.vatRate || 8)) / 100);
+      const citAmount = Math.round(Math.max(0, grossProfit) * ((financeConfig.citRate || 20) / 100));
+      estimatedTax = vatAmount + citAmount;
+      taxFormula = `VAT ${financeConfig.vatRate || 8}% (${vatAmount.toLocaleString('vi-VN')} ₫) + TNDN ${financeConfig.citRate || 20}% (${citAmount.toLocaleString('vi-VN')} ₫)`;
+    } else {
+      const rate = financeConfig.taxRate !== undefined ? financeConfig.taxRate : 1.5;
+      estimatedTax = Math.round((grossRevenue * rate) / 100);
+      taxFormula = `${rate}% Doanh thu (1% GTGT + 0.5% TNCN theo TT40/2021/TT-BTC)`;
+    }
+
+    const netProfit = grossProfit - estimatedTax;
+    const netMargin = grossRevenue > 0 ? ((netProfit / grossRevenue) * 100).toFixed(1) : '0.0';
+
+    // Inventory stats
+    let totalStockUnits = 0;
+    let totalStockValue = 0;
+    let lowStockCount = 0;
+    products.forEach(p => {
+      const stk = p.stock || 0;
+      totalStockUnits += stk;
+      totalStockValue += stk * (p.costPrice || 0);
+      if (stk < 5) lowStockCount++;
+    });
+
+    const dailyBars = Object.values(dailyMap);
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({
+      success: true,
+      summary: {
+        grossRevenue,
+        totalCOGS,
+        grossProfit,
+        grossMargin: parseFloat(grossMargin),
+        estimatedTax,
+        taxFormula,
+        netProfit,
+        netMargin: parseFloat(netMargin),
+        validOrdersCount,
+        totalItemsSold,
+        financeConfig
+      },
+      inventory: {
+        totalProducts: products.length,
+        totalStockUnits,
+        totalStockValue,
+        lowStockCount
+      },
+      dailyBars
+    }));
+    return;
+  }
+
+  // API F2: GET FINANCE CONFIG (GET /api/finance/config)
+  if (req.method === 'GET' && cleanUrl === '/api/finance/config') {
+    const config = readJSON(FINANCE_FILE, {
+      businessType: 'individual',
+      businessTypeName: 'Hộ Kinh Doanh Cá Thể (Thương Mại Điện Tử)',
+      taxRate: 1.5,
+      vatRate: 8,
+      citRate: 20
+    });
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(config));
+    return;
+  }
+
+  // API F3: SAVE FINANCE CONFIG (POST /api/finance/config)
+  if (req.method === 'POST' && cleanUrl === '/api/finance/config') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const config = readJSON(FINANCE_FILE, {});
+        config.businessType = payload.businessType || config.businessType || 'individual';
+        config.businessTypeName = payload.businessType === 'corporate' 
+          ? 'Doanh Nghiệp / Công Ty (Kê Khai Khấu Trừ)' 
+          : 'Hộ Kinh Doanh Cá Thể (Thương Mại Điện Tử)';
+        config.taxRate = payload.taxRate !== undefined ? parseFloat(payload.taxRate) : (config.taxRate || 1.5);
+        config.vatRate = payload.vatRate !== undefined ? parseFloat(payload.vatRate) : (config.vatRate || 8);
+        config.citRate = payload.citRate !== undefined ? parseFloat(payload.citRate) : (config.citRate || 20);
+        config.updatedAt = new Date().toISOString();
+
+        writeJSON(FINANCE_FILE, config);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: true, config }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // API F4: RESTOCK PRODUCT INVENTORY (POST /api/inventory/restock)
+  if (req.method === 'POST' && cleanUrl === '/api/inventory/restock') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { productId, addStock, newCostPrice, note } = JSON.parse(body || '{}');
+        if (!productId || addStock === undefined) {
+          throw new Error('Vui lòng chọn sản phẩm và số lượng cần nhập thêm');
+        }
+
+        const qtyToAdd = parseInt(addStock, 10);
+        if (isNaN(qtyToAdd) || qtyToAdd <= 0) {
+          throw new Error('Số lượng nhập thêm phải là số dương lớn hơn 0');
+        }
+
+        let products = readJSON(PRODUCTS_FILE, []);
+        const p = products.find(prod => prod.id === productId || prod.code === productId);
+        if (!p) {
+          res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ success: false, error: 'Không tìm thấy sản phẩm để nhập kho' }));
+          return;
+        }
+
+        const oldStock = p.stock || 0;
+        const oldCostPrice = p.costPrice || 0;
+        p.stock = oldStock + qtyToAdd;
+        p.initialStock = (p.initialStock || oldStock) + qtyToAdd;
+
+        if (newCostPrice && !isNaN(parseInt(newCostPrice, 10)) && parseInt(newCostPrice, 10) > 0) {
+          p.costPrice = parseInt(newCostPrice, 10);
+        }
+
+        writeJSON(PRODUCTS_FILE, products);
+
+        // Ghi lại lịch sử nhập kho
+        const history = readJSON(RESTOCK_LOG_FILE, []);
+        const logEntry = {
+          id: 'RESTOCK-' + Date.now(),
+          productId: p.id,
+          productCode: p.code,
+          productName: p.name,
+          addedQty: qtyToAdd,
+          previousStock: oldStock,
+          newStock: p.stock,
+          costPrice: p.costPrice,
+          note: note || 'Nhập thêm hàng vào kho',
+          timestamp: new Date().toISOString()
+        };
+        history.unshift(logEntry);
+        writeJSON(RESTOCK_LOG_FILE, history);
+
+        console.log(`[Inventory API] Đã nhập thêm +${qtyToAdd} đôi cho ${p.name} (${p.code}). Tồn kho mới: ${p.stock}`);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: true, product: p, log: logEntry }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // API F5: EXPORT REVENUE CSV (GET /api/finance/export-csv)
+  if (req.method === 'GET' && cleanUrl === '/api/finance/export-csv') {
+    const orders = readJSON(ORDERS_FILE, []);
+    const products = readJSON(PRODUCTS_FILE, []);
+    const financeConfig = readJSON(FINANCE_FILE, { taxRate: 1.5 });
+    const taxRate = financeConfig.taxRate || 1.5;
+
+    let csv = '﻿'; // UTF-8 BOM for Excel
+    csv += 'Mã Đơn,Ngày Đặt,Khách Hàng,Số Điện Thoại,Địa Chỉ,Chi Tiết Món Hàng,Tổng Doanh Thu (VNĐ),Giá Vốn Ước Tính (VNĐ),Lợi Nhuận Gộp (VNĐ),Thuế TMĐT (' + taxRate + '%),Lợi Nhuận Ròng (VNĐ),Phương Thức,Trạng Thái\n';
+
+    orders.forEach(o => {
+      const cust = o.customer || {};
+      const orderDate = o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN') : '';
+      const itemsStr = (o.items || []).map(it => `${it.name} (x${it.qty || 1})`).join('; ').replace(/"/g, '""');
+
+      let orderCOGS = 0;
+      (o.items || []).forEach(it => {
+        const qty = parseInt(it.qty, 10) || 1;
+        const p = products.find(prod => prod.id === it.id || prod.code === it.code || prod.name === it.name);
+        const cost = (p && p.costPrice) ? p.costPrice : (it.costPrice || Math.round((it.price || 0) * 0.55));
+        orderCOGS += cost * qty;
+      });
+
+      const rev = o.totalAmount || 0;
+      const profit = rev - orderCOGS;
+      const tax = Math.round((rev * taxRate) / 100);
+      const net = profit - tax;
+
+      const row = [
+        `"#${o.orderId || ''}"`,
+        `"${orderDate}"`,
+        `"${(cust.fullname || '').replace(/"/g, '""')}"`,
+        `"'${cust.phone || ''}"`,
+        `"${(cust.address || '').replace(/"/g, '""')}"`,
+        `"${itemsStr}"`,
+        rev,
+        orderCOGS,
+        profit,
+        tax,
+        net,
+        `"${o.paymentMethod === 'vietqr' ? 'VietQR (Techcombank)' : 'Tiền mặt (COD)'}"`,
+        `"${(o.status || '').replace(/"/g, '""')}"`
+      ];
+      csv += row.join(',') + '\n';
+    });
+
+    const filename = `Bao_Cao_Doanh_Thu_Nike_${new Date().toISOString().split('T')[0]}.csv`;
+    res.writeHead(200, {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`
+    });
+    res.end(csv);
+    return;
+  }
+
+  // API F6: EXPORT INVENTORY CSV (GET /api/inventory/export-csv)
+  if (req.method === 'GET' && cleanUrl === '/api/inventory/export-csv') {
+    const products = readJSON(PRODUCTS_FILE, []);
+
+    let csv = '﻿'; // UTF-8 BOM for Excel
+    csv += 'Mã SP,Tên Mẫu Giày,Danh Mục,Giá Niêm Yết (VNĐ),Giá Vốn Nhập (VNĐ),Số Lượng Đã Nhập,Đã Bán,Tồn Kho Hiện Tại,Tổng Giá Trị Tồn Kho (VNĐ),Tình Trạng Kho\n';
+
+    products.forEach(p => {
+      const stock = p.stock || 0;
+      const cost = p.costPrice || 0;
+      const value = stock * cost;
+      let status = 'Còn hàng dồi dào';
+      if (stock === 0) status = 'HẾT HÀNG';
+      else if (stock < 5) status = 'CẢNH BÁO: Sắp hết hàng';
+
+      const row = [
+        `"${p.code || ''}"`,
+        `"${(p.name || '').replace(/"/g, '""')}"`,
+        `"${p.category || ''}"`,
+        p.price || 0,
+        cost,
+        p.initialStock || (stock + (p.sold || 0)),
+        p.sold || 0,
+        stock,
+        value,
+        `"${status}"`
+      ];
+      csv += row.join(',') + '\n';
+    });
+
+    const filename = `Bao_Cao_Kho_Hang_Nike_${new Date().toISOString().split('T')[0]}.csv`;
+    res.writeHead(200, {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`
+    });
+    res.end(csv);
     return;
   }
 

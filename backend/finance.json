@@ -1,0 +1,9 @@
+{
+  "businessType": "individual",
+  "businessTypeName": "Hộ Kinh Doanh Cá Thể (Thương Mại Điện Tử)",
+  "taxRate": 1.5,
+  "taxDescription": "Thuế GTGT 1% + Thuế TNCN 0.5% theo Thông tư 40/2021/TT-BTC",
+  "vatRate": 8,
+  "citRate": 20,
+  "updatedAt": "2026-11-14T08:00:00.000Z"
+}

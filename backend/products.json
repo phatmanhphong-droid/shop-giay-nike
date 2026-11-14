@@ -31,7 +31,11 @@
         "photo": "assets/shoes/jordan1-volt.png"
       }
     ],
-    "code": "NK-01"
+    "code": "NK-01",
+    "costPrice": 2750000,
+    "initialStock": 40,
+    "sold": 8,
+    "stock": 32
   },
   {
     "id": "nike-02",
@@ -60,7 +64,11 @@
         "photo": "assets/shoes/airforce1-black.png"
       }
     ],
-    "code": "NK-02"
+    "code": "NK-02",
+    "costPrice": 1600000,
+    "initialStock": 50,
+    "sold": 11,
+    "stock": 39
   },
   {
     "id": "nike-03",
@@ -89,7 +97,11 @@
         "photo": "assets/shoes/adaptbb-smart.png"
       }
     ],
-    "code": "NK-03"
+    "code": "NK-03",
+    "costPrice": 4400000,
+    "initialStock": 60,
+    "sold": 14,
+    "stock": 46
   },
   {
     "id": "nike-04",
@@ -113,7 +125,11 @@
         "photo": "assets/shoes/dunk-panda.png"
       }
     ],
-    "code": "NK-04"
+    "code": "NK-04",
+    "costPrice": 2700000,
+    "initialStock": 70,
+    "sold": 17,
+    "stock": 53
   },
   {
     "id": "nike-05",
@@ -137,7 +153,11 @@
         "photo": "assets/shoes/airmax90-infrared.png"
       }
     ],
-    "code": "NK-05"
+    "code": "NK-05",
+    "costPrice": 2100000,
+    "initialStock": 80,
+    "sold": 20,
+    "stock": 60
   },
   {
     "id": "nike-06",
@@ -161,7 +181,11 @@
         "photo": "assets/shoes/cortez-classic.png"
       }
     ],
-    "code": "NK-06"
+    "code": "NK-06",
+    "costPrice": 1350000,
+    "initialStock": 40,
+    "sold": 23,
+    "stock": 17
   },
   {
     "id": "nike-07",
@@ -185,7 +209,11 @@
         "photo": "assets/shoes/pegasus40-blue.png"
       }
     ],
-    "code": "NK-07"
+    "code": "NK-07",
+    "costPrice": 1950000,
+    "initialStock": 50,
+    "sold": 26,
+    "stock": 24
   },
   {
     "id": "nike-08",
@@ -209,7 +237,11 @@
         "photo": "assets/shoes/vaporfly-pink.png"
       }
     ],
-    "code": "NK-08"
+    "code": "NK-08",
+    "costPrice": 3650000,
+    "initialStock": 75,
+    "sold": 27,
+    "stock": 18
   },
   {
     "id": "nike-09",
@@ -233,7 +265,11 @@
         "photo": "assets/shoes/zoomfly3-lime.png"
       }
     ],
-    "code": "NK-09"
+    "code": "NK-09",
+    "costPrice": 2300000,
+    "initialStock": 70,
+    "sold": 11,
+    "stock": 59
   },
   {
     "id": "nike-10",
@@ -257,7 +293,11 @@
         "photo": "assets/shoes/superrep-volt.png"
       }
     ],
-    "code": "NK-10"
+    "code": "NK-10",
+    "costPrice": 1850000,
+    "initialStock": 80,
+    "sold": 14,
+    "stock": 66
   },
   {
     "id": "nike-11",
@@ -281,7 +321,11 @@
         "photo": "assets/shoes/alphatr3-black.png"
       }
     ],
-    "code": "NK-11"
+    "code": "NK-11",
+    "costPrice": 1500000,
+    "initialStock": 40,
+    "sold": 17,
+    "stock": 23
   },
   {
     "id": "nike-12",
@@ -305,7 +349,11 @@
         "photo": "assets/shoes/jordan4-cement.png"
       }
     ],
-    "code": "NK-12"
+    "code": "NK-12",
+    "costPrice": 3400000,
+    "initialStock": 50,
+    "sold": 20,
+    "stock": 30
   },
   {
     "id": "nike-13",
@@ -329,7 +377,11 @@
         "photo": "assets/shoes/sbdunk-emerald.png"
       }
     ],
-    "code": "NK-13"
+    "code": "NK-13",
+    "costPrice": 2050000,
+    "initialStock": 60,
+    "sold": 23,
+    "stock": 37
   },
   {
     "id": "nike-14",
@@ -353,7 +405,11 @@
         "photo": "assets/shoes/airmax270-green.png"
       }
     ],
-    "code": "NK-14"
+    "code": "NK-14",
+    "costPrice": 2200000,
+    "initialStock": 70,
+    "sold": 26,
+    "stock": 44
   },
   {
     "id": "nike-15",
@@ -377,7 +433,11 @@
         "photo": "assets/shoes/airmax720-blue.png"
       }
     ],
-    "code": "NK-15"
+    "code": "NK-15",
+    "costPrice": 2500000,
+    "initialStock": 80,
+    "sold": 38,
+    "stock": 2
   },
   {
     "id": "nike-16",
@@ -401,7 +461,11 @@
         "photo": "assets/shoes/lebron21-purple.png"
       }
     ],
-    "code": "NK-16"
+    "code": "NK-16",
+    "costPrice": 3000000,
+    "initialStock": 40,
+    "sold": 11,
+    "stock": 29
   },
   {
     "id": "nike-17",
@@ -425,7 +489,11 @@
         "photo": "assets/shoes/kd16-gold.png"
       }
     ],
-    "code": "NK-17"
+    "code": "NK-17",
+    "costPrice": 2400000,
+    "initialStock": 50,
+    "sold": 14,
+    "stock": 36
   },
   {
     "id": "nike-18",
@@ -449,7 +517,11 @@
         "photo": "assets/shoes/giannis-red.png"
       }
     ],
-    "code": "NK-18"
+    "code": "NK-18",
+    "costPrice": 2050000,
+    "initialStock": 60,
+    "sold": 17,
+    "stock": 43
   },
   {
     "id": "nike-19",
@@ -473,7 +545,11 @@
         "photo": "assets/shoes/airmax-tn.png"
       }
     ],
-    "code": "NK-19"
+    "code": "NK-19",
+    "costPrice": 2650000,
+    "initialStock": 70,
+    "sold": 20,
+    "stock": 50
   },
   {
     "id": "nike-20",
@@ -497,7 +573,11 @@
         "photo": "assets/shoes/infinityrun-white.png"
       }
     ],
-    "code": "NK-20"
+    "code": "NK-20",
+    "costPrice": 2200000,
+    "initialStock": 80,
+    "sold": 23,
+    "stock": 57
   },
   {
     "id": "nike-21",
@@ -521,7 +601,11 @@
         "photo": "assets/shoes/sneaker-black.png"
       }
     ],
-    "code": "NK-21"
+    "code": "NK-21",
+    "costPrice": 1900000,
+    "initialStock": 40,
+    "sold": 26,
+    "stock": 14
   },
   {
     "id": "nike-23",
@@ -545,7 +629,11 @@
         "photo": "assets/shoes/airmax-red.png"
       }
     ],
-    "code": "NK-23"
+    "code": "NK-23",
+    "costPrice": 2100000,
+    "initialStock": 50,
+    "sold": 8,
+    "stock": 42
   },
   {
     "id": "nike-24",
@@ -569,6 +657,10 @@
         "photo": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg"
       }
     ],
-    "code": "NK-24"
+    "code": "NK-24",
+    "costPrice": 0,
+    "initialStock": 60,
+    "sold": 11,
+    "stock": 49
   }
 ]
