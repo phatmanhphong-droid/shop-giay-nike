@@ -1072,8 +1072,8 @@ async function loadNotificationConfig() {
       const apikeyEl = document.getElementById('notif-sms-apikey');
       const secretEl = document.getElementById('notif-sms-secret');
 
-      if (shopPhoneEl) shopPhoneEl.value = data.shopPhone || '0908062597';
-      if (zaloPhoneEl) zaloPhoneEl.value = data.zaloPhone || data.shopPhone || '0908062597';
+      if (shopPhoneEl) shopPhoneEl.value = data.shopPhone || '0908065297';
+      if (zaloPhoneEl) zaloPhoneEl.value = data.zaloPhone || data.shopPhone || '0908065297';
       if (smsEnabledEl) smsEnabledEl.checked = !!(data.smsGateway && data.smsGateway.enabled);
       if (providerEl && data.smsGateway) providerEl.value = data.smsGateway.provider || 'esms';
       if (apikeyEl && data.smsGateway) apikeyEl.value = data.smsGateway.apiKey || '';
@@ -1083,7 +1083,7 @@ async function loadNotificationConfig() {
 }
 
 async function saveNotificationConfig() {
-  const shopPhone = document.getElementById('notif-shop-phone')?.value.trim() || '0908062597';
+  const shopPhone = document.getElementById('notif-shop-phone')?.value.trim() || '0908065297';
   const zaloPhone = document.getElementById('notif-zalo-phone')?.value.trim() || shopPhone;
   const smsEnabled = !!document.getElementById('notif-sms-enabled')?.checked;
   const provider = document.getElementById('notif-sms-provider')?.value || 'esms';
@@ -1120,7 +1120,7 @@ async function saveNotificationConfig() {
 }
 
 async function testSMSNotify() {
-  const phone = document.getElementById('notif-shop-phone')?.value.trim() || '0908062597';
+  const phone = document.getElementById('notif-shop-phone')?.value.trim() || '0908065297';
   const provider = document.getElementById('notif-sms-provider')?.value || 'esms';
   const apiKey = document.getElementById('notif-sms-apikey')?.value.trim() || '';
   const secretKey = document.getElementById('notif-sms-secret')?.value.trim() || '';

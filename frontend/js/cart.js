@@ -115,8 +115,8 @@
   }
 
   let liveNotificationConfig = {
-    shopPhone: '0908062597',
-    zaloPhone: '0908062597'
+    shopPhone: '0908065297',
+    zaloPhone: '0908065297'
   };
 
   // Tự động tải cấu hình ngân hàng VietQR mới nhất từ Backend API
@@ -748,7 +748,7 @@
               <span>Nhắn Zalo Xác Nhận Đơn Liền</span>
             </button>
 
-            <a href="tel:0908062597" 
+            <a href="tel:0908065297" 
               class="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-slate-50 border border-hairline text-obsidian text-xs font-bold transition-all flex items-center justify-center gap-2">
               <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
               <span>Gọi Hotline 0908 062 597</span>
@@ -898,7 +898,7 @@
 
   function openZaloOrderChat() {
     if (!lastPlacedOrder) return;
-    const phone = liveNotificationConfig.zaloPhone || liveNotificationConfig.shopPhone || '0908062597';
+    const phone = liveNotificationConfig.zaloPhone || liveNotificationConfig.shopPhone || '0908065297';
     const text = `Chào Shop Nike, mình vừa đặt đơn hàng #${lastPlacedOrder.orderId} (${lastPlacedOrder.customer.fullname} - ${lastPlacedOrder.customer.phone}). Tổng thanh toán: ${lastPlacedOrder.totalAmount.toLocaleString('vi-VN')} ₫. Nhờ shop kiểm tra và gửi hàng sớm giúp mình nhé!`;
     copyToClipboard(text, 'Đã sao chép nội dung đơn hàng! Đang mở Zalo...');
     setTimeout(() => {

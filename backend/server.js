@@ -216,8 +216,8 @@ async function notifyAllChannelsNewOrder(order) {
   // 2. SMS & Zalo
   try {
     const notif = readJSON(NOTIFICATIONS_FILE, {
-      shopPhone: '0908062597',
-      zaloPhone: '0908062597',
+      shopPhone: '0908065297',
+      zaloPhone: '0908065297',
       smsGateway: { enabled: false }
     });
 
@@ -760,8 +760,8 @@ const server = http.createServer((req, res) => {
   // API 14: LẤY CẤU HÌNH ZALO & SỐ ĐIỆN THOẠI (SMS)
   if (cleanUrl === '/api/config/notifications' && req.method === 'GET') {
     const notif = readJSON(NOTIFICATIONS_FILE, {
-      shopPhone: '0908062597',
-      zaloPhone: '0908062597',
+      shopPhone: '0908065297',
+      zaloPhone: '0908065297',
       zaloEnabled: true,
       zaloOaWebhook: '',
       smsGateway: {
@@ -786,8 +786,8 @@ const server = http.createServer((req, res) => {
         const data = JSON.parse(body || '{}');
         const current = readJSON(NOTIFICATIONS_FILE, {});
         const updated = {
-          shopPhone: (data.shopPhone || current.shopPhone || '0908062597').trim(),
-          zaloPhone: (data.zaloPhone || data.shopPhone || current.zaloPhone || '0908062597').trim(),
+          shopPhone: (data.shopPhone || current.shopPhone || '0908065297').trim(),
+          zaloPhone: (data.zaloPhone || data.shopPhone || current.zaloPhone || '0908065297').trim(),
           zaloEnabled: data.zaloEnabled !== undefined ? !!data.zaloEnabled : true,
           zaloOaWebhook: (data.zaloOaWebhook || '').trim(),
           smsGateway: {
@@ -818,7 +818,7 @@ const server = http.createServer((req, res) => {
       try {
         const { phone, provider, apiKey, secretKey } = JSON.parse(body || '{}');
         const notif = readJSON(NOTIFICATIONS_FILE, {});
-        const targetPhone = phone || notif.shopPhone || '0908062597';
+        const targetPhone = phone || notif.shopPhone || '0908065297';
         const p = provider || (notif.smsGateway && notif.smsGateway.provider) || 'esms';
         const key = apiKey || (notif.smsGateway && notif.smsGateway.apiKey) || '';
         const secret = secretKey || (notif.smsGateway && notif.smsGateway.secretKey) || '';

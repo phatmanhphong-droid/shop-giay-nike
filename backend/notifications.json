@@ -1,6 +1,6 @@
 {
-  "shopPhone": "0908062597",
-  "zaloPhone": "0908062597",
+  "shopPhone": "0908065297",
+  "zaloPhone": "0908065297",
   "zaloEnabled": true,
   "zaloOaWebhook": "",
   "smsGateway": {
@@ -10,6 +10,5 @@
     "secretKey": "",
     "brandname": "NIKE SHOP"
   },
-  "lastUpdated": "2026-11-14T07:10:00.000Z"
+  "lastUpdated": "2026-11-14T07:28:00.000Z"
 }
-

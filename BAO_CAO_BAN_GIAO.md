@@ -33,7 +33,7 @@ Dự án **Shop Giày Nike** đã được hoàn thiện toàn diện từ giao 
 ### 2.1. Tra Cứu Tiến Độ Đơn Hàng (Order Tracking)
 * **Vị trí**: Nút **"Tra cứu đơn"** gắn biểu tượng đơn hàng màu xanh lá nổi bật tại thanh Header trên cùng.
 * **Cách sử dụng**:
-  * Khách chỉ cần nhập **Mã đơn hàng** (Ví dụ: `NIKE743768`) hoặc **Số điện thoại** đã đặt hàng (Ví dụ: `0908062597`).
+  * Khách chỉ cần nhập **Mã đơn hàng** (Ví dụ: `NIKE743768`) hoặc **Số điện thoại** đã đặt hàng (Ví dụ: `0908065297`).
   * Hệ thống tự động tra cứu trong cơ sở dữ liệu `orders.json` và hiển thị kết quả ngay tức thì không cần tải lại trang.
 * **Giao diện hiển thị**:
   * **Thanh tiến trình 4 bước (Timeline)**:
@@ -95,11 +95,11 @@ Dự án **Shop Giày Nike** đã được hoàn thiện toàn diện từ giao 
 * **Ý nghĩa thực tế**: Phục vụ tối đa thói quen mua sắm trực tuyến của người tiêu dùng và chủ shop tại Việt Nam (khi đa số người dùng không cài Telegram).
 * **Trải nghiệm khách hàng (Frontend)**:
   * Ngay khi đặt hàng thành công, hiển thị **Hộp hỗ trợ nhanh Zalo & Điện thoại**:
-  * **Nút Zalo 1 chạm (Màu xanh Zalo)**: Tự động sao chép mã đơn hàng và mở Zalo số điện thoại shop (`https://zalo.me/0908062597`) để khách nhắn tin xác nhận với shop ngay.
-  * **Nút Gọi Hotline**: Bấm gọi ngay đến số điện thoại Hotline Shop (`tel:0908062597`).
+  * **Nút Zalo 1 chạm (Màu xanh Zalo)**: Tự động sao chép mã đơn hàng và mở Zalo số điện thoại shop (`https://zalo.me/0908065297`) để khách nhắn tin xác nhận với shop ngay.
+  * **Nút Gọi Hotline**: Bấm gọi ngay đến số điện thoại Hotline Shop (`tel:0908065297`).
 * **Quản trị phía Admin**:
   * Trong tab **Cài Đặt**, có mục *"📲 Thông Báo Đơn Hàng Qua Zalo & Số Điện Thoại (SMS)"*.
-  * Tùy chỉnh Số điện thoại nhận đơn & Số Zalo Shop (`0908062597`).
+  * Tùy chỉnh Số điện thoại nhận đơn & Số Zalo Shop (`0908065297`).
   * Tích hợp sẵn cổng SMS Brandname (hỗ trợ `eSMS.vn`, `SpeedSMS.vn`, `Twilio SMS`) để tự động gửi tin nhắn SMS về số điện thoại của Chủ Shop và Khách Hàng.
   * Nút **"Gửi SMS Test Thử Về Điện Thoại"** kiểm tra kết nối SMS trực tiếp.
 

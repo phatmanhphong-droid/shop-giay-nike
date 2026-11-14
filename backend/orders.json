@@ -1,10 +1,96 @@
 [
   {
+    "orderId": "NIKE817847",
+    "createdAt": "2026-11-14T07:30:30.362Z",
+    "customer": {
+      "fullname": "Trần Đức Mạnh",
+      "phone": "0908065297",
+      "address": "Tổ 1, ấp 1, xã Long Phước, Long Thành, Đồng Nai",
+      "notes": "Nhắn Zalo 0908065297 xác nhận đơn giúp mình nhé"
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-01",
+        "name": "Air Jordan 1 Retro High OG",
+        "color": "Chicago Đỏ Trắng",
+        "size": 42,
+        "price": 4990000,
+        "qty": 1
+      }
+    ],
+    "subtotal": 4990000,
+    "discountAmount": 499000,
+    "voucher": {
+      "code": "NIKE10",
+      "discountAmount": 499000
+    },
+    "totalAmount": 4491000,
+    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+  },
+  {
+    "orderId": "NIKE625170",
+    "createdAt": "2026-11-14T07:24:28.347Z",
+    "customer": {
+      "fullname": "Trần đức mạnh",
+      "phone": "0908065297",
+      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
+      "notes": ""
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-24",
+        "name": "1234",
+        "color": "Mặc định",
+        "size": 41,
+        "price": 10000,
+        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
+        "qty": 1
+      }
+    ],
+    "subtotal": 10000,
+    "discountAmount": 0,
+    "voucher": null,
+    "totalAmount": 10000,
+    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+  },
+  {
+    "orderId": "NIKE506832",
+    "createdAt": "2026-11-14T07:23:47.358Z",
+    "customer": {
+      "fullname": "Trần đức mạnh",
+      "phone": "0908065297",
+      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
+      "notes": ""
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-24",
+        "name": "1234",
+        "color": "Mặc định",
+        "size": 41,
+        "price": 10000,
+        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
+        "qty": 1
+      }
+    ],
+    "subtotal": 10000,
+    "discountAmount": 0,
+    "voucher": null,
+    "totalAmount": 10000,
+    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+  },
+  {
     "orderId": "NIKE146419",
     "createdAt": "2026-11-14T07:18:01.156Z",
     "customer": {
       "fullname": "Trần Đức Mạnh",
-      "phone": "0908062597",
+      "phone": "0908065297",
       "address": "Tổ 1, ấp 1, xã Long Phước, Long Thành, Đồng Nai",
       "notes": "Nhắn Zalo xác nhận đơn cho mình nhé"
     },
@@ -60,7 +146,7 @@
     "createdAt": "2026-11-13T06:04:39.237Z",
     "customer": {
       "fullname": "trần đức mạnh",
-      "phone": "0908062597",
+      "phone": "0908065297",
       "address": "tổ 1 ấp  xã long phước",
       "notes": ""
     },
