@@ -2052,64 +2052,203 @@ function renderCashflowSpectrum(grossRev, totalCOGS, tax, netProfit) {
   if (netLegend) netLegend.textContent = `${netProfit.toLocaleString('vi-VN')} ₫ (${netPct}%)`;
 }
 
-function renderApexRevenueChart(dailyBars) {
+let currentChartType = 'bar';
+let cachedDailyBars = [];
+
+function switchChartView(type) {
+  currentChartType = type;
+  const btnBar = document.getElementById('chart-view-bar');
+  const btnArea = document.getElementById('chart-view-area');
+  const btnStacked = document.getElementById('chart-view-stacked');
+
+  [btnBar, btnArea, btnStacked].forEach(b => {
+    b?.classList.remove('bg-white', 'text-obsidian', 'shadow-sm');
+    b?.classList.add('text-muted');
+  });
+
+  const activeBtn = document.getElementById('chart-view-' + type);
+  activeBtn?.classList.add('bg-white', 'text-obsidian', 'shadow-sm');
+  activeBtn?.classList.remove('text-muted');
+
+  if (cachedDailyBars.length > 0) {
+    renderApexRevenueChart(cachedDailyBars, type);
+  }
+}
+
+function renderApexRevenueChart(dailyBars, type = currentChartType) {
   const container = document.getElementById('apex-revenue-chart');
   if (!container) return;
 
+  cachedDailyBars = dailyBars || [];
+
   if (typeof ApexCharts === 'undefined') {
-    // Fallback if CDN blocked
-    container.innerHTML = `<div class="p-8 text-center text-xs text-muted">Đang tải thư viện biểu đồ ApexCharts...</div>`;
+    container.innerHTML = '<div class="p-8 text-center text-xs text-muted">Đang tải thư viện biểu đồ ApexCharts...</div>';
     return;
   }
 
-  const categories = dailyBars.map(d => `${d.dayName} (${d.displayDate})`);
+  // Update Highlight Banner
+  let maxDay = null;
+  let maxVal = -1;
+  let sumRev = 0;
+  let sumProfit = 0;
+
+  dailyBars.forEach(d => {
+    const r = d.revenue || 0;
+    sumRev += r;
+    sumProfit += (d.profit || 0);
+    if (r > maxVal) {
+      maxVal = r;
+      maxDay = d;
+    }
+  });
+
+  const peakEl = document.getElementById('chart-peak-day');
+  const avgRevEl = document.getElementById('chart-avg-revenue');
+  const avgMarginEl = document.getElementById('chart-avg-margin');
+
+  if (peakEl && maxDay) {
+    peakEl.textContent = maxDay.dayName + ' (' + (maxDay.revenue / 1000000).toFixed(1) + 'M ₫)';
+  }
+  if (avgRevEl && dailyBars.length > 0) {
+    avgRevEl.textContent = (sumRev / dailyBars.length / 1000000).toFixed(1) + 'M ₫ / ngày';
+  }
+  if (avgMarginEl && sumRev > 0) {
+    avgMarginEl.textContent = ((sumProfit / sumRev) * 100).toFixed(1) + '% Doanh Số';
+  }
+
+  const categories = dailyBars.map(d => d.dayName + ' (' + d.displayDate + ')');
   const revenueSeries = dailyBars.map(d => d.revenue || 0);
   const profitSeries = dailyBars.map(d => Math.max(0, d.profit || 0));
+  const cogsSeries = dailyBars.map(d => d.cogs || 0);
+
+  let series = [];
+  let chartTypeConfig = 'bar';
+  let isStacked = false;
+  let strokeConfig = { show: true, width: 2, colors: ['transparent'] };
+  let fillConfig = {};
+  let colors = ['#4F46E5', '#10B981'];
+
+  if (type === 'area') {
+    chartTypeConfig = 'area';
+    series = [
+      { name: 'Doanh Thu (₫)', data: revenueSeries },
+      { name: 'Lợi Nhuận Gộp (₫)', data: profitSeries }
+    ];
+    colors = ['#3B82F6', '#10B981'];
+    strokeConfig = { curve: 'smooth', width: 3 };
+    fillConfig = {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [0, 95, 100]
+      }
+    };
+  } else if (type === 'stacked') {
+    chartTypeConfig = 'bar';
+    isStacked = true;
+    series = [
+      { name: 'Giá Vốn Nhập (₫)', data: cogsSeries },
+      { name: 'Lợi Nhuận Gộp (₫)', data: profitSeries }
+    ];
+    colors = ['#F59E0B', '#10B981'];
+    fillConfig = {
+      type: 'gradient',
+      gradient: {
+        shade: 'dark',
+        type: 'vertical',
+        shadeIntensity: 0.3,
+        gradientToColors: ['#D97706', '#059669'],
+        opacityFrom: 0.95,
+        opacityTo: 0.85
+      }
+    };
+  } else {
+    // Default: 3D Gradient Multi-Column Bar Chart
+    chartTypeConfig = 'bar';
+    series = [
+      { name: 'Doanh Thu (₫)', data: revenueSeries },
+      { name: 'Lợi Nhuận Gộp (₫)', data: profitSeries }
+    ];
+    colors = ['#4F46E5', '#059669'];
+    fillConfig = {
+      type: 'gradient',
+      gradient: {
+        shade: 'dark',
+        type: 'vertical',
+        shadeIntensity: 0.35,
+        gradientToColors: ['#06B6D4', '#34D399'],
+        inverseColors: false,
+        opacityFrom: 1,
+        opacityTo: 0.9,
+        stops: [0, 100]
+      }
+    };
+  }
 
   const options = {
-    series: [
-      { name: 'Doanh Thu (VNĐ)', data: revenueSeries },
-      { name: 'Lợi Nhuận Ròng (VNĐ)', data: profitSeries }
-    ],
+    series: series,
     chart: {
-      type: 'bar',
-      height: 300,
+      type: chartTypeConfig,
+      height: 330,
+      stacked: isStacked,
       toolbar: { show: false },
+      dropShadow: {
+        enabled: true,
+        top: 4,
+        left: 0,
+        blur: 6,
+        color: '#000000',
+        opacity: 0.08
+      },
       animations: {
         enabled: true,
         easing: 'easeinout',
-        speed: 600
+        speed: 700
       },
       fontFamily: 'Inter, sans-serif'
     },
-    colors: ['#111111', '#10B981'],
+    colors: colors,
+    fill: fillConfig,
     plotOptions: {
       bar: {
         horizontal: false,
-        columnWidth: '42%',
+        columnWidth: isStacked ? '42%' : '48%',
         borderRadius: 8,
-        dataLabels: { position: 'top' }
+        borderRadiusApplication: 'end',
+        dataLabels: {
+          position: 'top'
+        }
       }
     },
     dataLabels: {
-      enabled: false
+      enabled: type === 'bar',
+      offsetY: -20,
+      style: {
+        fontSize: '10px',
+        fontWeight: 'bold',
+        colors: ['#374151']
+      },
+      formatter: (val) => {
+        if (!val || val <= 0) return '';
+        if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+        if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
+        return val;
+      }
     },
-    stroke: {
-      show: true,
-      width: 3,
-      colors: ['transparent']
-    },
+    stroke: strokeConfig,
     xaxis: {
       categories: categories,
       labels: {
-        style: { colors: '#71717A', fontSize: '11px', fontWeight: 600 }
+        style: { colors: '#64748B', fontSize: '11px', fontWeight: 600 }
       },
       axisBorder: { show: false },
       axisTicks: { show: false }
     },
     yaxis: {
       labels: {
-        style: { colors: '#71717A', fontSize: '10px' },
+        style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 },
         formatter: (val) => {
           if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M ₫';
           if (val >= 1000) return (val / 1000).toFixed(0) + 'K ₫';
@@ -2117,31 +2256,34 @@ function renderApexRevenueChart(dailyBars) {
         }
       }
     },
-    fill: {
-      opacity: 1
-    },
     tooltip: {
       theme: 'dark',
+      shared: true,
+      intersect: false,
       y: {
         formatter: (val) => val.toLocaleString('vi-VN') + ' ₫'
       }
     },
     grid: {
-      borderColor: '#F4F4F5',
-      strokeDashArray: 4
+      borderColor: '#F1F5F9',
+      strokeDashArray: 4,
+      yaxis: { lines: { show: true } }
     },
     legend: {
-      show: false
+      position: 'top',
+      horizontalAlign: 'right',
+      fontSize: '11px',
+      fontWeight: 600,
+      markers: { radius: 12 }
     }
   };
 
   if (apexRevenueChartInstance) {
-    apexRevenueChartInstance.updateOptions(options);
-  } else {
-    container.innerHTML = '';
-    apexRevenueChartInstance = new ApexCharts(container, options);
-    apexRevenueChartInstance.render();
+    apexRevenueChartInstance.destroy();
   }
+  container.innerHTML = '';
+  apexRevenueChartInstance = new ApexCharts(container, options);
+  apexRevenueChartInstance.render();
 }
 
 function renderApexCategoryChart(products, orders) {

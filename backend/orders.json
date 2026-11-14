@@ -1,281 +1,338 @@
 [
   {
+    "orderId": "NIKE889124",
+    "createdAt": "2026-11-14T09:15:00.000Z",
     "customer": {
-      "fullname": "Anh Đức Mạnh",
+      "fullname": "Trần Đức Mạnh",
       "phone": "0908065297",
       "address": "789 Đường Lê Duẩn, Quận 1, TP. Hồ Chí Minh"
     },
     "items": [
       {
-        "id": "1",
-        "name": "Nike Air Max Pulse Roam",
+        "id": "nike-01",
+        "code": "NK-01",
+        "name": "Air Jordan 1 Retro High OG",
         "size": 42,
-        "color": "Obsidian Navy",
-        "price": 4459000,
-        "qty": 1
+        "color": "Chicago Đỏ Trắng",
+        "price": 4990000,
+        "qty": 1,
+        "costPrice": 2750000
+      },
+      {
+        "id": "nike-02",
+        "code": "NK-02",
+        "name": "Air Jordan 4 Retro White Cement",
+        "size": 42,
+        "color": "Cement Trắng Đốm",
+        "price": 5490000,
+        "qty": 1,
+        "costPrice": 3100000
       }
     ],
     "voucher": {
-      "code": "NIKE10",
-      "discountAmount": 445900
+      "code": "SALEDONQUA",
+      "discountAmount": 1000000
     },
-    "subtotal": 4459000,
-    "totalAmount": 4013100,
+    "subtotal": 10480000,
+    "totalAmount": 9480000,
     "paymentMethod": "vietqr",
     "paymentMethodLabel": "VietQR (Techcombank)",
-    "createdAt": "2026-11-14T07:46:38.360Z",
-    "orderId": "NIKE559143",
-    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
-    "updatedAt": "2026-11-14T07:48:49.945Z"
+    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng"
   },
   {
+    "orderId": "NIKE889125",
+    "createdAt": "2026-11-14T11:30:00.000Z",
     "customer": {
-      "fullname": "Anh Đức Mạnh",
-      "phone": "0908065297",
-      "address": "789 Đường Lê Duẩn, Quận 1, TP. Hồ Chí Minh"
+      "fullname": "Lê Hoàng Nam",
+      "phone": "0912345678",
+      "address": "12 Võ Văn Tần, Quận 3, TP. Hồ Chí Minh"
     },
     "items": [
       {
-        "id": "1",
-        "name": "Nike Air Max Pulse Roam",
-        "size": 42,
-        "color": "Obsidian Navy",
-        "price": 4459000,
-        "qty": 1
+        "id": "nike-03",
+        "code": "NK-03",
+        "name": "Nike Air Force 1 07 All White",
+        "size": 41,
+        "color": "Triple White",
+        "price": 2990000,
+        "qty": 1,
+        "costPrice": 1650000
       }
     ],
-    "voucher": {
-      "code": "NIKE10",
-      "discountAmount": 445900
-    },
-    "subtotal": 4459000,
-    "totalAmount": 4013100,
+    "subtotal": 2990000,
+    "totalAmount": 2990000,
     "paymentMethod": "vietqr",
     "paymentMethodLabel": "VietQR (Techcombank)",
-    "createdAt": "2026-11-14T07:44:01.898Z"
+    "status": "Đang giao hàng qua bưu điện"
   },
   {
-    "orderId": "NIKE243159",
-    "createdAt": "2026-11-14T07:32:47.842Z",
+    "orderId": "NIKE889126",
+    "createdAt": "2026-11-14T14:45:00.000Z",
     "customer": {
-      "fullname": "Trần đức mạnh",
-      "phone": "0908065297",
-      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
-      "notes": ""
+      "fullname": "Nguyễn Minh Quân",
+      "phone": "0988776655",
+      "address": "45 Trần Phú, Ba Đình, Hà Nội"
     },
+    "items": [
+      {
+        "id": "nike-04",
+        "code": "NK-04",
+        "name": "Nike Dunk Low Retro Panda",
+        "size": 43,
+        "color": "Panda Đen Trắng",
+        "price": 3490000,
+        "qty": 1,
+        "costPrice": 1950000
+      }
+    ],
+    "subtotal": 3490000,
+    "totalAmount": 3490000,
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "VietQR (Techcombank)",
+    "status": "Đã hoàn thành"
+  },
+  {
+    "orderId": "NIKE778231",
+    "createdAt": "2026-11-13T10:20:00.000Z",
+    "customer": {
+      "fullname": "Vũ Quốc Bảo",
+      "phone": "0977112233",
+      "address": "88 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"
+    },
+    "items": [
+      {
+        "id": "nike-05",
+        "code": "NK-05",
+        "name": "Nike Air Max 90 Infrared",
+        "size": 42,
+        "color": "Infrared Trắng Xám Đỏ",
+        "price": 3890000,
+        "qty": 2,
+        "costPrice": 2150000
+      }
+    ],
+    "subtotal": 7780000,
+    "totalAmount": 7780000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
+  },
+  {
+    "orderId": "NIKE778232",
+    "createdAt": "2026-11-13T16:05:00.000Z",
+    "customer": {
+      "fullname": "Đặng Tuấn Anh",
+      "phone": "0966443322",
+      "address": "102 Cầu Giấy, Hà Nội"
+    },
+    "items": [
+      {
+        "id": "nike-06",
+        "code": "NK-06",
+        "name": "Nike Pegasus 40 Running",
+        "size": 41,
+        "color": "Obsidian Navy",
+        "price": 3829000,
+        "qty": 1,
+        "costPrice": 2100000
+      }
+    ],
+    "subtotal": 3829000,
+    "totalAmount": 3829000,
     "paymentMethod": "cod",
-    "paymentMethodLabel": "Thanh toán khi nhận hàng (COD)",
-    "items": [
-      {
-        "id": "nike-24",
-        "name": "1234",
-        "color": "Mặc định",
-        "size": 41,
-        "price": 10000,
-        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
-        "qty": 1
-      }
-    ],
-    "subtotal": 10000,
-    "discountAmount": 0,
-    "voucher": null,
-    "totalAmount": 10000,
-    "status": "Đã tiếp nhận đơn hàng COD"
+    "status": "Đã hoàn thành"
   },
   {
-    "orderId": "NIKE537839",
-    "createdAt": "2026-11-14T07:32:16.521Z",
+    "orderId": "NIKE667341",
+    "createdAt": "2026-11-12T09:40:00.000Z",
     "customer": {
-      "fullname": "Trần đức mạnh",
-      "phone": "0908065297",
-      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
-      "notes": ""
+      "fullname": "Phạm Thanh Sơn",
+      "phone": "0903332211",
+      "address": "25 Lê Lợi, Đà Nẵng"
     },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
     "items": [
       {
-        "id": "nike-24",
-        "name": "1234",
-        "color": "Mặc định",
-        "size": 41,
-        "price": 10000,
-        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
-        "qty": 1
+        "id": "nike-08",
+        "code": "NK-08",
+        "name": "Nike ZoomX Vaporfly NEXT% 3",
+        "size": 42,
+        "color": "Hyper Pink Đỏ Neon",
+        "price": 6639000,
+        "qty": 1,
+        "costPrice": 3700000
+      },
+      {
+        "id": "nike-07",
+        "code": "NK-07",
+        "name": "Nike Air Zoom Alphafly 3",
+        "size": 42,
+        "color": "Proto Trắng Cam",
+        "price": 7990000,
+        "qty": 1,
+        "costPrice": 4400000
       }
     ],
-    "subtotal": 10000,
-    "discountAmount": 0,
-    "voucher": null,
-    "totalAmount": 10000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+    "voucher": {
+      "code": "JORDAN500K",
+      "discountAmount": 500000
+    },
+    "subtotal": 14629000,
+    "totalAmount": 14129000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
   },
   {
-    "orderId": "NIKE817847",
-    "createdAt": "2026-11-14T07:30:30.362Z",
+    "orderId": "NIKE556451",
+    "createdAt": "2026-11-11T00:15:00.000Z",
     "customer": {
-      "fullname": "Trần Đức Mạnh",
-      "phone": "0908065297",
-      "address": "Tổ 1, ấp 1, xã Long Phước, Long Thành, Đồng Nai",
-      "notes": "Nhắn Zalo 0908065297 xác nhận đơn giúp mình nhé"
+      "fullname": "Bùi Gia Huy",
+      "phone": "0918889900",
+      "address": "304 Lý Thường Kiệt, TP. Cần Thơ"
     },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
     "items": [
       {
         "id": "nike-01",
+        "code": "NK-01",
         "name": "Air Jordan 1 Retro High OG",
-        "color": "Chicago Đỏ Trắng",
         "size": 42,
+        "color": "Royal Xanh Dương",
         "price": 4990000,
-        "qty": 1
+        "qty": 2,
+        "costPrice": 2750000
       }
     ],
-    "subtotal": 4990000,
-    "discountAmount": 499000,
-    "voucher": {
-      "code": "NIKE10",
-      "discountAmount": 499000
-    },
-    "totalAmount": 4491000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+    "subtotal": 9980000,
+    "totalAmount": 8980000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
   },
   {
-    "orderId": "NIKE625170",
-    "createdAt": "2026-11-14T07:24:28.347Z",
+    "orderId": "NIKE556452",
+    "createdAt": "2026-11-11T12:30:00.000Z",
     "customer": {
-      "fullname": "Trần đức mạnh",
-      "phone": "0908065297",
-      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
-      "notes": ""
+      "fullname": "Nguyễn Tấn Đạt",
+      "phone": "0933556677",
+      "address": "55 Hoàng Hoa Thám, Bình Thạnh, TP. Hồ Chí Minh"
     },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
     "items": [
       {
-        "id": "nike-24",
-        "name": "1234",
-        "color": "Mặc định",
+        "id": "nike-09",
+        "code": "NK-09",
+        "name": "Nike Invincible 3 Cushion",
         "size": 41,
-        "price": 10000,
-        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
-        "qty": 1
-      }
-    ],
-    "subtotal": 10000,
-    "discountAmount": 0,
-    "voucher": null,
-    "totalAmount": 10000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
-  },
-  {
-    "orderId": "NIKE506832",
-    "createdAt": "2026-11-14T07:23:47.358Z",
-    "customer": {
-      "fullname": "Trần đức mạnh",
-      "phone": "0908065297",
-      "address": "tổ 1 ấp 5 xã long phước tp đồng nai",
-      "notes": ""
-    },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
-    "items": [
+        "color": "Thunder Blue",
+        "price": 4990000,
+        "qty": 1,
+        "costPrice": 2750000
+      },
       {
-        "id": "nike-24",
-        "name": "1234",
-        "color": "Mặc định",
+        "id": "nike-10",
+        "code": "NK-10",
+        "name": "Nike InfinityRN 4",
         "size": 41,
-        "price": 10000,
-        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
-        "qty": 1
+        "color": "White Mint",
+        "price": 4459000,
+        "qty": 1,
+        "costPrice": 2450000
       }
     ],
-    "subtotal": 10000,
-    "discountAmount": 0,
-    "voucher": null,
-    "totalAmount": 10000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+    "subtotal": 9449000,
+    "totalAmount": 9449000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
   },
   {
-    "orderId": "NIKE146419",
-    "createdAt": "2026-11-14T07:18:01.156Z",
+    "orderId": "NIKE445561",
+    "createdAt": "2026-11-10T15:20:00.000Z",
     "customer": {
-      "fullname": "Trần Đức Mạnh",
-      "phone": "0908065297",
-      "address": "Tổ 1, ấp 1, xã Long Phước, Long Thành, Đồng Nai",
-      "notes": "Nhắn Zalo xác nhận đơn cho mình nhé"
+      "fullname": "Trịnh Công Vinh",
+      "phone": "0909123789",
+      "address": "77 Hai Bà Trưng, Quận 1, TP. Hồ Chí Minh"
     },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
     "items": [
       {
-        "id": "nike-01",
-        "name": "Air Jordan 1 Retro High OG",
-        "color": "Chicago Đỏ Trắng",
+        "id": "nike-04",
+        "code": "NK-04",
+        "name": "Nike Dunk Low Retro Panda",
         "size": 42,
-        "price": 4990000,
-        "qty": 1
-      }
-    ],
-    "subtotal": 4990000,
-    "discountAmount": 499000,
-    "voucher": {
-      "code": "NIKE10",
-      "discountAmount": 499000
-    },
-    "totalAmount": 4491000,
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
-  },
-  {
-    "orderId": "NIKE975493",
-    "createdAt": "2026-11-13T07:25:56.490Z",
-    "customer": {
-      "fullname": "m",
-      "phone": "0933089270",
-      "address": "ấp hàng gòn phường long thành tp đồng nai",
-      "notes": ""
-    },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
-    "items": [
+        "color": "Panda Đen Trắng",
+        "price": 3490000,
+        "qty": 1,
+        "costPrice": 1950000
+      },
       {
-        "id": "nike-24",
-        "name": "1234",
-        "color": "Mặc định",
-        "size": 41,
-        "price": 10000,
-        "image": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg",
-        "qty": 1
+        "id": "nike-03",
+        "code": "NK-03",
+        "name": "Nike Air Force 1 07 All White",
+        "size": 42,
+        "color": "Triple White",
+        "price": 2990000,
+        "qty": 1,
+        "costPrice": 1650000
       }
     ],
-    "totalAmount": 10000,
-    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
-    "updatedAt": "2026-11-13T07:26:20.827Z"
+    "subtotal": 6480000,
+    "totalAmount": 6480000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
   },
   {
-    "orderId": "NIKE743768",
-    "createdAt": "2026-11-13T06:04:39.237Z",
+    "orderId": "NIKE334671",
+    "createdAt": "2026-11-09T11:10:00.000Z",
     "customer": {
-      "fullname": "trần đức mạnh",
-      "phone": "0908065297",
-      "address": "tổ 1 ấp  xã long phước",
-      "notes": ""
+      "fullname": "Dương Văn Khoa",
+      "phone": "0987654321",
+      "address": "18 Phan Châu Trinh, Nha Trang"
     },
-    "paymentMethod": "vietqr",
-    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
     "items": [
       {
         "id": "nike-02",
-        "name": "Air Force 1 '07",
-        "color": "Triple White Trắng Tinh",
-        "size": 41,
-        "price": 2929000,
-        "image": "assets/shoes/airforce1-white.png",
-        "qty": 1
+        "code": "NK-02",
+        "name": "Air Jordan 4 Retro White Cement",
+        "size": 43,
+        "color": "Cement Trắng Đốm",
+        "price": 5490000,
+        "qty": 1,
+        "costPrice": 3100000
       }
     ],
-    "totalAmount": 2929000,
-    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
-    "updatedAt": "2026-11-13T07:26:24.183Z"
+    "subtotal": 5490000,
+    "totalAmount": 5490000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
+  },
+  {
+    "orderId": "NIKE223781",
+    "createdAt": "2026-11-08T14:35:00.000Z",
+    "customer": {
+      "fullname": "Hồ Quang Hiếu",
+      "phone": "0908887766",
+      "address": "99 Hùng Vương, Hải Phòng"
+    },
+    "items": [
+      {
+        "id": "nike-01",
+        "code": "NK-01",
+        "name": "Air Jordan 1 Retro High OG",
+        "size": 42,
+        "color": "Volt Neon Vàng Chanh",
+        "price": 4990000,
+        "qty": 1,
+        "costPrice": 2750000
+      },
+      {
+        "id": "nike-05",
+        "code": "NK-05",
+        "name": "Nike Air Max 90 Infrared",
+        "size": 42,
+        "color": "Infrared Trắng Xám Đỏ",
+        "price": 3890000,
+        "qty": 1,
+        "costPrice": 2150000
+      }
+    ],
+    "subtotal": 8880000,
+    "totalAmount": 8380000,
+    "paymentMethod": "vietqr",
+    "status": "Đã hoàn thành"
   }
 ]

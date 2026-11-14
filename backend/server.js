@@ -1046,7 +1046,7 @@ const server = http.createServer((req, res) => {
         const qty = parseInt(it.qty, 10) || 1;
         totalItemsSold += qty;
         const p = products.find(prod => prod.id === it.id || prod.code === it.code || prod.name === it.name);
-        const cost = (p && p.costPrice) ? p.costPrice : (it.costPrice || Math.round((it.price || 0) * 0.55));
+        const cost = (it.costPrice && it.costPrice < (it.price || 0)) ? it.costPrice : ((p && p.costPrice && p.costPrice < (it.price || 0)) ? p.costPrice : Math.round((it.price || 0) * 0.55));
         orderCOGS += cost * qty;
       });
       totalCOGS += orderCOGS;
@@ -1245,7 +1245,7 @@ const server = http.createServer((req, res) => {
       (o.items || []).forEach(it => {
         const qty = parseInt(it.qty, 10) || 1;
         const p = products.find(prod => prod.id === it.id || prod.code === it.code || prod.name === it.name);
-        const cost = (p && p.costPrice) ? p.costPrice : (it.costPrice || Math.round((it.price || 0) * 0.55));
+        const cost = (it.costPrice && it.costPrice < (it.price || 0)) ? it.costPrice : ((p && p.costPrice && p.costPrice < (it.price || 0)) ? p.costPrice : Math.round((it.price || 0) * 0.55));
         orderCOGS += cost * qty;
       });
 
