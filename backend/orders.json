@@ -25,7 +25,8 @@
     "paymentMethodLabel": "VietQR (Techcombank)",
     "createdAt": "2026-11-14T07:46:38.360Z",
     "orderId": "NIKE559143",
-    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+    "status": "Đã xác nhận thanh toán • Chuẩn bị gửi hàng",
+    "updatedAt": "2026-11-14T07:48:49.945Z"
   },
   {
     "customer": {

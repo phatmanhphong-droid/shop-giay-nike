@@ -213,6 +213,7 @@
             <thead>
               <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
                 <th class="py-3 px-4">Ảnh</th>
+                <th class="py-3 px-4 text-center">Mã SP</th>
                 <th class="py-3 px-4">Tên Mẫu Giày & Dòng</th>
                 <th class="py-3 px-4 text-center">Danh Mục</th>
                 <th class="py-3 px-4 text-right">Giá Niêm Yết</th>
@@ -248,12 +249,12 @@
             <thead>
               <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
                 <th class="py-3 px-4">Mã Voucher</th>
-                <th class="py-3 px-4">Mô Tả Ưu Đãi</th>
-                <th class="py-3 px-4 text-center">Hình Thức Giảm</th>
-                <th class="py-3 px-4 text-right">Giá Trị</th>
+                <th class="py-3 px-4">Mô Tả & Phạm Vi Áp Dụng</th>
+                <th class="py-3 px-4 text-center">Mức Giảm</th>
+                <th class="py-3 px-4 text-center">Thời Gian Áp Dụng</th>
                 <th class="py-3 px-4 text-center">Đơn Tối Thiểu</th>
                 <th class="py-3 px-4 text-center">Trạng Thái</th>
-                <th class="py-3 px-4 text-center">Thao Tác</th>
+                <th class="py-3 px-4 text-center">Thao Tác Nhanh</th>
               </tr>
             </thead>
             <tbody id="vouchers-table-body" class="divide-y divide-hairline">
@@ -630,15 +631,15 @@
   <!-- MODAL: ADD VOUCHER (TẠO MÃ GIẢM GIÁ MỚI) -->
   <div id="add-voucher-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="fixed inset-0 bg-obsidian/60 backdrop-blur-md" onclick="closeAddVoucherModal()"></div>
-    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10 animate-in fade-in zoom-in-95 duration-200">
-      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60">
+    <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10 max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60 shrink-0">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
             🏷️
           </div>
           <div>
-            <h3 class="font-display font-bold text-base text-obsidian">Tạo Mã Giảm Giá Mới</h3>
-            <p class="text-[11px] text-muted">Mã sẽ có hiệu lực ngay lập tức tại giỏ hàng khách</p>
+            <h3 class="font-display font-bold text-base text-obsidian">Tạo Mã Giảm Giá (Voucher) Mới</h3>
+            <p class="text-[11px] text-muted">Cài đặt mức giảm, thời hạn áp dụng & phạm vi từng sản phẩm</p>
           </div>
         </div>
         <button type="button" onclick="closeAddVoucherModal()" class="w-8 h-8 rounded-full bg-white hover:bg-hairline border border-hairline flex items-center justify-center text-obsidian font-bold transition-colors">
@@ -646,15 +647,15 @@
         </button>
       </div>
 
-      <div class="p-6 space-y-4 text-xs">
+      <div class="p-6 space-y-4 text-xs overflow-y-auto flex-1">
         <div>
           <label class="block font-semibold text-obsidian mb-1">Mã code (Viết liền, không dấu) <span class="text-rose-500">*</span></label>
-          <input type="text" id="voucher-code-input" placeholder="Ví dụ: SALE50, TET2026..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl uppercase font-mono font-bold focus:outline-none focus:border-obsidian">
+          <input type="text" id="voucher-code-input" placeholder="Ví dụ: SALE50, TET2026, JORDAN20..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl uppercase font-mono font-bold focus:outline-none focus:border-obsidian">
         </div>
 
         <div>
           <label class="block font-semibold text-obsidian mb-1">Mô tả ưu đãi <span class="text-rose-500">*</span></label>
-          <input type="text" id="voucher-desc-input" placeholder="Ví dụ: Giảm 15% tối đa 300.000 ₫..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          <input type="text" id="voucher-desc-input" placeholder="Ví dụ: Giảm 20% cho Air Jordan hoặc toàn bộ sản phẩm..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -667,7 +668,7 @@
           </div>
           <div>
             <label class="block font-semibold text-obsidian mb-1">Giá trị giảm <span class="text-rose-500">*</span></label>
-            <input type="number" id="voucher-val-input" placeholder="Ví dụ: 10 hoặc 50000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-bold focus:outline-none focus:border-obsidian">
+            <input type="number" id="voucher-val-input" placeholder="Ví dụ: 10 hoặc 200000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-bold focus:outline-none focus:border-obsidian">
           </div>
         </div>
 
@@ -681,9 +682,52 @@
             <input type="number" id="voucher-max-input" placeholder="0 = Không giới hạn" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
           </div>
         </div>
+
+        <!-- THỜI GIAN ÁP DỤNG -->
+        <div class="grid grid-cols-2 gap-3 pt-1 border-t border-hairline">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Áp dụng từ ngày <span class="text-rose-500">*</span></label>
+            <input type="date" id="voucher-start-date" class="w-full px-3.5 py-2 bg-canvas border border-hairline rounded-xl font-medium text-xs focus:outline-none focus:border-obsidian">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Đến hết ngày <span class="text-rose-500">*</span></label>
+            <input type="date" id="voucher-end-date" class="w-full px-3.5 py-2 bg-canvas border border-hairline rounded-xl font-medium text-xs focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+
+        <!-- PHẠM VI ÁP DỤNG: TẤT CẢ SẢN PHẨM HOẶC CHỈ ĐỊNH THEO MÃ SP -->
+        <div class="space-y-2 pt-1 border-t border-hairline">
+          <label class="block font-semibold text-obsidian">Phạm vi áp dụng <span class="text-rose-500">*</span></label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-hairline cursor-pointer hover:bg-canvas transition-colors bg-white">
+              <input type="radio" name="voucher-scope" value="all" checked onchange="toggleVoucherScopeUI()" class="accent-obsidian">
+              <span class="font-bold text-xs text-obsidian">🌍 Tất cả sản phẩm</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-hairline cursor-pointer hover:bg-canvas transition-colors bg-white">
+              <input type="radio" name="voucher-scope" value="specific" onchange="toggleVoucherScopeUI()" class="accent-obsidian">
+              <span class="font-bold text-xs text-obsidian">🎯 Sản phẩm chỉ định</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- DANH SÁCH CHỌN SẢN PHẨM CHỈ ĐỊNH THEO MÃ SỐ RIÊNG -->
+        <div id="voucher-product-selector-box" class="hidden space-y-2 p-3 bg-canvas/70 rounded-2xl border border-hairline">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-[11px] text-obsidian uppercase">Tích chọn các đôi giày muốn giảm:</span>
+            <div class="flex items-center gap-2 text-[10px]">
+              <button type="button" onclick="selectAllVoucherProducts(true)" class="text-blue-600 font-bold hover:underline">Chọn hết</button>
+              <span class="text-muted">•</span>
+              <button type="button" onclick="selectAllVoucherProducts(false)" class="text-muted hover:underline">Bỏ chọn</button>
+            </div>
+          </div>
+          <input type="text" id="voucher-product-search" oninput="filterVoucherProductList(this.value)" placeholder="Tìm kiếm theo mã SP (NK-01...) hoặc tên..." class="w-full px-3 py-1.5 text-xs bg-white border border-hairline rounded-lg focus:outline-none">
+          <div id="voucher-products-checklist" class="max-h-40 overflow-y-auto space-y-1.5 pr-1 divide-y divide-hairline">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
       </div>
 
-      <div class="px-6 py-4 border-t border-hairline bg-canvas/40 flex items-center justify-end gap-3">
+      <div class="px-6 py-4 border-t border-hairline bg-canvas/40 flex items-center justify-end gap-3 shrink-0">
         <button type="button" onclick="closeAddVoucherModal()" class="px-5 py-2.5 rounded-full border border-hairline hover:bg-canvas text-xs font-semibold text-muted hover:text-obsidian transition-colors">
           Hủy Bỏ
         </button>

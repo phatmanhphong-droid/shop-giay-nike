@@ -213,7 +213,10 @@
           <!-- Top Badge & Category -->
           <div>
             <div class="flex items-center justify-between text-[11px] mb-3">
-              <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category || 'Sneaker'}</span>
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded-md bg-obsidian text-white font-mono font-bold text-[10px] tracking-wider shadow-xs" title="Mã số riêng của sản phẩm">${shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))}</span>
+                <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category || 'Sneaker'}</span>
+              </div>
               <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
             </div>
 

@@ -28,7 +28,9 @@
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
     let discountAmount = 0;
     if (appliedVoucher && subtotal > 0) {
-      if (appliedVoucher.type === 'percent') {
+      if (appliedVoucher.discountAmount !== undefined) {
+        discountAmount = appliedVoucher.discountAmount;
+      } else if (appliedVoucher.type === 'percent') {
         discountAmount = Math.round((subtotal * appliedVoucher.value) / 100);
         if (appliedVoucher.maxDiscount && discountAmount > appliedVoucher.maxDiscount) {
           discountAmount = appliedVoucher.maxDiscount;
@@ -60,7 +62,7 @@
       const res = await fetch(`${apiBase}/api/vouchers/apply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, orderTotal: subtotal })
+        body: JSON.stringify({ code, subtotal, orderTotal: subtotal, items: cartItems })
       });
       const data = await res.json();
       if (data.success && data.voucher) {
@@ -70,7 +72,9 @@
           description: data.voucher.description,
           type: data.voucher.type,
           value: data.voucher.value,
-          maxDiscount: data.voucher.maxDiscount
+          maxDiscount: data.voucher.maxDiscount,
+          applyScope: data.voucher.applyScope,
+          applicableProductCodes: data.voucher.applicableProductCodes
         };
 
         if (msgEl) {
@@ -197,6 +201,7 @@
     const finalColor = colorName || (shoe && shoe.colors && shoe.colors[0] ? shoe.colors[0].name : 'Mặc định');
     const finalImage = image || (shoe && shoe.colors && shoe.colors[0] ? shoe.colors[0].photo : (shoe ? shoe.image : 'assets/shoes/default-shoe.png'));
     const finalSize = size || 41;
+    const finalCode = (shoe && shoe.code) ? shoe.code : ('NK-' + (id || '').replace('nike-', ''));
 
     const existingIndex = cartItems.findIndex(
       item => item.id === id && item.color === finalColor && item.size === finalSize
@@ -207,6 +212,7 @@
     } else {
       cartItems.push({
         id,
+        code: finalCode,
         name: finalName,
         color: finalColor,
         size: finalSize,
@@ -308,7 +314,10 @@
             <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain" />
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-obsidian truncate">${item.name}</h4>
+            <h4 class="text-xs font-bold text-obsidian truncate flex items-center gap-1.5">
+              <span class="px-1.5 py-0.2 rounded bg-obsidian text-white font-mono text-[9px] font-bold shrink-0">${item.code || ('NK-' + (item.id||'').replace('nike-', ''))}</span>
+              <span class="truncate">${item.name}</span>
+            </h4>
             <p class="text-[11px] text-muted mt-0.5">${item.color} • Size ${item.size}</p>
             <p class="text-xs font-semibold text-obsidian mt-1">${item.price.toLocaleString('vi-VN')} ₫</p>
           </div>

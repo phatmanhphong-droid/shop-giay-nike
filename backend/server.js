@@ -586,14 +586,38 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       try {
-        const { code, subtotal, orderTotal } = JSON.parse(body || '{}');
+        const { code, subtotal, orderTotal, items } = JSON.parse(body || '{}');
         const vouchers = readJSON(VOUCHERS_FILE, []);
         const cleanCode = (code || '').trim().toUpperCase();
         const v = vouchers.find(x => x.code.toUpperCase() === cleanCode && x.active);
 
         if (!v) {
           res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-          res.end(JSON.stringify({ success: false, error: 'Mã giảm giá không tồn tại hoặc đã hết hạn' }));
+          res.end(JSON.stringify({ success: false, error: 'Mã giảm giá không tồn tại hoặc đã tạm dừng hoạt động' }));
+          return;
+        }
+
+        // 1. Kiểm tra thời hạn áp dụng (Từ ngày ... đến hết ngày ...)
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (v.startDate && todayStr < v.startDate) {
+          const parts = v.startDate.split('-');
+          const startFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ 
+            success: false, 
+            error: `Mã "${v.code}" có hiệu lực từ ngày ${startFormatted}. Hiện tại chưa đến thời gian áp dụng!` 
+          }));
+          return;
+        }
+
+        if (v.endDate && todayStr > v.endDate) {
+          const parts = v.endDate.split('-');
+          const endFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ 
+            success: false, 
+            error: `Mã "${v.code}" đã hết hạn sử dụng vào ngày ${endFormatted}!` 
+          }));
           return;
         }
 
@@ -608,13 +632,45 @@ const server = http.createServer((req, res) => {
           return;
         }
 
+        // 2. Kiểm tra phạm vi áp dụng (Tất cả sản phẩm HOẶC Sản phẩm cụ thể)
+        const isSpecific = v.applyScope === 'specific' && Array.isArray(v.applicableProductCodes) && v.applicableProductCodes.length > 0;
+        let applicableSubtotal = sub;
+        let matchedItems = [];
+
+        if (isSpecific) {
+          const cartList = Array.isArray(items) ? items : [];
+          matchedItems = cartList.filter(item => {
+            const itemCode = (item.code || '').toUpperCase();
+            const itemIdCode = ('NK-' + (item.id || '').replace('nike-', '')).toUpperCase();
+            const itemIdRaw = (item.id || '').toUpperCase();
+            return v.applicableProductCodes.some(c => {
+              const cUpper = c.trim().toUpperCase();
+              return cUpper === itemCode || cUpper === itemIdCode || cUpper === itemIdRaw;
+            });
+          });
+
+          if (cartList.length > 0 && matchedItems.length === 0) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+              success: false, 
+              error: `Mã "${v.code}" chỉ áp dụng cho các sản phẩm có mã: ${v.applicableProductCodes.join(', ')}. Giỏ hàng của bạn không có sản phẩm nào thuộc diện áp dụng!` 
+            }));
+            return;
+          }
+
+          if (matchedItems.length > 0) {
+            applicableSubtotal = matchedItems.reduce((sum, item) => sum + ((item.price || 0) * (item.qty || 1)), 0);
+          }
+        }
+
         let discount = 0;
         if (v.type === 'percent') {
-          discount = Math.round((sub * v.value) / 100);
+          discount = Math.round((applicableSubtotal * v.value) / 100);
           if (v.maxDiscount && discount > v.maxDiscount) discount = v.maxDiscount;
         } else {
           discount = v.value;
         }
+        if (discount > applicableSubtotal) discount = applicableSubtotal;
         if (discount > sub) discount = sub;
         const finalTotal = Math.max(0, sub - discount);
 
@@ -623,7 +679,11 @@ const server = http.createServer((req, res) => {
           success: true,
           voucher: v,
           discountAmount: discount,
-          finalTotal: finalTotal
+          finalTotal: finalTotal,
+          applicableSubtotal: applicableSubtotal,
+          appliedScope: isSpecific ? 'specific' : 'all',
+          applicableProductCodes: v.applicableProductCodes || [],
+          matchedItemsCount: matchedItems.length
         }));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -633,7 +693,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // API 16: ADD VOUCHER (POST /api/vouchers)
+  // API 16: ADD / UPDATE VOUCHER (POST /api/vouchers)
   if (req.method === 'POST' && cleanUrl === '/api/vouchers') {
     let body = '';
     req.on('data', chunk => body += chunk);
@@ -648,6 +708,10 @@ const server = http.createServer((req, res) => {
         newVoucher.minOrder = parseInt(newVoucher.minOrder, 10) || 0;
         newVoucher.maxDiscount = parseInt(newVoucher.maxDiscount, 10) || 0;
         newVoucher.active = newVoucher.active !== false;
+        newVoucher.startDate = newVoucher.startDate || '2026-01-01';
+        newVoucher.endDate = newVoucher.endDate || '2026-12-31';
+        newVoucher.applyScope = newVoucher.applyScope === 'specific' ? 'specific' : 'all';
+        newVoucher.applicableProductCodes = Array.isArray(newVoucher.applicableProductCodes) ? newVoucher.applicableProductCodes : [];
 
         let vouchers = readJSON(VOUCHERS_FILE, []);
         vouchers = vouchers.filter(v => v.code !== newVoucher.code);
@@ -661,6 +725,40 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: false, error: err.message }));
       }
     });
+    return;
+  }
+
+  // API: TOGGLE VOUCHER SCOPE (PUT /api/vouchers/:code/toggle-scope)
+  if (req.method === 'PUT' && cleanUrl.includes('/toggle-scope')) {
+    const code = cleanUrl.split('/')[3].toUpperCase();
+    let vouchers = readJSON(VOUCHERS_FILE, []);
+    const v = vouchers.find(x => x.code === code);
+    if (v) {
+      v.applyScope = v.applyScope === 'all' ? 'specific' : 'all';
+      writeJSON(VOUCHERS_FILE, vouchers);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: true, voucher: v }));
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: false, error: 'Không tìm thấy voucher' }));
+    }
+    return;
+  }
+
+  // API: TOGGLE VOUCHER ACTIVE (PUT /api/vouchers/:code/toggle-active)
+  if (req.method === 'PUT' && cleanUrl.includes('/toggle-active')) {
+    const code = cleanUrl.split('/')[3].toUpperCase();
+    let vouchers = readJSON(VOUCHERS_FILE, []);
+    const v = vouchers.find(x => x.code === code);
+    if (v) {
+      v.active = !v.active;
+      writeJSON(VOUCHERS_FILE, vouchers);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: true, voucher: v }));
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: false, error: 'Không tìm thấy voucher' }));
+    }
     return;
   }
 

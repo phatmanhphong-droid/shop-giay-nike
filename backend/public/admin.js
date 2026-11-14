@@ -418,6 +418,10 @@ function renderProductsTable() {
           </div>
         </td>
 
+        <td class="py-2.5 px-4 text-center">
+          <span class="px-2 py-0.5 rounded-md bg-obsidian text-white font-mono font-bold text-[10px] tracking-wider shadow-xs">${p.code || ('NK-' + (p.id||'').replace('nike-', ''))}</span>
+        </td>
+
         <td class="py-2.5 px-4">
           <p class="font-bold text-obsidian text-xs">${p.name}</p>
           <p class="text-[10px] text-muted">${p.series || 'Nike Collection'}</p>
@@ -845,6 +849,24 @@ async function loadVouchers() {
   }
 }
 
+function formatVoucherDate(dateStr) {
+  if (!dateStr) return 'Vô thời hạn';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return dateStr;
+}
+
+function getVoucherDateStatus(startDate, endDate) {
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (startDate && todayStr < startDate) {
+    return { text: '⏳ Chưa bắt đầu', class: 'bg-amber-100 text-amber-800' };
+  }
+  if (endDate && todayStr > endDate) {
+    return { text: '🔴 Đã hết hạn', class: 'bg-rose-100 text-rose-800' };
+  }
+  return { text: '🟢 Đang áp dụng', class: 'bg-emerald-100 text-emerald-800' };
+}
+
 function renderVouchers() {
   const tbody = document.getElementById('vouchers-table-body');
   if (!tbody) return;
@@ -852,38 +874,114 @@ function renderVouchers() {
     tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-muted">Chưa có mã voucher nào. Bấm "Tạo Voucher Mới" để thêm!</td></tr>`;
     return;
   }
-  tbody.innerHTML = allVouchers.map(v => `
-    <tr class="hover:bg-canvas/50 transition-colors">
-      <td class="py-3 px-4 font-mono font-bold text-obsidian">${v.code}</td>
-      <td class="py-3 px-4 text-obsidian font-medium">${v.description || '-'}</td>
-      <td class="py-3 px-4 text-center">
-        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.type === 'percent' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
-          ${v.type === 'percent' ? 'Phần trăm (%)' : 'Cố định (₫)'}
-        </span>
-      </td>
-      <td class="py-3 px-4 text-right font-bold text-obsidian">
-        ${v.type === 'percent' ? `${v.value}%` : `${v.value.toLocaleString('vi-VN')} ₫`}
-      </td>
-      <td class="py-3 px-4 text-center text-muted">
-        ${v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : 'Không có'}
-      </td>
-      <td class="py-3 px-4 text-center">
-        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.active ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}">
-          ${v.active ? 'Đang hoạt động' : 'Tạm tắt'}
-        </span>
-      </td>
-      <td class="py-3 px-4 text-center">
-        <button type="button" onclick="deleteVoucher('${v.code}')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold text-xs transition-colors">
-          Xóa
-        </button>
-      </td>
-    </tr>
-  `).join('');
+
+  tbody.innerHTML = allVouchers.map(v => {
+    const isSpecific = v.applyScope === 'specific';
+    const specificCodes = Array.isArray(v.applicableProductCodes) ? v.applicableProductCodes : [];
+    const dateStatus = getVoucherDateStatus(v.startDate, v.endDate);
+
+    return `
+      <tr class="hover:bg-canvas/50 transition-colors">
+        <!-- Cột 1: Mã code & Scope -->
+        <td class="py-3 px-4">
+          <div class="flex items-center gap-2">
+            <span class="font-mono font-bold text-obsidian text-sm">#${v.code}</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+              isSpecific ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+            }">
+              ${isSpecific ? `🎯 Riêng ${specificCodes.length} SP` : '🌍 Tất Cả SP'}
+            </span>
+          </div>
+        </td>
+
+        <!-- Cột 2: Mô tả & Chi tiết mã áp dụng -->
+        <td class="py-3 px-4">
+          <p class="text-obsidian font-medium text-xs">${v.description || '-'}</p>
+          ${isSpecific ? `
+            <div class="mt-1 flex flex-wrap items-center gap-1">
+              <span class="text-[10px] text-muted">Áp dụng cho:</span>
+              ${specificCodes.length ? specificCodes.map(c => `
+                <span class="px-1.5 py-0.2 rounded bg-purple-100 text-purple-900 font-mono text-[9px] font-bold">${c}</span>
+              `).join('') : '<span class="text-[10px] text-amber-600 italic">Chưa chọn SP nào</span>'}
+            </div>
+          ` : `
+            <p class="text-[10px] text-emerald-700 mt-0.5 font-medium">Áp dụng cho mọi đôi giày trong cửa hàng</p>
+          `}
+        </td>
+
+        <!-- Cột 3: Mức giảm -->
+        <td class="py-3 px-4 text-center">
+          <span class="font-bold text-obsidian text-xs">
+            ${v.type === 'percent' ? `${v.value}%` : `${(v.value || 0).toLocaleString('vi-VN')} ₫`}
+          </span>
+          ${v.type === 'percent' && v.maxDiscount ? `
+            <p class="text-[10px] text-muted">Tối đa ${(v.maxDiscount).toLocaleString('vi-VN')} ₫</p>
+          ` : ''}
+        </td>
+
+        <!-- Cột 4: Thời gian áp dụng -->
+        <td class="py-3 px-4 text-center">
+          <p class="font-mono text-[11px] text-obsidian">${formatVoucherDate(v.startDate)} → ${formatVoucherDate(v.endDate)}</p>
+          <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold ${dateStatus.class}">
+            ${dateStatus.text}
+          </span>
+        </td>
+
+        <!-- Cột 5: Đơn tối thiểu -->
+        <td class="py-3 px-4 text-center text-muted font-medium">
+          ${v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '0 ₫'}
+        </td>
+
+        <!-- Cột 6: Bật/Tắt -->
+        <td class="py-3 px-4 text-center">
+          <button type="button" onclick="toggleVoucherActive('${v.code}')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shadow-2xs ${
+            v.active ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }" title="Bấm để bật hoặc tắt voucher">
+            ${v.active ? '● Đang Bật' : '○ Tạm Tắt'}
+          </button>
+        </td>
+
+        <!-- Cột 7: Thao tác nhanh -->
+        <td class="py-3 px-4 text-center">
+          <div class="flex items-center justify-center gap-1.5">
+            ${isSpecific ? `
+              <button type="button" onclick="quickApplyAllProducts('${v.code}')" class="px-2 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-[10px] transition-colors flex items-center gap-1" title="Chuyển voucher sang áp dụng cho TẤT CẢ sản phẩm">
+                ⚡ Tất Cả SP
+              </button>
+            ` : `
+              <button type="button" onclick="openAssignProductsModal('${v.code}')" class="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-[10px] transition-colors flex items-center gap-1" title="Chuyển voucher sang chỉ áp dụng cho một số sản phẩm">
+                🎯 Chọn SP Riêng
+              </button>
+            `}
+            <button type="button" onclick="deleteVoucher('${v.code}')" class="p-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors" title="Xóa voucher">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function openAddVoucherModal() {
   const modal = document.getElementById('add-voucher-modal');
   if (modal) {
+    // Set default dates
+    const today = new Date();
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(today.getMonth() + 2);
+    
+    const startEl = document.getElementById('voucher-start-date');
+    const endEl = document.getElementById('voucher-end-date');
+    if (startEl && !startEl.value) startEl.value = today.toISOString().split('T')[0];
+    if (endEl && !endEl.value) endEl.value = nextMonth.toISOString().split('T')[0];
+
+    // Reset scope to all
+    const radioAll = document.querySelector('input[name="voucher-scope"][value="all"]');
+    if (radioAll) radioAll.checked = true;
+    toggleVoucherScopeUI();
+    renderVoucherProductChecklist();
+
     modal.classList.remove('pointer-events-none', 'opacity-0');
     modal.classList.add('opacity-100');
     document.body.style.overflow = 'hidden';
@@ -902,6 +1000,59 @@ function closeAddVoucherModal() {
   }
 }
 
+function toggleVoucherScopeUI() {
+  const isSpecific = document.querySelector('input[name="voucher-scope"]:checked')?.value === 'specific';
+  const box = document.getElementById('voucher-product-selector-box');
+  if (box) {
+    if (isSpecific) {
+      box.classList.remove('hidden');
+      renderVoucherProductChecklist();
+    } else {
+      box.classList.add('hidden');
+    }
+  }
+}
+
+function renderVoucherProductChecklist(selectedCodes = []) {
+  const container = document.getElementById('voucher-products-checklist');
+  if (!container) return;
+
+  const prods = allProducts || [];
+  container.innerHTML = prods.map(p => {
+    const code = p.code || ('NK-' + (p.id||'').replace('nike-', ''));
+    const isChecked = selectedCodes.includes(code);
+    return `
+      <label class="flex items-center justify-between p-2 hover:bg-white rounded-lg cursor-pointer transition-colors voucher-prod-item" data-code="${code.toLowerCase()}" data-name="${(p.name||'').toLowerCase()}">
+        <div class="flex items-center gap-2 min-w-0">
+          <input type="checkbox" value="${code}" ${isChecked ? 'checked' : ''} class="voucher-prod-checkbox accent-obsidian w-3.5 h-3.5 rounded">
+          <span class="px-1.5 py-0.2 rounded bg-obsidian text-white font-mono font-bold text-[9px] shrink-0">${code}</span>
+          <span class="text-xs font-semibold text-obsidian truncate">${p.name}</span>
+        </div>
+        <span class="text-[10px] font-bold text-muted whitespace-nowrap ml-2">${(p.price||0).toLocaleString('vi-VN')} ₫</span>
+      </label>
+    `;
+  }).join('');
+}
+
+function selectAllVoucherProducts(select) {
+  const checkboxes = document.querySelectorAll('.voucher-prod-checkbox');
+  checkboxes.forEach(cb => { cb.checked = select; });
+}
+
+function filterVoucherProductList(query) {
+  const q = (query || '').trim().toLowerCase();
+  const items = document.querySelectorAll('.voucher-prod-item');
+  items.forEach(item => {
+    const code = item.getAttribute('data-code') || '';
+    const name = item.getAttribute('data-name') || '';
+    if (!q || code.includes(q) || name.includes(q)) {
+      item.classList.remove('hidden');
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+}
+
 async function submitNewVoucher() {
   const code = document.getElementById('voucher-code-input')?.value.trim().toUpperCase();
   const desc = document.getElementById('voucher-desc-input')?.value.trim();
@@ -909,6 +1060,19 @@ async function submitNewVoucher() {
   const val = parseInt(document.getElementById('voucher-val-input')?.value, 10);
   const minOrder = parseInt(document.getElementById('voucher-min-input')?.value || 0, 10) || 0;
   const maxDiscount = parseInt(document.getElementById('voucher-max-input')?.value || 0, 10) || 0;
+  const startDate = document.getElementById('voucher-start-date')?.value || '2026-01-01';
+  const endDate = document.getElementById('voucher-end-date')?.value || '2026-12-31';
+  const applyScope = document.querySelector('input[name="voucher-scope"]:checked')?.value || 'all';
+
+  const applicableProductCodes = [];
+  if (applyScope === 'specific') {
+    const checked = document.querySelectorAll('.voucher-prod-checkbox:checked');
+    checked.forEach(cb => applicableProductCodes.push(cb.value));
+    if (applicableProductCodes.length === 0) {
+      showToast('Vui lòng tích chọn ít nhất 1 đôi giày để áp dụng voucher!');
+      return;
+    }
+  }
 
   if (!code) {
     showToast('Vui lòng nhập Mã voucher!');
@@ -934,12 +1098,16 @@ async function submitNewVoucher() {
         value: val,
         minOrder,
         maxDiscount,
+        startDate,
+        endDate,
+        applyScope,
+        applicableProductCodes,
         active: true
       })
     });
     const data = await res.json();
     if (data.success) {
-      showToast(`Đã tạo voucher ${code} thành công!`);
+      showToast(`Đã tạo voucher ${code} (${applyScope === 'specific' ? 'Riêng ' + applicableProductCodes.length + ' SP' : 'Tất cả SP'}) thành công!`);
       closeAddVoucherModal();
       document.getElementById('voucher-code-input').value = '';
       document.getElementById('voucher-desc-input').value = '';
@@ -951,6 +1119,58 @@ async function submitNewVoucher() {
   } catch (err) {
     showToast('Lỗi kết nối: ' + err.message);
   }
+}
+
+async function quickApplyAllProducts(code) {
+  if (!confirm(`Bạn có muốn chuyển voucher "${code}" sang áp dụng cho TẤT CẢ các sản phẩm trong cửa hàng không?`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers/${code}/toggle-scope`, { method: 'PUT' });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Voucher ${code} giờ đã áp dụng cho TẤT CẢ sản phẩm!`);
+      loadVouchers();
+    } else {
+      showToast('Lỗi: ' + data.error);
+    }
+  } catch (err) {
+    showToast('Lỗi mạng: ' + err.message);
+  }
+}
+
+async function toggleVoucherActive(code) {
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers/${code}/toggle-active`, { method: 'PUT' });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Đã ${data.voucher.active ? 'BẬT' : 'TẮT'} voucher ${code}!`);
+      loadVouchers();
+    } else {
+      showToast('Lỗi: ' + data.error);
+    }
+  } catch (err) {
+    showToast('Lỗi mạng: ' + err.message);
+  }
+}
+
+function openAssignProductsModal(code) {
+  const v = allVouchers.find(x => x.code === code);
+  if (!v) return;
+
+  // Open modal and prepopulate with existing voucher data
+  openAddVoucherModal();
+  document.getElementById('voucher-code-input').value = v.code;
+  document.getElementById('voucher-desc-input').value = v.description || '';
+  document.getElementById('voucher-type-input').value = v.type || 'percent';
+  document.getElementById('voucher-val-input').value = v.value || '';
+  document.getElementById('voucher-min-input').value = v.minOrder || 0;
+  document.getElementById('voucher-max-input').value = v.maxDiscount || 0;
+  if (v.startDate) document.getElementById('voucher-start-date').value = v.startDate;
+  if (v.endDate) document.getElementById('voucher-end-date').value = v.endDate;
+
+  const radioSpecific = document.querySelector('input[name="voucher-scope"][value="specific"]');
+  if (radioSpecific) radioSpecific.checked = true;
+  toggleVoucherScopeUI();
+  renderVoucherProductChecklist(v.applicableProductCodes || []);
 }
 
 async function deleteVoucher(code) {
@@ -971,7 +1191,6 @@ async function deleteVoucher(code) {
   }
 }
 
-// ==========================================================================
 // TELEGRAM BOT CONFIGURATION
 // ==========================================================================
 

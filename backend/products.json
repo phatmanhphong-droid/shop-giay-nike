@@ -30,7 +30,8 @@
         "hex": "#84CC16",
         "photo": "assets/shoes/jordan1-volt.png"
       }
-    ]
+    ],
+    "code": "NK-01"
   },
   {
     "id": "nike-02",
@@ -58,7 +59,8 @@
         "hex": "#18181B",
         "photo": "assets/shoes/airforce1-black.png"
       }
-    ]
+    ],
+    "code": "NK-02"
   },
   {
     "id": "nike-03",
@@ -86,7 +88,8 @@
         "hex": "#3B82F6",
         "photo": "assets/shoes/adaptbb-smart.png"
       }
-    ]
+    ],
+    "code": "NK-03"
   },
   {
     "id": "nike-04",
@@ -109,7 +112,8 @@
         "hex": "#4B5320",
         "photo": "assets/shoes/dunk-panda.png"
       }
-    ]
+    ],
+    "code": "NK-04"
   },
   {
     "id": "nike-05",
@@ -132,7 +136,8 @@
         "hex": "#E4E4E7",
         "photo": "assets/shoes/airmax90-infrared.png"
       }
-    ]
+    ],
+    "code": "NK-05"
   },
   {
     "id": "nike-06",
@@ -155,7 +160,8 @@
         "hex": "#18181B",
         "photo": "assets/shoes/cortez-classic.png"
       }
-    ]
+    ],
+    "code": "NK-06"
   },
   {
     "id": "nike-07",
@@ -178,7 +184,8 @@
         "hex": "#65A30D",
         "photo": "assets/shoes/pegasus40-blue.png"
       }
-    ]
+    ],
+    "code": "NK-07"
   },
   {
     "id": "nike-08",
@@ -201,7 +208,8 @@
         "hex": "#EC4899",
         "photo": "assets/shoes/vaporfly-pink.png"
       }
-    ]
+    ],
+    "code": "NK-08"
   },
   {
     "id": "nike-09",
@@ -224,7 +232,8 @@
         "hex": "#84CC16",
         "photo": "assets/shoes/zoomfly3-lime.png"
       }
-    ]
+    ],
+    "code": "NK-09"
   },
   {
     "id": "nike-10",
@@ -247,7 +256,8 @@
         "hex": "#A3E635",
         "photo": "assets/shoes/superrep-volt.png"
       }
-    ]
+    ],
+    "code": "NK-10"
   },
   {
     "id": "nike-11",
@@ -270,7 +280,8 @@
         "hex": "#3F3F46",
         "photo": "assets/shoes/alphatr3-black.png"
       }
-    ]
+    ],
+    "code": "NK-11"
   },
   {
     "id": "nike-12",
@@ -293,7 +304,8 @@
         "hex": "#E4E4E7",
         "photo": "assets/shoes/jordan4-cement.png"
       }
-    ]
+    ],
+    "code": "NK-12"
   },
   {
     "id": "nike-13",
@@ -316,7 +328,8 @@
         "hex": "#F97316",
         "photo": "assets/shoes/sbdunk-emerald.png"
       }
-    ]
+    ],
+    "code": "NK-13"
   },
   {
     "id": "nike-14",
@@ -339,7 +352,8 @@
         "hex": "#10B981",
         "photo": "assets/shoes/airmax270-green.png"
       }
-    ]
+    ],
+    "code": "NK-14"
   },
   {
     "id": "nike-15",
@@ -362,7 +376,8 @@
         "hex": "#1E40AF",
         "photo": "assets/shoes/airmax720-blue.png"
       }
-    ]
+    ],
+    "code": "NK-15"
   },
   {
     "id": "nike-16",
@@ -385,7 +400,8 @@
         "hex": "#7C3AED",
         "photo": "assets/shoes/lebron21-purple.png"
       }
-    ]
+    ],
+    "code": "NK-16"
   },
   {
     "id": "nike-17",
@@ -408,7 +424,8 @@
         "hex": "#D97706",
         "photo": "assets/shoes/kd16-gold.png"
       }
-    ]
+    ],
+    "code": "NK-17"
   },
   {
     "id": "nike-18",
@@ -431,7 +448,8 @@
         "hex": "#DC2626",
         "photo": "assets/shoes/giannis-red.png"
       }
-    ]
+    ],
+    "code": "NK-18"
   },
   {
     "id": "nike-19",
@@ -454,7 +472,8 @@
         "hex": "#0284C7",
         "photo": "assets/shoes/airmax-tn.png"
       }
-    ]
+    ],
+    "code": "NK-19"
   },
   {
     "id": "nike-20",
@@ -477,7 +496,8 @@
         "hex": "#F4F4F5",
         "photo": "assets/shoes/infinityrun-white.png"
       }
-    ]
+    ],
+    "code": "NK-20"
   },
   {
     "id": "nike-21",
@@ -500,7 +520,8 @@
         "hex": "#09090B",
         "photo": "assets/shoes/sneaker-black.png"
       }
-    ]
+    ],
+    "code": "NK-21"
   },
   {
     "id": "nike-23",
@@ -523,7 +544,8 @@
         "hex": "#EF4444",
         "photo": "assets/shoes/airmax-red.png"
       }
-    ]
+    ],
+    "code": "NK-23"
   },
   {
     "id": "nike-24",
@@ -546,6 +568,7 @@
         "hex": "#111111",
         "photo": "assets/shoes/Camo_Studio_Snapshot_2026-09-17_-_23-25-41.jpg"
       }
-    ]
+    ],
+    "code": "NK-24"
   }
 ]

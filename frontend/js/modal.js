@@ -35,6 +35,8 @@
     const sizesContainer = document.getElementById('qv-sizes');
     const specsContainer = document.getElementById('qv-specs');
 
+    const codeEl = document.getElementById('qv-code');
+    if (codeEl) codeEl.textContent = currentProduct.code || ('NK-' + (currentProduct.id || '').replace('nike-', ''));
     if (badgeEl) badgeEl.textContent = currentProduct.badge;
     if (titleEl) titleEl.textContent = currentProduct.name;
     if (priceEl) priceEl.textContent = currentProduct.price.toLocaleString('vi-VN') + ' ₫';
