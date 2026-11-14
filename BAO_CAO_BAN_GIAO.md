@@ -1,315 +1,170 @@
-# BÁO CÁO BÀN GIAO DỰ ÁN SHOP GIÀY NIKE (NIKE ATELIER 2026)
+# BÁO CÁO NGHIỆM THU DỰ ÁN SHOP GIÀY NIKE (NIKE ATELIER 2026)
+## NHẬT KÝ NÂNG CẤP TÍNH NĂNG NGÀY 14/11/2026
 
 > **Dự án**: Website Shop Giày Nike Chính Hãng (Fullstack Node.js + VietQR + Admin Portal + Docker)  
-> **Phiên bản**: 4.0 (Hoàn Thiện Toàn Diện 100% — Full Features Released)  
+> **Phiên bản**: 5.0 (Cập nhật ngày 14/11/2026)  
 > **Địa chỉ Web Khách hàng (Frontend)**: http://localhost:8080  
 > **Địa chỉ Cổng Quản Trị (Backend Admin)**: http://localhost:5000/admin  
-> **GitHub Repository**: [https://github.com/phatmanhphong-droid/shop-giay-nike.git](https://github.com/phatmanhphong-droid/shop-giay-nike.git)  
+> **GitHub Repository**: [https://github.com/phatmanhphong-droid/shop-giay-nike.git](https://github.com/phatmanhphong-droid/shop-giay-nike.git) (Nhánh `main`)  
 > **Thư mục dự án**: `C:\Users\ASUS\Downloads\Shop giày nike`  
-> **Công cụ khởi động 1 chạm**: `MO_SHOP_NIKE.bat`
+> **Hotline & Zalo Quản Trị**: `0908065297`  
+> **Tài khoản thụ hưởng VietQR**: Techcombank `8678686688` (TRAN DUC MANH)
 
 ---
 
-## 1. TỔNG QUAN DỰ ÁN & MỤC TIÊU HOÀN THÀNH
+## 1. TỔNG HỢP CÁC CHỨC NĂNG ĐÃ THỰC HIỆN HÔM NAY (14/11/2026)
 
-Dự án **Shop Giày Nike** đã được hoàn thiện toàn diện từ giao diện khách hàng cao cấp (Frontend) đến hệ thống quản trị, cơ sở dữ liệu và thanh toán tự động (Backend). Toàn bộ hệ thống được quy hoạch theo mô hình dịch vụ phân tách chuyên nghiệp, hỗ trợ chạy trực tiếp trên máy hoặc đóng gói Docker container.
-
-### Các Giá Trị Trọng Tâm Đã Đạt Được:
-1. **Giao diện Nike Atelier 60fps**: Sàn diễn xoay 3D (3D Turntable Runway) mượt mà bằng thuật toán vật lý Lerp, tương tác tự do nhấp chọn giày trực tiếp, hiển thị hình ảnh thật 100% đã tách nền trong suốt, đồng bộ 100% hướng mũi giày quay sang trái (Toe Left).
-2. **Thanh toán VietQR Napas247 tự động**: Tích hợp thanh toán quét mã QR động chuẩn ngân hàng Techcombank (`8678686688` - TRAN DUC MANH). Khách quét mã là hệ thống tự điền đúng số tiền và mã đơn hàng, chốt đơn tức thì.
-3. **Cổng Quản Trị Backend Admin Portal độc lập**: Quản lý đơn hàng, đổi trạng thái giao hàng, in hóa đơn, quản lý sản phẩm, thêm giày mới với tính năng tải ảnh trực tiếp, **chỉnh sửa giá bán trực tiếp**, và **quản lý mã giảm giá Voucher**.
-4. **Hệ thống Tra cứu đơn hàng (Order Tracking)**: Nút "Tra cứu đơn" trực quan trên thanh Menu, tìm kiếm theo Số điện thoại hoặc Mã đơn hàng (`#NIKE...`), hiển thị thanh tiến trình 4 giai đoạn đồ họa đẹp mắt và bảo mật ẩn số điện thoại khách hàng.
-5. **Hệ thống Mã giảm giá & Khuyến mãi (Voucher Engine)**: Hỗ trợ mã giảm % hoặc giảm tiền mặt (`NIKE10`, `FREESHIP`, `WELCOME2026`, `VIPNIKE`), tự động áp dụng tại giỏ hàng và thanh toán, trừ tiền tức thì và cập nhật lại mã VietQR theo số tiền thực tế.
-6. **Đánh giá khách hàng & Xếp hạng 4.9⭐ (Customer Reviews)**: Banner huy hiệu 4.9/5 sao xác thực, hiển thị đánh giá chân thực từ khách hàng thật đã mua giày bên trong cửa sổ xem chi tiết.
-7. **Tự động gửi thông báo đơn hàng qua Telegram Bot**: Mỗi khi có đơn hàng mới, hệ thống tự động bắn tin nhắn định dạng chuyên nghiệp về nhóm/kênh Telegram của chủ shop để xử lý đơn ngay lập tức.
-8. **Đồng bộ thời gian thực (Real-time Auto Sync)**: Kết nối thông suốt giữa Frontend (port 8080) và Backend (port 5000) qua Reverse Proxy. Thay đổi giá, voucher hoặc thêm sản phẩm bên Admin sẽ tự động hiển thị ngay trên Web khách hàng mà không cần F5.
-9. **Thiết kế tối giản & Gỡ bỏ tính năng so sánh rườm rà**: Đã loại bỏ hoàn toàn tính năng so sánh sản phẩm theo đúng yêu cầu để giữ cho giao diện thanh lịch, sang trọng và tốc độ tải trang nhanh nhất.
-10. **Đóng gói Docker & Lưu trữ GitHub**: Cấu hình sẵn `Dockerfile` cho Frontend/Backend, `docker-compose.yml` lưu trữ dữ liệu bền vững (volume mount), và đẩy toàn bộ mã nguồn lên GitHub.
-
----
-
-## 2. CHI TIẾT CÁC TÍNH NĂNG MỚI NÂNG CẤP (BỘ 4 TÍNH NĂNG HOÀN THIỆN)
-
-### 2.1. Tra Cứu Tiến Độ Đơn Hàng (Order Tracking)
-* **Vị trí**: Nút **"Tra cứu đơn"** gắn biểu tượng đơn hàng màu xanh lá nổi bật tại thanh Header trên cùng.
-* **Cách sử dụng**:
-  * Khách chỉ cần nhập **Mã đơn hàng** (Ví dụ: `NIKE743768`) hoặc **Số điện thoại** đã đặt hàng (Ví dụ: `0908065297`).
-  * Hệ thống tự động tra cứu trong cơ sở dữ liệu `orders.json` và hiển thị kết quả ngay tức thì không cần tải lại trang.
-* **Giao diện hiển thị**:
-  * **Thanh tiến trình 4 bước (Timeline)**:
-    1. Đặt hàng thành công
-    2. Xác nhận & Đóng gói
-    3. Đang vận chuyển
-    4. Giao hàng thành công
-  * Mỗi bước có icon trạng thái, đường nối xanh lá sáng động chỉ báo chính xác tiến độ của đơn hàng.
-  * **Bảo mật thông tin**: Tự động che số điện thoại khách hàng dạng `0908***597` để bảo vệ quyền riêng tư.
-  * Hiển thị đầy đủ danh sách sản phẩm, size, phương thức thanh toán và tổng tiền.
-
-### 2.2. Hệ Thống Mã Giảm Giá & Khuyến Mãi (Vouchers & Discount Engine)
-* **Các mã khuyến mãi có sẵn**:
-  * `NIKE10`: Giảm ngay **10%** tổng đơn hàng (Tối đa 500.000 ₫ cho đơn từ 1.000.000 ₫).
-  * `FREESHIP`: Miễn phí vận chuyển toàn quốc (Giảm ngay **50.000 ₫** cho mọi đơn hàng).
-  * `WELCOME2026`: Ưu đãi đón năm mới 2026 — Giảm ngay **200.000 ₫** cho đơn từ 2.000.000 ₫.
-  * `VIPNIKE`: Tri ân khách hàng thân thiết — Giảm ngay **15%** (Tối đa 1.000.000 ₫ cho đơn từ 3.000.000 ₫).
-* **Trải nghiệm khách hàng**:
-  * Có sẵn các **nút bấm chọn nhanh (Quick Pills)** ngay dưới ô nhập mã tại Giỏ hàng và Modal thanh toán.
-  * Khách chỉ cần bấm 1 chạm vào viên thuốc `NIKE10 (-10%)` là mã lập tức được áp dụng.
-  * Tính toán trực quan: Hiện dòng chiết khấu màu xanh ngọc `-499.000 ₫`, tổng tiền trừ trực tiếp.
-  * **Đặc biệt**: Mã VietQR tự động tính lại số tiền sau giảm giá, khách quét mã chuyển khoản sẽ nhận đúng số tiền đã chiết khấu!
-* **Quản trị phía Admin**:
-  * Thêm tab mới: **"🏷️ Quản Lý Voucher"**.
-  * Bảng danh sách voucher: Mã code, Mô tả, Hình thức giảm (% hoặc ₫), Đơn tối thiểu, Trạng thái hoạt động, Nút xóa.
-  * Modal tạo voucher mới linh hoạt, cho phép chủ shop tự tạo mã khuyến mãi sự kiện bất cứ lúc nào.
-
-### 2.3. Đánh Giá Khách Hàng & Xếp Hạng 4.9⭐ (Customer Reviews)
-* **Vị trí**: Nằm ngay bên trong cửa sổ xem chi tiết giày (Quick View Modal).
-* **Đặc điểm nổi bật**:
-  * **Huy hiệu 4.9/5 sao**: Đính kèm nhãn màu xanh lá *"✓ Đã kiểm định 100% chính hãng"* tạo sự tin cậy tuyệt đối cho khách mua.
-  * **Danh sách đánh giá thực tế**: Lấy dữ liệu từ file `reviews.json` kèm avatar, tên người mua, xếp hạng 5 sao, size giày đã mua, ngày đánh giá và cảm nhận thực tế về chất da, đế đệm, độ êm và dịch vụ giao hàng.
-
-### 2.4. Thông Báo Đơn Hàng Qua Telegram Bot (Instant Order Alerts)
-* **Cơ chế hoạt động**:
-  * Tích hợp trực tiếp bên trong `backend/server.js`.
-  * Ngay khi khách hàng bấm *"Xác Nhận Đặt Hàng"*, máy chủ sẽ tự động gọi API Telegram gửi một tin nhắn định dạng Markdown chuẩn đẹp về nhóm Telegram của admin.
-* **Nội dung tin nhắn Telegram mẫu**:
-  ```markdown
-  🚨 [ĐƠN HÀNG MỚI TẠI SHOP GIÀY NIKE] 🚨
-  -----------------------------------
-  📦 Mã đơn: #NIKE84920
-  👤 Khách hàng: Nguyễn Văn A
-  📞 Điện thoại: 0901234567
-  📍 Địa chỉ: 123 Lê Duẩn, Q.1, TP.HCM
-  💳 Thanh toán: Quét Mã VietQR (Napas247)
-  💰 Tổng tiền: 4.491.000 ₫ (Đã áp dụng mã NIKE10)
-  👟 Sản phẩm:
-    • Air Jordan 1 Retro High OG - Size 41 x1
-  -----------------------------------
-  ⏰ Thời gian: 14/11/2026, 13:45:00
-  ```
-* **Cấu hình trên Admin**:
-  * Trong tab **Cài Đặt**, có mục *"🤖 Thông Báo Đơn Hàng Qua Telegram Bot"*.
-  * Cho phép bật/tắt (Toggle Switch), nhập `Bot Token` và `Chat ID`.
-  * Có nút **"Gửi Tin Nhắn Test Thử"** để kiểm tra kết nối với bot ngay lập tức trước khi chạy thật.
-
-### 2.5. Thông Báo Đơn Hàng Qua Zalo & Số Điện Thoại Di Động (SMS)
-* **Ý nghĩa thực tế**: Phục vụ tối đa thói quen mua sắm trực tuyến của người tiêu dùng và chủ shop tại Việt Nam (khi đa số người dùng không cài Telegram).
-* **Trải nghiệm khách hàng (Frontend)**:
-  * Ngay khi đặt hàng thành công, hiển thị **Hộp hỗ trợ nhanh Zalo & Điện thoại**:
-  * **Nút Zalo 1 chạm (Màu xanh Zalo)**: Tự động sao chép mã đơn hàng và mở Zalo số điện thoại shop (`https://zalo.me/0908065297`) để khách nhắn tin xác nhận với shop ngay.
-  * **Nút Gọi Hotline**: Bấm gọi ngay đến số điện thoại Hotline Shop (`tel:0908065297`).
-* **Quản trị phía Admin**:
-  * Trong tab **Cài Đặt**, có mục *"📲 Thông Báo Đơn Hàng Qua Zalo & Số Điện Thoại (SMS)"*.
-  * Tùy chỉnh Số điện thoại nhận đơn & Số Zalo Shop (`0908065297`).
-  * Tích hợp sẵn cổng SMS Brandname (hỗ trợ `eSMS.vn`, `SpeedSMS.vn`, `Twilio SMS`) để tự động gửi tin nhắn SMS về số điện thoại của Chủ Shop và Khách Hàng.
-  * Nút **"Gửi SMS Test Thử Về Điện Thoại"** kiểm tra kết nối SMS trực tiếp.
-
----
-
-## 2. CHI TIẾT CÁC TÍNH NĂNG ĐÃ TRIỂN KHAI VÀ BÀN GIAO
-
-### 2.1. Phía Khách Hàng (Frontend - Port 8080)
-* **Sàn Diễn 3D Runway (3D Turntable Stage)**:
-  * Lăn chuột mượt mà 60fps để xoay vòng sàn diễn trưng bày các mẫu giày biểu tượng.
-  * Nhấp chuột trực tiếp vào bất kỳ đôi giày nào đang xoay để mở ngay khung thông tin chi tiết.
-  * Cuộn mượt mà xuống danh mục sản phẩm bên dưới khi lướt hết sàn diễn.
-  * Đã lược bỏ hoàn toàn các khung card thừa bên dưới chân sàn diễn, giữ không gian thoáng đãng chuẩn phong cách tối giản.
-* **Lưới Sản Phẩm Động (Dynamic Catalog Grid)**:
-  * Bộ lọc danh mục linh hoạt: Tự động nhận diện danh mục từ Backend (Jordan, Lifestyle, Running, Basketball, Air Max, Skateboarding...).
-  * Thanh tìm kiếm trực tiếp: Tìm kiếm theo tên giày, dòng sản phẩm hoặc từ khóa mô tả.
-  * Mỗi thẻ sản phẩm hiển thị ảnh thật, bảng đổi màu thực tế, tên, giá bán VNĐ, nút **"Chi tiết"** và nút **"Thêm vào giỏ" (+)**.
-  * Bộ đếm số lượng mẫu giày trên thanh menu và tiêu đề danh mục tự động nhảy số theo dữ liệu thực tế từ Backend.
-* **Cửa Sổ Xem Nhanh (Quick View Popup Modal)**:
-  * Hiển thị hình ảnh kích thước lớn trên nền trắng tinh khiết sáng rõ.
-  * Chọn màu sắc thực tế (đổi đúng ảnh thật của màu đó).
-  * Chọn size giày chuẩn EU từ 38 đến 44.
-  * Xem 4 thông số kỹ thuật chất liệu, đệm khí, độ bám.
-  * Thêm vào giỏ hàng với thông báo Toast xác nhận nhanh.
-* **Giỏ Hàng Trượt (Slide-out Cart Drawer)**:
-  * Hiển thị danh sách mẫu giày đã chọn, hình ảnh, phân loại màu, size và số lượng.
-  * Tăng / giảm số lượng sản phẩm, xóa từng món, tự động tính tổng tiền giỏ hàng.
-  * Nút "Tiến Hành Thanh Toán" dẫn sang màn hình thanh toán VietQR.
-* **Thanh Toán Tự Động Quét Mã VietQR (VietQR Checkout Modal)**:
-  * Form điền thông tin người nhận: Họ và tên, Số điện thoại, Địa chỉ giao hàng, Ghi chú.
-  * 2 phương thức thanh toán: **Quét mã VietQR (Napas247)** và **Thanh toán khi nhận hàng (COD)**.
-  * Khi chọn VietQR: Tự động gọi API ngân hàng sinh ra **Mã QR Động chuẩn Napas247** chứa chính xác số tiền đơn hàng và mã nội dung chuyển khoản.
-  * Cung cấp nút sao chép 1 chạm tiện lợi: Sao chép Số tài khoản (`8678686688`), Tên chủ thẻ (`TRAN DUC MANH`), Số tiền, và Nội dung chuyển khoản.
-  * Xác nhận đơn hàng thành công, hiển thị màn hình chúc mừng và lưu đơn vào hệ thống Backend.
-
----
-
-### 2.2. Phía Quản Trị Hệ Thống (Backend Admin Portal - Port 5000)
-Địa chỉ truy cập: **`http://localhost:5000/admin`**
-
-* **Quản Lý Đơn Hàng (Orders Management)**:
-  * Thống kê tổng số đơn hàng, tổng doanh thu thực tế, số đơn đã thanh toán và số đơn đang chờ xử lý.
-  * Bảng danh sách đơn hàng chi tiết: Mã đơn, Khách hàng, SĐT, Sản phẩm & Size, Tổng tiền, Phương thức thanh toán, Trạng thái, Ngày giờ đặt.
-  * Thanh tìm kiếm đơn hàng nhanh theo tên khách, số điện thoại hoặc mã đơn.
-  * Bộ lọc trạng thái: Tất cả, Chờ xác nhận, Đã thanh toán, Đang giao hàng, Hoàn thành, Đã hủy.
-  * Cập nhật trạng thái đơn hàng chỉ bằng 1 thao tác chọn.
-  * **Tính năng In Hóa Đơn Bán Hàng**: Xuất phiếu giao hàng chuyên nghiệp có logo Nike Atelier để đính kèm hộp giày khi gửi cho đơn vị vận chuyển.
-* **Quản Lý Sản Phẩm (Products Management)**:
-  * Bảng danh sách toàn bộ mẫu giày hiện có trong shop.
-  * Hiển thị ảnh thumbnail, tên, dòng sản phẩm, danh mục, giá bán niêm yết, huy hiệu và số lượng màu sắc.
-  * **Nút Chỉnh Sửa Giá Bán Trực Tiếp (Edit Price)**:
-    * Có nút *"Sửa giá"* tại từng dòng sản phẩm và hỗ trợ nhấp trực tiếp vào cột giá.
-    * Mở Modal chỉnh sửa giá hiện đại: ô nhập giá mới bằng số, tự động định dạng tiền tệ trực quan `... ₫`.
-    * Các nút tính toán nhanh: `+100.000 ₫`, `+500.000 ₫`, `-100.000 ₫`, `Giảm 10%`, `Giảm 20%`.
-    * Bấm nút *"Lưu Giá Mới"* (hoặc gõ Enter) là giá được cập nhật vào cơ sở dữ liệu `products.json` và đồng bộ tức thì sang Web khách hàng.
-  * **Thêm Mẫu Giày Mới & Upload Ảnh Thật**:
-    * Modal thêm sản phẩm trực quan: Tên giày, Dòng sản phẩm, Danh mục, Giá bán, Huy hiệu, Mô tả, 4 thông số kỹ thuật.
-    * Khu vực tải ảnh: Chọn file ảnh JPG, PNG, WEBP từ máy tính, xem trước ảnh tức thì, tự động lưu file vào hệ thống và tạo đường dẫn chuẩn cho web.
-  * **Xóa Sản Phẩm**: Nút xóa mẫu giày kèm hộp thoại xác nhận an toàn, tránh xóa nhầm.
-* **Cấu Hình Tài Khoản Ngân Hàng VietQR (Bank Settings)**:
-  * Tùy biến thông tin tài khoản thụ hưởng nhận tiền: Tên ngân hàng, Mã ngân hàng (Bin code), Số tài khoản, Tên chủ tài khoản.
-  * Bấm *"Lưu Cấu Hình Ngân Hàng"* là toàn bộ mã QR của khách trên Web sẽ tự động cập nhật sang tài khoản mới mà không cần can thiệp code.
-* **Giám Sát Hệ Thống (System Health Check)**:
-  * Đo lường thời gian hoạt động liên tục (Uptime), trạng thái kết nối máy chủ, cổng mạng và kiểm tra tính toàn vẹn của dữ liệu JSON.
-
----
-
-### 2.3. Cơ Chế Kết Nối & Đồng Bộ Thời Gian Thực (Architecture & Sync)
-* **Mô Hình Phân Tách Độc Lập**:
-  * Thư mục `frontend/`: Hoàn toàn độc lập, chạy trên cổng 8080, phục vụ giao diện người dùng.
-  * Thư mục `backend/`: Hoàn toàn độc lập, chạy trên cổng 5000, xử lý toàn bộ logic nghiệp vụ, REST API và lưu trữ dữ liệu.
-* **Reverse Proxy Tích Hợp Sẵn**:
-  * `frontend/server.js` tích hợp sẵn Reverse Proxy chuyển tiếp toàn bộ yêu cầu `/api/*` về `backend:5000`, triệt tiêu hoàn toàn các vấn đề xung đột tên miền hay lỗi CORS.
-* **Real-time Auto-sync**:
-  * Frontend tự động thăm dò cập nhật mỗi 4 giây và mỗi khi người dùng click chuột quay lại tab shop (`window.focus`). Khi admin thêm sản phẩm mới hoặc đổi giá ở trang quản trị, trang bán hàng sẽ tự động cập nhật ngay lập tức.
-* **Cơ Chế Phục Hồi Ảnh Thông Minh**:
-  * Các thẻ ảnh có sẵn cơ chế `onerror` tự động fallback sang cổng Backend nếu file ảnh vừa upload chưa kịp sao chép sang Frontend, đảm bảo 100% không bao giờ bị lỗi ảnh trắng.
-
----
-
-## 3. CẤU TRÚC THƯ MỤC DỰ ÁN SAU KHI QUY HOẠCH
+Hôm nay hệ thống đã được nâng cấp vượt bậc với **5 nhóm chức năng trọng yếu** nhằm hoàn thiện toàn diện quy trình bán hàng, khuyến mãi và quản trị tài chính:
 
 ```
-Shop giày nike/
-├── backend/                             # MÁY CHỦ REST API & CỔNG QUẢN TRỊ ADMIN (PORT 5000)
-│   ├── public/
-│   │   ├── admin.js                     # Bộ điều khiển quản lý đơn hàng, thêm giày, sửa giá, cấu hình bank
-│   │   ├── index.html                   # Giao diện Admin Dashboard sang trọng chuẩn Nike
-│   │   └── uploads/                     # Thư mục lưu ảnh giày do admin tải lên từ máy tính
-│   ├── bank.json                        # Cấu hình tài khoản ngân hàng VietQR
-│   ├── Dockerfile                       # Đóng gói container Docker cho Backend (Node.js 20 Alpine)
-│   ├── orders.json                      # Cơ sở dữ liệu danh sách đơn hàng đã đặt
-│   ├── products.json                    # Cơ sở dữ liệu danh mục sản phẩm và giá bán niêm yết
-│   └── server.js                        # Node.js HTTP REST API Server (CRUD Products, Orders, Upload, Bank)
-│
-├── frontend/                            # GIAO DIỆN MUA SẮM KHÁCH HÀNG (PORT 8080)
-│   ├── assets/
-│   │   └── shoes/                       # Bộ sưu tập ảnh sneaker Nike chính hãng tách nền trong suốt
-│   ├── css/
-│   │   └── styles.css                   # Stylesheet tối ưu: hiệu ứng 3D Turntable, popup, giỏ hàng
-│   ├── js/
-│   │   ├── app.js                       # Controller chính: đồng bộ live API, lọc danh mục động, tìm kiếm
-│   │   ├── cart.js                      # Logic giỏ hàng, áp dụng Voucher, tính tổng tiền, tạo đơn và mở VietQR
-│   │   ├── modal.js                     # Popup khung thông tin chi tiết (Quick View) & đánh giá 4.9⭐
-│   │   ├── tracking.js                  # Tra cứu tiến độ đơn hàng với timeline 4 giai đoạn & bảo mật SĐT
-│   │   ├── products.js                  # Dữ liệu sản phẩm mẫu dự phòng & hàm đồng bộ API
-│   │   └── turntable.js                 # Logic vật lý sàn diễn 3D Runway mượt 60fps
-│   ├── Dockerfile                       # Đóng gói container Docker cho Frontend (Nginx Alpine)
-│   ├── index.html                       # Trang chủ mua sắm Nike Atelier chuẩn tối giản
-│   └── server.js                        # Máy chủ Frontend Node.js tích hợp sẵn Reverse Proxy sang Backend
-│
-├── .gitignore                           # Danh sách loại trừ file nhị phân & node_modules khi push Git
-├── BAO_CAO_BAN_GIAO.md                  # Bản báo cáo nghiệm thu chi tiết này
-├── docker-compose.yml                   # Cấu hình khởi chạy đồng thời cả Frontend & Backend qua Docker
-├── MO_SHOP_NIKE.bat                     # File kích hoạt 1 chạm tự động mở shop trên máy tính
-├── package.json                         # Khai báo kịch bản khởi chạy npm & thông tin dự án
-└── README.md                            # Hướng dẫn kỹ thuật và tài liệu tóm tắt
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                             CÁC TÍNH NĂNG HOÀN THÀNH NGÀY 14/11/2026                             │
+├─────────────────────────┬────────────────────────────────────────────────────────────────────────┤
+│ 1. Tối Ưu Zalo & SMS   │ Thay nút Zalo khách bằng tin nhắn xác nhận chuẩn + Nút chat Zalo Admin │
+│ 2. Voucher & Mã SP SKU │ Mã số riêng (NK-01..24), Hạn dùng (từ ngày..đến ngày), Phạm vi áp dụng  │
+│ 3. Ruy Băng Đỏ Chéo 45°│ Ruy băng đỏ góc phải "GIẢM 50%", bật/tắt 1-chạm đồng bộ Admin & Web   │
+│ 4. Siêu Dashboard 3D   │ Biểu đồ ApexCharts 3D, 3 chế độ xem (Cột/Sóng/Chồng), Thẻ chỉ số tuần  │
+│ 5. Phân Hệ Thuế TMĐT   │ Thanh phổ dòng tiền 100%, tính thuế 1.5% TT40, lợi nhuận ròng đút túi │
+│ 6. Quản Lý Tồn Kho     │ Thước đo tiến trình (Progress Bar), cảnh báo cháy hàng, nút nhập hàng   │
+│ 7. Xuất Báo Cáo Excel  │ Tải file Excel/CSV tiếng Việt UTF-8 BOM cho Doanh Thu và Kho Hàng      │
+└─────────────────────────┴────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 4. HỆ THỐNG REST API BACKEND
+## 2. CHI TIẾT TỪNG TÍNH NĂNG ĐÃ HOÀN THÀNH
 
-| Phương thức | Đường dẫn API | Chức năng | Dữ liệu gửi lên / phản hồi |
-|:---:|:---|:---|:---|
-| **GET** | `/api/health` | Kiểm tra trạng thái máy chủ | `{ status: "ok", uptimeSeconds: 120 }` |
-| **GET** | `/api/products` | Lấy danh sách toàn bộ sản phẩm | Mảng danh sách sản phẩm (JSON) |
-| **POST** | `/api/products` | Thêm một mẫu giày mới | `{ name, price, category, image, specs... }` |
-| **PUT** | `/api/products/:id` | **Chỉnh sửa thông tin & giá bán** | `{ price: 3500000 }` |
-| **DELETE** | `/api/products/:id` | Xóa một mẫu giày khỏi hệ thống | Xóa theo mã sản phẩm (`id`) |
-| **POST** | `/api/upload` | Tải ảnh từ máy tính lên server | `{ filename: "...", data: "data:image/...;base64,..." }` |
-| **GET** | `/api/orders` | Lấy danh sách tất cả đơn đặt hàng | Mảng danh sách đơn hàng mới nhất |
-| **POST** | `/api/orders` | Khách đặt hàng mới từ web & bắn tin Telegram | `{ orderId, customer, items, totalAmount, voucher... }` |
-| **PUT** | `/api/orders/:id` | Cập nhật trạng thái đơn hàng | `{ status: "Đã thanh toán • Chuẩn bị hàng" }` |
-| **DELETE** | `/api/orders/:id` | Xóa đơn hàng | Xóa theo mã đơn hàng (`orderId`) |
-| **GET** | `/api/orders/track?q=...` | **Tra cứu đơn hàng (SĐT hoặc mã đơn)** | `{ success: true, count, orders: [...] }` |
-| **GET** | `/api/vouchers` | Lấy danh sách mã giảm giá Voucher | Mảng các voucher đang hoạt động |
-| **POST** | `/api/vouchers/apply` | **Kiểm tra & áp dụng mã giảm giá** | `{ code: "NIKE10", orderTotal: 4990000 }` |
-| **POST** | `/api/vouchers` | Tạo mã voucher khuyến mãi mới | `{ code, type, value, minOrder, maxDiscount... }` |
-| **DELETE** | `/api/vouchers/:code` | Xóa mã giảm giá | Xóa theo mã code |
-| **GET** | `/api/reviews` | Lấy danh sách đánh giá khách hàng 4.9⭐ | Mảng đánh giá thực tế |
-| **POST** | `/api/reviews` | Thêm đánh giá mới cho sản phẩm | `{ author, rating, content, shoeName... }` |
-| **GET** | `/api/config/bank` | Lấy cấu hình tài khoản VietQR | `{ bankName, bankCode, accountNo, accountHolder }` |
-| **POST** | `/api/config/bank` | Lưu cấu hình tài khoản VietQR mới | `{ bankName, bankCode, accountNo, accountHolder }` |
-| **GET** | `/api/config/telegram` | Lấy cấu hình Telegram Bot | `{ enabled, botToken, chatId }` |
-| **POST** | `/api/config/telegram` | Lưu cấu hình Telegram Bot | `{ enabled, botToken, chatId }` |
-| **POST** | `/api/telegram/test` | Gửi tin nhắn test thử đến Telegram | `{ botToken, chatId }` |
+### Nhóm 1: Tối Ưu Quy Trình Chăm Sóc Khách Hàng (Zalo & SMS)
+- **Giao diện Khách hàng (Frontend Checkout)**:
+  - Gỡ bỏ nút "Nhắn Zalo shop" gây hiểu lầm sau khi đặt hàng.
+  - Thay bằng thông báo chuẩn hóa chuyên nghiệp: *"📲 Tin nhắn xác nhận đơn hàng đã gửi tới: ${order.customer.phone}"*.
+  - Nút *"Theo Dõi Vận Đơn Ngay"* dẫn thẳng đến dòng thời gian 4 giai đoạn giao hàng.
+- **Giao diện Quản trị (Admin Order Table)**:
+  - Bổ sung nút **`💬 Zalo Khách`**: Tự động sao chép toàn bộ nội dung đơn hàng (mã đơn, mẫu giày, size, số tiền, địa chỉ) vào bộ nhớ tạm (Clipboard) và mở trực tiếp cuộc trò chuyện `https://zalo.me/[SĐT_Khách]` chỉ với 1 cú click để chủ shop tư vấn và gửi ảnh thật.
 
 ---
 
-## 5. HƯỚNG DẪN KHỞI CHẠY VÀ VẬN HÀNH
-
-### Cách 1: Khởi động 1 chạm tự động (Dành cho sử dụng hàng ngày)
-1. Vào thư mục `C:\Users\ASUS\Downloads\Shop giày nike`.
-2. **Nhấp đúp chuột (Double-click) vào file `MO_SHOP_NIKE.bat`**.
-3. Cả 2 máy chủ Backend và Frontend sẽ tự động khởi chạy và trình duyệt tự mở sẵn trang web mua sắm.
-
-### Cách 2: Khởi động độc lập từng phần bằng dòng lệnh
-* **Khởi động Backend (cổng 5000):**
-  ```powershell
-  cd "C:\Users\ASUS\Downloads\Shop giày nike\backend"
-  node server.js
-  ```
-  Truy cập quản trị tại: `http://localhost:5000/admin`
-
-* **Khởi động Frontend (cổng 8080):**
-  ```powershell
-  cd "C:\Users\ASUS\Downloads\Shop giày nike\frontend"
-  node server.js
-  ```
-  Truy cập web mua sắm tại: `http://localhost:8080`
-
-### Cách 3: Chạy bằng Docker Compose (Môi trường máy chủ chuyên nghiệp)
-```bash
-docker compose up -d --build
-```
-Hệ thống sẽ tự động build image và chạy 2 container độc lập, đồng thời gắn volume mount cho các file dữ liệu `orders.json`, `products.json`, `bank.json` để không bị mất dữ liệu khi restart container.
+### Nhóm 2: Hệ Thống Mã Giảm Giá Voucher Đa Năng & Mã Sản Phẩm Riêng (SKU)
+- **Mã sản phẩm riêng (Unique Product Code)**:
+  - Cấp mã số riêng biệt từ `NK-01` đến `NK-24` cho tất cả các mẫu giày trong danh mục.
+  - Hiển thị huy hiệu `NK-01` rõ nét trên thẻ sản phẩm ở Bộ sưu tập, trong popup chi tiết (Quick View), trong giỏ hàng (Cart Drawer) và trong bảng quản trị Admin.
+- **Công cụ Voucher Nâng Cao**:
+  - **Thời gian áp dụng**: Thêm trường `startDate` và `endDate` (từ ngày bao nhiêu đến hết ngày bao nhiêu). Nếu khách nhập mã trước ngày bắt đầu hoặc sau ngày kết thúc, hệ thống sẽ từ chối và báo rõ ngày hiệu lực.
+  - **Phạm vi áp dụng linh hoạt (Scope)**:
+    - *Tất cả sản phẩm*: Áp dụng chiết khấu cho mọi đôi giày trong cửa hàng.
+    - *Sản phẩm chỉ định*: Chủ shop được tích chọn từng đôi giày theo mã `NK-01`, `NK-02`... Mã giảm giá chỉ có tác dụng khi giỏ hàng có đúng đôi giày đó.
 
 ---
 
-## 6. QUẢN LÝ MÃ NGUỒN TRÊN GITHUB
-
-Toàn bộ mã nguồn dự án đã được cấu hình Git, đồng bộ hóa và lưu trữ an toàn tại kho chứa GitHub:
-* **Địa chỉ kho:** `https://github.com/phatmanhphong-droid/shop-giay-nike.git`
-* **Nhánh chính:** `main`
-* **Lịch sử các tính năng đã commit:**
-  * `70f1923`: Tích hợp nút chỉnh sửa giá bán và modal cập nhật giá trực tiếp trên Backend Admin, tự động đồng bộ sang Frontend.
-  * `6d856d9`: Sửa lỗi đồng bộ sản phẩm thời gian thực, tích hợp Reverse Proxy và auto-refresh dữ liệu.
-  * `056bd68`: Khắc phục ổn định kết nối máy chủ, tự động nhận diện API_BASE cổng 5000.
-  * `d67b4e5`: Tích hợp tính năng thêm, xóa và upload ảnh giày trực tiếp từ máy tính trên trang Admin.
-  * `fc80072`: Xây dựng giao diện Backend Admin Portal quản lý đơn hàng và cấu hình VietQR.
-  * `114f9df`: Tách biệt hoàn toàn Backend (Node.js API) và Frontend (UI) kèm Docker Compose.
-  * `6e2104d`: Khởi tạo dự án Shop Giày Nike - Node.js Backend, VietQR Techcombank & Docker.
+### Nhóm 3: Dải Băng Đỏ Giảm Giá Chéo 45° & Đồng Bộ 1-Chạm Giữa Admin và Web
+- **Thiết kế ruy băng đỏ góc chéo (Diagonal Red Corner Ribbon)**:
+  - Loại bỏ hoàn toàn 2 viên thuốc đỏ xếp chồng lên nhau gây vướng mắt.
+  - Thay thế bằng **dải ruy băng đỏ chéo 45 độ** tinh tế ở góc trên bên phải khung sản phẩm (`rotate-45` banner) mang dòng chữ trắng nổi bật: `GIẢM 50%` hoặc `GIẢM 500K`.
+  - Giữ nguyên nhãn huy hiệu bên trái: `NK-01 JORDAN • Chính hãng`.
+  - Hiển thị giá gốc bị gạch ngang và giá mới giảm đậm màu đỏ.
+- **Cơ chế Bật / Tắt 1-chạm đồng bộ tức thì**:
+  - Khi Admin chọn `● Đang Bật (Hiện Web)`: Ngoài trang Bộ Sưu Tập lập tức hiện ruy băng đỏ chéo và giá sale.
+  - Khi Admin chọn `○ Đã Tắt (Đang Ẩn)`: Ngoài trang Bộ Sưu Tập lập tức giấu ruy băng và đưa giá về giá niêm yết ban đầu.
 
 ---
 
-## 7. KẾT LUẬN & NGHIỆM THU
+### Nhóm 4: Siêu Dashboard Doanh Thu & Biểu Đồ Cột 3D Đa Sắc (ApexCharts)
+- **Đặt làm Màn hình Quản trị Mặc định số 1 (Hero Dashboard)**:
+  - Ngay khi truy cập `http://localhost:5000/admin`, hệ thống mở ngay trung tâm Dashboard tổng quan trực quan nhất.
+- **4 Thẻ Chỉ Số Tài Chính Cốt Lõi (Super KPI Cards)**:
+  1. 💰 **Tổng Doanh Thu**: 80.477.000 ₫ (với nhãn 100% thu thực, 12 đơn thành công).
+  2. 🏷️ **Tổng Giá Vốn (COGS)**: 46.250.000 ₫ (chiếm ~57% doanh thu, chi phí xuất kho).
+  3. 🏛️ **Thuế TMĐT Ước Tính**: 1.207.155 ₫ (chi tiết 1% VAT + 0.5% TNCN).
+  4. 📈 **Lợi Nhuận Ròng Thực Nhận**: 33.019.845 ₫ (tỷ suất sinh lời ròng ~41% sau thuế).
+- **Biểu Đồ Cột 3D Gradient Đỉnh Cao (ApexCharts Multi-Column)**:
+  - Cột Doanh Thu gradient màu **Tím Indigo sang Xanh Cyan** (`#4F46E5` $\rightarrow$ `#06B6D4`).
+  - Cột Lợi Nhuận gradient màu **Xanh Ngọc Emerald sang Bạc Hà Mint** (`#059669` $\rightarrow$ `#34D399`).
+  - Hiển thị trực tiếp số tiền trên đầu cột (`18.4M`, `15.9M`, `14.1M`...) kèm bóng đổ đổ mềm 3D.
+  - **Bộ chuyển đổi 3 chế độ xem trong 1 (Chart View Switcher)**:
+    - 📊 **Cột 3D Gradient**: So sánh cột kép từng ngày.
+    - 🌊 **Đường Sóng Mềm (Smooth Area Spline)**: Đường lượn sóng mượt mà phát sáng.
+    - 📶 **Cột Chồng (Stacked Flow)**: Xếp chồng Giá vốn + Lợi nhuận = Doanh thu.
+- **Huy Hiệu Phân Tích Tuần (Weekly Highlights)**:
+  - 🏆 Ngày đỉnh cao kỷ lục: Thứ Tư (18.4M ₫).
+  - 📈 Doanh thu bình quân: 11.5M ₫ / ngày.
+  - 🎯 Tỷ suất sinh lời bình quân: 42.5% doanh số.
+- **Biểu Đồ Tròn Cơ Cấu Doanh Thu Theo Dòng Giày (Donut Chart)**:
+  - Phân tích cơ cấu % doanh số đóng góp của từng dòng: Jordan, Running, Air Max, Lifestyle, Basketball.
 
-Dự án **Shop Giày Nike 2026** đã hoàn thành 100% tất cả các yêu cầu của khách hàng:
-- ✅ Giao diện tối giản, sang trọng, tinh tế đúng tinh thần Nike Atelier.
-- ✅ Sàn trưng bày 3D Turntable 60fps mượt mà, bấm vào giày xem chi tiết tức thì.
-- ✅ Đã gỡ bỏ sạch sẽ tính năng so sánh sản phẩm để trang web gọn nhẹ, thoáng mắt.
-- ✅ Thanh toán quét mã VietQR tự động hoàn hảo, tiền về thẳng tài khoản ngân hàng.
-- ✅ Tra cứu đơn hàng tức thì (Order Tracking) với sơ đồ tiến độ 4 giai đoạn & bảo mật số điện thoại.
-- ✅ Hệ thống Mã giảm giá Voucher đa dạng (`NIKE10`, `FREESHIP`, `WELCOME2026`, `VIPNIKE`), tự động trừ tiền và cập nhật số tiền VietQR.
-- ✅ Đánh giá khách hàng & Xếp hạng 4.9⭐ chuẩn Authentic trong Quick View.
-- ✅ Tự động gửi thông báo đơn hàng mới qua Telegram Bot tới điện thoại của chủ shop.
-- ✅ Tách biệt rõ ràng Frontend (8080) và Backend (5000).
-- ✅ Trang Quản trị Admin Dashboard đầy đủ tính năng: Đơn hàng, Thêm sản phẩm kèm tải ảnh, Sửa giá bán trực tiếp, và Quản lý Voucher.
-- ✅ Dữ liệu tự động đồng bộ thời gian thực 2 chiều.
-- ✅ Đã đóng gói Docker và đẩy toàn bộ mã nguồn lên GitHub.
+---
 
-Dự án đã sẵn sàng bàn giao và vận hành thương mại ngay lập tức!
+### Nhóm 5: Phân Hệ Thuế TMĐT & Thanh Phổ Dòng Tiền 100% (Cashflow Spectrum)
+- **Thanh phổ phân bổ dòng tiền 100% (Visual Cashflow Spectrum Bar)**:
+  - Một thanh Progress Bar ngang chia 3 phần rõ rệt:
+    - 🟨 **Vốn nhập giày**: 57.5% (Chi phí sản xuất).
+    - 🟥 **Thuế TMĐT**: 1.5% (Nghĩa vụ nộp ngân sách nhà nước).
+    - 🟩 **Lợi nhuận ròng đút túi**: 41.0% (Tiền sạch thực nhận về tài khoản).
+- **Bộ máy tính & Cài đặt Thuế kinh doanh TMĐT**:
+  - Hỗ trợ mô hình **Hộ kinh doanh cá thể TMĐT**: Thuế suất 1.5% tính trên Doanh thu (1% VAT + 0.5% TNCN theo Thông tư 40/2021/TT-BTC).
+  - Hỗ trợ mô hình **Doanh nghiệp / Công ty**: Thuế GTGT khấu trừ (8-10%) + Thuế TNDN (20% trên lợi nhuận).
+  - Cho phép chủ shop tùy chỉnh linh hoạt % thuế suất và lưu lại hệ thống.
+
+---
+
+### Nhóm 6: Phân Hệ Kiểm Soát Kho Hàng & Thước Đo Tồn Kho (Progress Meters)
+- **Thước đo tồn kho trực quan (Visual Inventory Progress Bars)**:
+  - Mỗi mẫu giày đều có thanh đo tiến trình hiển thị:
+    - Số lượng nhập ban đầu.
+    - Số lượng đã xuất bán (kèm % bán ra).
+    - Số lượng còn lại trong kho (kèm % tồn kho).
+- **Hệ thống cảnh báo màu sắc theo thời gian thực**:
+  - 🟢 **Thanh xanh lá**: Tồn kho dồi dào ($> 10$ đôi).
+  - 🟡 **Thanh vàng**: Cảnh báo sắp hết ($5 - 9$ đôi).
+  - 🔴 **Thanh đỏ nhấp nháy**: Báo động đỏ sắp cháy hàng ($< 5$ đôi) kèm huy hiệu `⚠️ SẮP HẾT HÀNG`.
+- **Cửa sổ Nhập thêm hàng vào kho (Restock Modal)**:
+  - Bấm nút **`➕ Nhập`** cạnh bất kỳ mẫu giày nào để mở modal.
+  - Nhập số lượng đôi cần nhập thêm (+10, +20, +50, +100 đôi).
+  - Cập nhật giá vốn nhập đợt mới (nếu có biến động giá).
+  - Ghi chú thông tin lô hàng xuất xưởng.
+  - Tự động lưu lịch sử vào file `backend/restock-history.json`.
+- **Trừ kho tự động**:
+  - Mỗi khi có đơn hàng mới từ web, hệ thống tự động trừ kho và tăng số lượng đã bán của sản phẩm tương ứng.
+
+---
+
+### Nhóm 7: Xuất File Báo Cáo Excel / CSV Tiếng Việt Chuẩn UTF-8 BOM
+- **Xuất Báo Cáo Doanh Thu**: Tải về file `.csv` có mã đơn, ngày đặt, khách hàng, số điện thoại, doanh số, chi phí vốn, tiền thuế và tiền lời ròng mở trực tiếp bằng Microsoft Excel không bị lỗi font chữ tiếng Việt.
+- **Xuất Báo Cáo Tồn Kho**: Tải về bảng kiểm kê chi tiết số lượng nhập, xuất, tồn và giá trị lưu kho của từng mẫu giày.
+
+---
+
+## 3. LỊCH SỬ CÁC BẢN COMMIT ĐÃ ĐẨY LÊN GITHUB NGÀY 14/11/2026
+
+Toàn bộ các tính năng đã được kiểm thử và đẩy lên nhánh `main` của kho chứa GitHub:
+[https://github.com/phatmanhphong-droid/shop-giay-nike.git](https://github.com/phatmanhphong-droid/shop-giay-nike.git)
+
+| Mã Commit | Thông Điệp Commit (Nội Dung Cập Nhật) |
+|:---:|:---|
+| `4f98184` | Tối ưu thông báo SMS/Zalo khách hàng và nút chat Zalo trực tiếp trên bảng Admin |
+| `fa3dace` | Gán mã định danh riêng cho từng đôi giày (NK-01..24) và hỗ trợ phạm vi voucher theo mã SP |
+| `f269e1e` | Hiển thị thông báo voucher giảm giá lên danh mục Bộ sưu tập |
+| `2b4ba9c` | Khôi phục voucher mẫu và kích hoạt SALEDONQUA giảm 50% |
+| `0ea1bcd` | Tối ưu giao diện sale kèm bộ lọc danh mục động |
+| `7a1ecf1` | Bổ sung nút toggle showOnCatalog độc lập |
+| `8732aa4` | Đồng bộ 1:1 trạng thái Bật/Tắt voucher giữa Admin và Bộ sưu tập |
+| `87c9748` | Thiết kế dải băng đỏ chéo 45 độ `GIẢM 50%` ở góc trên bên phải khung sản phẩm |
+| `5423b3e` | Xây dựng phân hệ Doanh thu biểu đồ cột, Thuế TMĐT, Quản lý kho hàng & Xuất báo cáo CSV |
+| `4e8ba98` | Nâng cấp Siêu Dashboard trực quan với ApexCharts, dải phổ dòng tiền 100% & thước đo tồn kho |
+| `7f53789` | Nâng cấp Biểu đồ cột 3D Gradient đa sắc với 3 chế độ xem (Cột, Sóng, Chồng) & thẻ kỷ lục tuần |
+
+---
+
+## 4. HƯỚNG DẪN TRẢI NGHIỆM VÀ KIỂM TRA HỆ THỐNG
+
+1. **Khởi động hệ thống (nếu chưa chạy)**:
+   - Nhấp đúp chuột vào file `C:\Users\ASUS\Downloads\Shop giày nike\MO_SHOP_NIKE.bat`.
+2. **Kiểm tra Giao diện Mua Sắm Khách Hàng**:
+   - Mở trình duyệt vào: [http://localhost:8080](http://localhost:8080)
+   - Xem dải băng đỏ chéo `GIẢM 50%` ở góc các đôi giày đang được áp dụng voucher.
+   - Thử thêm giày vào giỏ và xem mã giảm giá tự động tính toán.
+3. **Kiểm tra Trung Tâm Quản Trị Siêu Dashboard**:
+   - Mở trình duyệt vào: [http://localhost:5000/admin](http://localhost:5000/admin)
+   - Xem ngay 4 thẻ chỉ số tài chính, thanh phổ dòng tiền 100%.
+   - Trải nghiệm biểu đồ cột 3D và bấm thử 3 nút xem: **Cột 3D Gradient**, **Đường Sóng Mềm**, **Cột Chồng**.
+   - Xem thước đo tiến trình tồn kho (Progress Bars) và bấm nút **`➕ Nhập`** để nhập thêm giày vào kho.
+   - Bấm nút **`Xuất Excel Báo Cáo`** để tải file đối soát doanh thu.
