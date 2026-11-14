@@ -1,5 +1,35 @@
 [
   {
+    "orderId": "NIKE146419",
+    "createdAt": "2026-11-14T07:18:01.156Z",
+    "customer": {
+      "fullname": "Trần Đức Mạnh",
+      "phone": "0908062597",
+      "address": "Tổ 1, ấp 1, xã Long Phước, Long Thành, Đồng Nai",
+      "notes": "Nhắn Zalo xác nhận đơn cho mình nhé"
+    },
+    "paymentMethod": "vietqr",
+    "paymentMethodLabel": "Quét Mã VietQR (Napas247)",
+    "items": [
+      {
+        "id": "nike-01",
+        "name": "Air Jordan 1 Retro High OG",
+        "color": "Chicago Đỏ Trắng",
+        "size": 42,
+        "price": 4990000,
+        "qty": 1
+      }
+    ],
+    "subtotal": 4990000,
+    "discountAmount": 499000,
+    "voucher": {
+      "code": "NIKE10",
+      "discountAmount": 499000
+    },
+    "totalAmount": 4491000,
+    "status": "Đã quét mã VietQR • Chờ xác nhận giao dịch"
+  },
+  {
     "orderId": "NIKE975493",
     "createdAt": "2026-11-13T07:25:56.490Z",
     "customer": {

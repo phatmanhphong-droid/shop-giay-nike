@@ -114,6 +114,11 @@
     applyVoucherCode(code, 'checkout');
   }
 
+  let liveNotificationConfig = {
+    shopPhone: '0908062597',
+    zaloPhone: '0908062597'
+  };
+
   // Tự động tải cấu hình ngân hàng VietQR mới nhất từ Backend API
   async function fetchLiveBankConfig() {
     try {
@@ -127,6 +132,21 @@
           BANK_CONFIG.bankBadge = liveBank.bankCode || 'TCB';
           BANK_CONFIG.accountNo = liveBank.accountNo;
           BANK_CONFIG.accountName = liveBank.accountHolder || 'TRAN DUC MANH';
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Tự động tải cấu hình Zalo và Hotline mới nhất từ Backend API
+  async function fetchLiveNotificationConfig() {
+    try {
+      const apiBase = window.API_BASE_URL || (window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000');
+      const res = await fetch(`${apiBase}/api/config/notifications`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.shopPhone) {
+          liveNotificationConfig.shopPhone = data.shopPhone;
+          liveNotificationConfig.zaloPhone = data.zaloPhone || data.shopPhone;
         }
       }
     } catch (e) {}
@@ -157,6 +177,7 @@
     }
 
     fetchLiveBankConfig();
+    fetchLiveNotificationConfig();
   }
 
   function saveCart() {
@@ -877,7 +898,7 @@
 
   function openZaloOrderChat() {
     if (!lastPlacedOrder) return;
-    const phone = '0908062597';
+    const phone = liveNotificationConfig.zaloPhone || liveNotificationConfig.shopPhone || '0908062597';
     const text = `Chào Shop Nike, mình vừa đặt đơn hàng #${lastPlacedOrder.orderId} (${lastPlacedOrder.customer.fullname} - ${lastPlacedOrder.customer.phone}). Tổng thanh toán: ${lastPlacedOrder.totalAmount.toLocaleString('vi-VN')} ₫. Nhờ shop kiểm tra và gửi hàng sớm giúp mình nhé!`;
     copyToClipboard(text, 'Đã sao chép nội dung đơn hàng! Đang mở Zalo...');
     setTimeout(() => {
