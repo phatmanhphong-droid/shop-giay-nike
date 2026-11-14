@@ -405,30 +405,29 @@
       ` : `<div class="h-6 mt-3"></div>`;
 
       return `
-        <div class="group relative bg-white ${hasSale ? 'border-rose-200 ring-1 ring-rose-100 hover:border-rose-500' : 'border-hairline hover:border-obsidian/40'} rounded-2xl p-5 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between" id="card-${shoe.id}">
+        <div class="group relative bg-white ${hasSale ? 'border-rose-300 ring-1 ring-rose-200/80 hover:border-rose-500 hover:shadow-2xl' : 'border-hairline hover:border-obsidian/40 hover:shadow-xl'} rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between overflow-hidden" id="card-${shoe.id}">
+          
+          <!-- BĂNG ĐỎ GIẢM GIÁ ĐỂ CHÉO TRÊN GÓC KHUNG THẺ (CORNER RIBBON) -->
+          ${hasSale ? `
+            <div class="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none z-20">
+              <div class="absolute top-4 -right-7 w-28 py-1 bg-gradient-to-r from-red-600 via-rose-600 to-red-600 text-white font-display font-black text-[10px] uppercase tracking-wider text-center shadow-md transform rotate-45 select-none drop-shadow-sm">
+                GIẢM ${tagText.replace('-', '')}
+              </div>
+            </div>
+          ` : ''}
+
           <!-- Top Badge & Category -->
           <div>
-            <div class="flex items-center justify-between text-[11px] mb-3">
+            <div class="flex items-center justify-between text-[11px] mb-3 ${hasSale ? 'pr-12' : ''}">
               <div class="flex items-center gap-1.5">
                 <span class="px-2 py-0.5 rounded-md bg-obsidian text-white font-mono font-bold text-[10px] tracking-wider shadow-xs" title="Mã số riêng của sản phẩm">${shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))}</span>
                 <span class="font-semibold text-muted tracking-wider uppercase">${shoe.category || 'Sneaker'}</span>
               </div>
-              ${hasSale ? `
-                <span class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-[10px] tracking-wider uppercase shadow-xs flex items-center gap-1 animate-pulse">
-                  🔥 GIẢM ${tagText.replace('-', '')}
-                </span>
-              ` : `
-                <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
-              `}
+              <span class="px-2.5 py-0.5 rounded-full bg-canvas text-obsidian font-bold text-[10px]">${shoe.badge || 'Chính hãng'}</span>
             </div>
 
             <!-- Shoe Image Container -->
             <div class="relative w-full h-48 sm:h-52 flex items-center justify-center p-3 overflow-hidden cursor-pointer" onclick="window.openQuickView('${shoe.id}')">
-              ${hasSale ? `
-                <div class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-lg bg-rose-600 text-white font-black text-[10px] uppercase shadow-md flex items-center gap-1">
-                  <span>${tagText}</span>
-                </div>
-              ` : ''}
               <img src="${defaultPhoto}" 
                 alt="${shoe.name}" 
                 id="card-img-${shoe.id}" 
