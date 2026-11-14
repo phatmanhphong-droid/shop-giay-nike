@@ -1,5 +1,53 @@
 [
   {
+    "id": "RESTOCK-1794647476713",
+    "productId": "nike-15",
+    "productCode": "NK-15",
+    "productName": "Nike Air Max 720 Deep Blue",
+    "addedQty": 20,
+    "previousStock": 2,
+    "newStock": 22,
+    "costPrice": 2500000,
+    "note": "Nhập thêm lô hàng mới cho Nike Air Max 720 Deep Blue",
+    "timestamp": "2026-11-14T09:11:16.713Z"
+  },
+  {
+    "id": "RESTOCK-1794647468761",
+    "productId": "nike-24",
+    "productCode": "NK-24",
+    "productName": "1234",
+    "addedQty": 20,
+    "previousStock": 49,
+    "newStock": 69,
+    "costPrice": 0,
+    "note": "Nhập thêm lô hàng mới cho 1234",
+    "timestamp": "2026-11-14T09:11:08.761Z"
+  },
+  {
+    "id": "RESTOCK-1794647464354",
+    "productId": "nike-23",
+    "productCode": "NK-23",
+    "productName": "Nike Air Max Red Pulse",
+    "addedQty": 20,
+    "previousStock": 42,
+    "newStock": 62,
+    "costPrice": 2100000,
+    "note": "Nhập thêm lô hàng mới cho Nike Air Max Red Pulse",
+    "timestamp": "2026-11-14T09:11:04.354Z"
+  },
+  {
+    "id": "RESTOCK-1794647459396",
+    "productId": "nike-16",
+    "productCode": "NK-16",
+    "productName": "Nike LeBron XXI Tím Vương Giả",
+    "addedQty": 20,
+    "previousStock": 29,
+    "newStock": 49,
+    "costPrice": 3000000,
+    "note": "Nhập thêm lô hàng mới cho Nike LeBron XXI Tím Vương Giả",
+    "timestamp": "2026-11-14T09:10:59.396Z"
+  },
+  {
     "id": "RESTOCK-1794647255385",
     "productId": "nike-08",
     "productCode": "NK-08",

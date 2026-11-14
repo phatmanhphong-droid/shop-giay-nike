@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 
+  <!-- ApexCharts Modern Dashboard Library -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -128,33 +130,333 @@
     </div>
 
     <!-- TABS NAVIGATION -->
-    <div class="flex items-center gap-3 border-b border-hairline pb-4 overflow-x-auto scrollbar-none">
-      <button type="button" onclick="switchTab('orders')" id="tab-btn-orders" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-obsidian text-white shadow-sm transition-all shrink-0">
-        📦 Quản Lý Đơn Hàng
+    <div class="flex items-center gap-2.5 border-b border-hairline pb-4 overflow-x-auto scrollbar-none">
+      <!-- TAB 1: MAIN HERO DASHBOARD (DEFAULT ACTIVE) -->
+      <button type="button" onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-obsidian text-white shadow-md transition-all shrink-0 flex items-center gap-2 border border-obsidian">
+        <span>🔥</span>
+        <span>Dashboard Trực Quan</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
       </button>
-      <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
-        👟 Quản Lý Sản Phẩm (<span id="tab-product-count">23</span>)
+      
+      <!-- TAB 2: INVENTORY & STOCK -->
+      <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>📦</span>
+        <span>Kho Hàng & Tồn Kho</span>
+        <span id="tab-inventory-alert-badge" class="hidden px-1.5 py-0.5 text-[9px] rounded-full bg-rose-500 text-white font-bold animate-pulse">!</span>
       </button>
-      <button type="button" onclick="switchTab('vouchers')" id="tab-btn-vouchers" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
-        🏷️ Quản Lý Voucher (<span id="tab-voucher-count">4</span>)
+
+      <!-- TAB 3: ORDERS -->
+      <button type="button" onclick="switchTab('orders')" id="tab-btn-orders" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>🛒</span>
+        <span>Đơn Hàng (<span id="tab-order-count">10</span>)</span>
       </button>
-      <button type="button" onclick="switchTab('finance')" id="tab-btn-finance" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
-        <span>📊 Doanh Thu & Thuế</span>
+
+      <!-- TAB 4: PRODUCTS -->
+      <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>👟</span>
+        <span>Mẫu Giày (<span id="tab-product-count">23</span>)</span>
       </button>
-      <button type="button" onclick="switchTab('inventory')" id="tab-btn-inventory" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
-        <span>📦 Quản Lý Kho Hàng</span>
-        <span id="tab-inventory-alert-badge" class="hidden px-1.5 py-0.2 text-[9px] rounded-full bg-rose-500 text-white font-bold">!</span>
+
+      <!-- TAB 5: VOUCHERS -->
+      <button type="button" onclick="switchTab('vouchers')" id="tab-btn-vouchers" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>🏷️</span>
+        <span>Mã Giảm Giá (<span id="tab-voucher-count">4</span>)</span>
       </button>
-      <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
-        ⚙️ Cấu Hình & Telegram
+
+      <!-- TAB 6: TAX & FINANCE -->
+      <button type="button" onclick="switchTab('finance')" id="tab-btn-finance" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>🏛️</span>
+        <span>Thuế & Kế Toán TMĐT</span>
       </button>
-      <button type="button" onclick="switchTab('system')" id="tab-btn-system" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
-        🖥️ Trạng Thái Máy Chủ & Docker
+
+      <!-- TAB 7: SETTINGS -->
+      <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-4 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0 flex items-center gap-1.5">
+        <span>⚙️</span>
+        <span>Cấu Hình</span>
       </button>
     </div>
 
+
+    <!-- ================================================================= -->
+    <!-- 🔥 TAB HERO: SIÊU DASHBOARD TRỰC QUAN (DOANH THU, BIỂU ĐỒ & KHO) -->
+    <!-- ================================================================= -->
+    <section id="tab-dashboard" class="space-y-6">
+
+      <!-- Hero Header & Filter Bar -->
+      <div class="bg-gradient-to-r from-obsidian via-zinc-900 to-zinc-800 text-white p-6 sm:p-7 rounded-3xl shadow-xl border border-zinc-700/50 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2.5">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              Live Dashboard
+            </span>
+            <span class="text-zinc-400 text-xs">•</span>
+            <span class="text-zinc-300 text-xs font-mono font-medium">Shop Giày Nike Atelier</span>
+          </div>
+          <h2 class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-white">
+            Trung Tâm Doanh Thu, Thuế & Kiểm Soát Tồn Kho
+          </h2>
+          <p class="text-xs text-zinc-400 max-w-2xl">
+            Báo cáo trực quan hóa 100% dòng tiền bán hàng, bóc tách giá vốn nhập buôn, thuế suất TMĐT Việt Nam và cảnh báo hàng sắp hết.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Timeframe selector -->
+          <div class="bg-white/10 backdrop-blur-md p-1 rounded-xl border border-white/10 flex items-center text-xs">
+            <button type="button" onclick="setDashboardTimeframe('7d')" id="tf-btn-7d" class="px-3 py-1.5 rounded-lg font-bold bg-white text-obsidian shadow-sm transition-all">7 Ngày</button>
+            <button type="button" onclick="setDashboardTimeframe('30d')" id="tf-btn-30d" class="px-3 py-1.5 rounded-lg font-bold text-zinc-300 hover:text-white transition-all">30 Ngày</button>
+            <button type="button" onclick="setDashboardTimeframe('all')" id="tf-btn-all" class="px-3 py-1.5 rounded-lg font-bold text-zinc-300 hover:text-white transition-all">Tất Cả</button>
+          </div>
+
+          <!-- Quick Refresh -->
+          <button type="button" onclick="loadDashboardAllData(true)" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors" title="Làm mới tức thì">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+
+          <!-- Export Excel -->
+          <a href="/api/finance/export-csv" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Xuất Excel Báo Cáo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 4 SUPER KPI CARDS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- KPI 1: Gross Revenue -->
+        <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/5 rounded-full group-hover:scale-125 transition-transform duration-500 pointer-events-none"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-muted uppercase tracking-wider">Tổng Doanh Thu</span>
+            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm shadow-inner">
+              💰
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="dash-gross-revenue" class="font-display font-black text-2xl sm:text-3xl text-obsidian tracking-tight">19.987.200 ₫</h3>
+            <div class="flex items-center gap-1.5 mt-2 text-xs">
+              <span class="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px]">100% Thu Thực</span>
+              <span id="dash-orders-pill" class="text-muted font-medium text-[11px]">10 đơn hàng thành công</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 2: Total COGS (Tiền Vốn) -->
+        <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-125 transition-transform duration-500 pointer-events-none"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-muted uppercase tracking-wider">Tổng Giá Vốn (COGS)</span>
+            <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-black text-sm shadow-inner">
+              🏷️
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="dash-total-cogs" class="font-display font-black text-2xl sm:text-3xl text-obsidian tracking-tight">12.032.400 ₫</h3>
+            <div class="flex items-center gap-1.5 mt-2 text-xs">
+              <span id="dash-cogs-pct-pill" class="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 font-bold text-[10px]">60.2% Doanh thu</span>
+              <span id="dash-items-sold-pill" class="text-muted font-medium text-[11px]">Đã xuất 10 đôi giày</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 3: Estimated Tax (Thuế TMĐT) -->
+        <div class="bg-white p-5 rounded-2xl border border-hairline shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/5 rounded-full group-hover:scale-125 transition-transform duration-500 pointer-events-none"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-muted uppercase tracking-wider">Thuế TMĐT Phải Nộp</span>
+            <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-black text-sm shadow-inner">
+              🏛️
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="dash-estimated-tax" class="font-display font-black text-2xl sm:text-3xl text-rose-600 tracking-tight">299.808 ₫</h3>
+            <div class="flex items-center gap-1.5 mt-2 text-xs">
+              <span id="dash-tax-rate-pill" class="px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-800 font-bold text-[10px]">1.5% TMĐT (TT40)</span>
+              <span class="text-muted font-medium text-[11px]">VAT 1% + TNCN 0.5%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 4: Net Profit (Lợi Nhuận Ròng Thực Nhận) -->
+        <div class="bg-gradient-to-br from-white via-emerald-50/30 to-emerald-100/40 p-5 rounded-2xl border-2 border-emerald-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full group-hover:scale-125 transition-transform duration-500 pointer-events-none"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Lợi Nhuận Ròng Đút Túi</span>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black text-sm shadow-md">
+              📈
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="dash-net-profit" class="font-display font-black text-2xl sm:text-3xl text-emerald-600 tracking-tight">7.654.992 ₫</h3>
+            <div class="flex items-center gap-1.5 mt-2 text-xs">
+              <span id="dash-net-margin-pill" class="px-1.5 py-0.5 rounded-md bg-emerald-200 text-emerald-900 font-bold text-[10px]">Tỷ suất: 38.3%</span>
+              <span class="text-emerald-700 font-medium text-[11px]">Tiền sạch sau trừ vốn & thuế</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VISUAL 100% CASHFLOW BREAKDOWN SPECTRUM BAR -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-hairline shadow-sm space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h4 class="font-display font-bold text-sm text-obsidian flex items-center gap-2">
+              <span>🌈 Bóc Tách 100% Cơ Cấu Dòng Tiền (Cashflow Breakdown)</span>
+            </h4>
+            <p class="text-[11px] text-muted">Trực quan hóa chính xác từng đồng doanh thu đi về đâu: Giá vốn nhập buôn, Nghĩa vụ thuế và Lợi nhuận ròng.</p>
+          </div>
+          <span class="text-xs font-mono font-bold text-obsidian bg-canvas px-3 py-1 rounded-lg border border-hairline">
+            100% = <span id="dash-cashflow-total">19.987.200 ₫</span>
+          </span>
+        </div>
+
+        <!-- 3-Segment Progress Bar -->
+        <div class="h-6 w-full rounded-xl bg-canvas border border-hairline p-0.5 flex overflow-hidden shadow-inner gap-0.5">
+          <!-- COGS segment -->
+          <div id="spectrum-cogs-bar" style="width: 60.2%;" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-lg flex items-center justify-center text-[10px] font-bold text-amber-950 transition-all duration-700 relative group cursor-pointer" title="Giá vốn nhập giày">
+            <span class="truncate px-2">Giá Vốn (60.2%)</span>
+          </div>
+          <!-- Tax segment -->
+          <div id="spectrum-tax-bar" style="width: 1.5%; min-width: 8px;" class="h-full bg-rose-500 rounded-lg flex items-center justify-center text-[9px] font-bold text-white transition-all duration-700 relative group cursor-pointer" title="Thuế TMĐT 1.5%">
+          </div>
+          <!-- Net Profit segment -->
+          <div id="spectrum-net-bar" style="width: 38.3%;" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center text-[10px] font-bold text-white transition-all duration-700 relative group cursor-pointer" title="Lợi nhuận ròng thực nhận">
+            <span class="truncate px-2">Lợi Nhuận Ròng (38.3%)</span>
+          </div>
+        </div>
+
+        <!-- Spectrum Legend -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-500 shrink-0"></span>
+            <div>
+              <span class="font-bold text-obsidian">Tiền Vốn Nhập: </span>
+              <span id="spectrum-cogs-legend" class="text-muted">12.032.400 ₫ (60.2%)</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-rose-500 shrink-0"></span>
+            <div>
+              <span class="font-bold text-obsidian">Thuế TMĐT 1.5%: </span>
+              <span id="spectrum-tax-legend" class="text-rose-600 font-bold">299.808 ₫ (1.5%)</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 shrink-0"></span>
+            <div>
+              <span class="font-bold text-emerald-800">Lợi Nhuận Thực Lời: </span>
+              <span id="spectrum-net-legend" class="text-emerald-600 font-bold">7.654.992 ₫ (38.3%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CHARTS ROW (DUAL INTERACTIVE CHARTS) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: ApexCharts Revenue & Profit Bar/Area Chart (2 Cols) -->
+        <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-2xl border border-hairline shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-hairline pb-4">
+            <div>
+              <h4 class="font-display font-bold text-base text-obsidian flex items-center gap-2">
+                <span>📈 Biểu Đồ Cột Doanh Thu & Lợi Nhuận (ApexCharts)</span>
+              </h4>
+              <p class="text-[11px] text-muted">Biểu diễn xu hướng doanh số và lợi nhuận thực tế theo từng ngày</p>
+            </div>
+            <!-- Legend Indicators -->
+            <div class="flex items-center gap-3 text-xs">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-obsidian inline-block"></span>
+                <span class="font-semibold text-obsidian">Doanh Thu</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span>
+                <span class="font-semibold text-emerald-700">Lợi Nhuận</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ApexCharts Container -->
+          <div id="apex-revenue-chart" class="w-full min-h-[320px]">
+            <!-- Rendered by admin.js -->
+            <div class="h-72 flex items-center justify-center text-muted text-xs">Đang nạp dữ liệu biểu đồ...</div>
+          </div>
+        </div>
+
+        <!-- Right: Donut Chart Category Breakdown (1 Col) -->
+        <div class="bg-white p-5 sm:p-6 rounded-2xl border border-hairline shadow-sm space-y-4 flex flex-col justify-between">
+          <div class="border-b border-hairline pb-3">
+            <h4 class="font-display font-bold text-sm text-obsidian flex items-center gap-1.5">
+              <span>🍩 Cơ Cấu Doanh Số Theo Dòng Giày</span>
+            </h4>
+            <p class="text-[11px] text-muted">Tỷ trọng đóng góp doanh thu của từng phân khúc</p>
+          </div>
+
+          <!-- Donut Chart Container -->
+          <div id="apex-category-chart" class="w-full py-2 flex items-center justify-center min-h-[220px]">
+            <!-- Rendered by admin.js -->
+          </div>
+
+          <!-- Category Top List -->
+          <div id="dash-category-top-list" class="space-y-2 text-xs border-t border-hairline pt-3">
+            <!-- Dynamic Category stats -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VISUAL STOCK INVENTORY METERS & LOW-STOCK ALERTS -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-hairline shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-hairline pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-display font-bold text-base text-obsidian">
+                📦 Bảng Kiểm Soát Kho Hàng: Tồn Bao Nhiêu & Nhập Vào Bao Nhiêu
+              </h4>
+              <span id="dash-low-stock-alert-pill" class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px] uppercase tracking-wider animate-pulse">
+                Có Mẫu Sắp Hết Hàng
+              </span>
+            </div>
+            <p class="text-xs text-muted mt-0.5">Thước đo trực quan (Progress Bar) cho thấy chính xác số lượng đã bán, tồn kho còn lại và nút nhập thêm hàng.</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="switchTab('inventory')" class="px-3.5 py-2 rounded-xl bg-canvas hover:bg-hairline text-obsidian font-bold text-xs border border-hairline transition-all flex items-center gap-1.5">
+              <span>Xem Toàn Bộ Kho Hàng &rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inventory Visual Progress Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
+                <th class="py-3 px-3 text-center">Mã SP</th>
+                <th class="py-3 px-3">Mẫu Giày Nike</th>
+                <th class="py-3 px-3 text-right">Giá Bán</th>
+                <th class="py-3 px-3 text-right">Giá Vốn</th>
+                <th class="py-3 px-3 text-center">Đã Bán</th>
+                <th class="py-3 px-4 min-w-[200px]">Thước Đo Tồn Kho (Còn lại / Đã bán)</th>
+                <th class="py-3 px-3 text-center">Tình Trạng</th>
+                <th class="py-3 px-3 text-center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="dash-inventory-meters-body" class="divide-y divide-hairline">
+              <!-- Rendered dynamically by admin.js with visual progress meters -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
     <!-- TAB 1: ORDERS MANAGEMENT -->
-    <section id="tab-orders" class="space-y-4">
+    <section id="tab-orders" class="hidden space-y-4">
       <!-- Search and Filter Bar -->
       <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-hairline shadow-sm">
         <div class="relative w-full sm:w-80">

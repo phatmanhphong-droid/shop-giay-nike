@@ -435,9 +435,9 @@
     ],
     "code": "NK-15",
     "costPrice": 2500000,
-    "initialStock": 80,
+    "initialStock": 100,
     "sold": 38,
-    "stock": 2
+    "stock": 22
   },
   {
     "id": "nike-16",
@@ -463,9 +463,9 @@
     ],
     "code": "NK-16",
     "costPrice": 3000000,
-    "initialStock": 40,
+    "initialStock": 60,
     "sold": 11,
-    "stock": 29
+    "stock": 49
   },
   {
     "id": "nike-17",
@@ -631,9 +631,9 @@
     ],
     "code": "NK-23",
     "costPrice": 2100000,
-    "initialStock": 50,
+    "initialStock": 70,
     "sold": 8,
-    "stock": 42
+    "stock": 62
   },
   {
     "id": "nike-24",
@@ -659,8 +659,8 @@
     ],
     "code": "NK-24",
     "costPrice": 0,
-    "initialStock": 60,
+    "initialStock": 80,
     "sold": 11,
-    "stock": 49
+    "stock": 69
   }
 ]
