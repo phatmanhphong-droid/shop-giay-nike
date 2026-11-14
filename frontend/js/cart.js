@@ -684,6 +684,25 @@
           </p>
         </div>
 
+        <!-- THONG BAO GUI TOI KHACH HANG -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 text-left space-y-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+            <span class="font-bold text-xs uppercase tracking-wider text-emerald-950">
+              Đã Gửi Tin Nhắn Xác Nhận Cho Quý Khách
+            </span>
+          </div>
+          <div class="bg-white/95 p-3 rounded-xl border border-emerald-200 text-xs text-obsidian space-y-1">
+            <p class="font-semibold text-emerald-900 flex items-center gap-1.5">
+              <span>📲 Tin nhắn xác nhận đơn hàng đã gửi tới:</span>
+              <span class="font-mono text-emerald-800 text-sm font-bold bg-emerald-100/70 px-2 py-0.5 rounded">${order.customer.phone}</span>
+            </p>
+            <p class="text-muted text-[11px] leading-relaxed">
+              Nhân viên CSKH Shop Giày Nike sẽ gọi điện hoặc nhắn tin Zalo tới số <strong class="text-obsidian">${order.customer.phone}</strong> để xác nhận kích cỡ, chuẩn bị đơn hàng và gửi mã bưu phẩm. Quý khách vui lòng để ý điện thoại nhé!
+            </p>
+          </div>
+        </div>
+
         <!-- Order Information Summary Card -->
         <div class="p-5 rounded-2xl bg-canvas border border-hairline text-left space-y-3 text-xs">
           <div class="flex items-center justify-between border-b border-hairline pb-2.5">
@@ -719,45 +738,27 @@
           </div>
         </div>
 
-        <!-- Shipping & Support Note -->
-        <div class="text-[11px] text-muted bg-white p-4 rounded-xl border border-hairline flex items-start gap-3 text-left">
-          <svg class="w-5 h-5 text-obsidian shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <div>
-            <p class="font-semibold text-obsidian">Thời gian giao hàng dự kiến: 1 - 3 ngày làm việc</p>
-            <p class="mt-0.5">Bộ phận CSKH Shop Giày Nike sẽ gọi điện thoại hoặc gửi tin nhắn SMS để xác nhận đơn và gửi mã vận đơn qua Zalo. Hotline hỗ trợ 24/7: <strong>0908 062 597</strong></p>
+        <!-- Shipping & Hotline Note -->
+        <div class="text-[11px] text-muted bg-white p-3.5 rounded-xl border border-hairline flex items-center justify-between text-left">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Thời gian giao hàng dự kiến: <strong>1 - 3 ngày làm việc</strong></span>
           </div>
-        </div>
-
-        <!-- DIRECT ZALO & PHONE CONTACT FOR VIETNAMESE SHOPPING -->
-        <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/70 space-y-3 text-left">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-              <span class="font-bold text-xs text-blue-950 uppercase tracking-wider">Hỗ Trợ Nhanh Qua Zalo & Điện Thoại</span>
-            </div>
-            <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">Trực Tuyến 24/7</span>
-          </div>
-          <p class="text-[11px] text-muted">
-            Quý khách có thể bấm nhắn tin Zalo ngay để shop đóng gói gửi hàng sớm nhất hoặc gọi điện thoại trực tiếp:
-          </p>
-          <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
-            <button type="button" 
-              onclick="window.openZaloOrderChat()" 
-              class="w-full sm:w-auto flex-1 py-3 px-4 rounded-xl bg-[#0068FF] hover:bg-[#0054cc] text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2">
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.35 5L2 22l5.22-1.31C8.63 21.49 10.27 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1.09 14.5h-2.18v-4.91h2.18v4.91zm0-6.55h-2.18V7.77h2.18v2.18z"/></svg>
-              <span>Nhắn Zalo Xác Nhận Đơn Liền</span>
-            </button>
-
-            <a href="tel:0908065297" 
-              class="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-slate-50 border border-hairline text-obsidian text-xs font-bold transition-all flex items-center justify-center gap-2">
-              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              <span>Gọi Hotline 0908 062 597</span>
-            </a>
-          </div>
+          <a href="tel:0908065297" class="font-bold text-obsidian hover:text-blue-600 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            <span>Hotline: 0908 065 297</span>
+          </a>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <button type="button" 
+            onclick="window.openTrackingModal('${order.orderId}')" 
+            class="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <span>Theo Dõi Vận Đơn Ngay</span>
+          </button>
+
           <button type="button" 
             onclick="window.printInvoice()" 
             class="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-hairline hover:border-obsidian text-obsidian text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2">

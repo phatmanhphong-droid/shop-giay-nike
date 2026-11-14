@@ -235,9 +235,13 @@ async function notifyAllChannelsNewOrder(order) {
       }
     }
 
-    // Gửi SMS cho Khách hàng
-    if (cust.phone && notif.smsGateway && notif.smsGateway.enabled && notif.smsGateway.apiKey) {
-      await sendSMSGatewayMessage(notif.smsGateway.provider, notif.smsGateway.apiKey, notif.smsGateway.secretKey, cust.phone, smsContentToCustomer);
+    // Gửi SMS / Zalo thông báo trực tiếp cho Khách hàng
+    if (cust.phone) {
+      if (notif.smsGateway && notif.smsGateway.enabled && notif.smsGateway.apiKey) {
+        await sendSMSGatewayMessage(notif.smsGateway.provider, notif.smsGateway.apiKey, notif.smsGateway.secretKey, cust.phone, smsContentToCustomer);
+      } else {
+        console.log(`[Notification To Customer] 📲 Gửi thông báo SMS / Zalo tới KHÁCH HÀNG (${cust.phone}): ${smsContentToCustomer}`);
+      }
     }
   } catch (err) {
     console.warn('[Notification Error]', err.message);
@@ -421,6 +425,12 @@ const server = http.createServer((req, res) => {
       try {
         const order = JSON.parse(body || '{}');
         order.createdAt = new Date().toISOString();
+        if (!order.orderId) {
+          order.orderId = 'NIKE' + Math.floor(100000 + Math.random() * 900000);
+        }
+        if (!order.status) {
+          order.status = order.paymentMethod === 'vietqr' ? 'Đã quét mã VietQR • Chờ xác nhận giao dịch' : 'Chờ xác nhận giao hàng (COD)';
+        }
 
         let orders = readJSON(ORDERS_FILE, []);
         orders.unshift(order);

@@ -177,7 +177,17 @@ function renderOrdersTable() {
 
         <td class="py-3 px-4">
           <p class="font-bold text-obsidian">${cust.fullname || 'Khách vãng lai'}</p>
-          <p class="text-muted text-[11px] font-mono">${cust.phone || 'N/A'}</p>
+          <div class="flex items-center gap-1.5 my-1">
+            <span class="text-muted text-[11px] font-mono font-bold">${cust.phone || 'N/A'}</span>
+            ${cust.phone ? `
+              <button type="button" onclick="contactCustomerZalo('${order.orderId}')" class="px-2 py-0.5 text-[10px] font-bold bg-[#0068FF] text-white hover:bg-blue-700 rounded-md shadow-xs transition-colors flex items-center gap-1" title="Nhắn tin Zalo trực tiếp cho khách hàng">
+                💬 Zalo Khách
+              </button>
+              <a href="tel:${cust.phone}" class="px-2 py-0.5 text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 rounded-md shadow-xs transition-colors flex items-center gap-1" title="Gọi điện thoại cho khách">
+                📞 Gọi
+              </a>
+            ` : ''}
+          </div>
           <p class="text-muted text-[10px] truncate max-w-xs" title="${cust.address || ''}">${cust.address || 'Tại cửa hàng'}</p>
         </td>
 
@@ -1153,3 +1163,30 @@ window.addEventListener('DOMContentLoaded', () => {
   // Poll every 10 seconds for real-time updates (silently, without toast error)
   setInterval(() => loadDashboardData(false), 10000);
 });
+
+
+function contactCustomerZalo(orderId) {
+  const order = allOrders.find(o => o.orderId === orderId);
+  if (!order || !order.customer || !order.customer.phone) {
+    showToast('Đơn hàng không có số điện thoại khách!');
+    return;
+  }
+
+  const cust = order.customer;
+  const itemsText = (order.items || []).map(i => `${i.name} (Size ${i.size}) x${i.qty}`).join(', ');
+  const message = `Dạ em chào anh/chị ${cust.fullname || ''}! Em là CSKH Shop Giày Nike.
+Shop đã nhận được đơn hàng #${order.orderId} của mình:
+- Sản phẩm: ${itemsText}
+- Tổng thanh toán: ${(order.totalAmount || 0).toLocaleString('vi-VN')} ₫
+- Giao đến: ${cust.address || ''}
+Em nhắn tin qua Zalo để gửi ảnh thật giày và gửi mã vận đơn bưu điện cho mình theo dõi nhé ạ!`;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(message).catch(() => {});
+  }
+
+  showToast(`📋 Đã sao chép nội dung đơn hàng! Đang mở Zalo của khách (${cust.phone})...`);
+
+  const cleanPhone = cust.phone.replace(/[^0-9]/g, '');
+  window.open(`https://zalo.me/${cleanPhone}`, '_blank');
+}
