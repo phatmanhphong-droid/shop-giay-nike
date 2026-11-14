@@ -94,24 +94,28 @@
     }
   }
 
-  // Tìm mã Voucher tối ưu nhất cho từng đôi giày
+  // Tìm mã giảm giá được ADMIN BÁO LÊN GIẢM (showOnCatalog === true)
   function getBestVoucherForProduct(shoe) {
     if (!shoe) return null;
     const todayStr = new Date().toISOString().split('T')[0];
-    const activeVouchers = (liveVouchers || []).filter(v => {
+    
+    // CHỈ LẤY CÁC MÃ ĐƯỢC ADMIN BÁO LÊN GIẢM (showOnCatalog === true)
+    // Các mã giảm giá nhập tay thông thường (showOnCatalog !== true) sẽ KHÔNG hiện lên web
+    const activeSaleVouchers = (liveVouchers || []).filter(v => {
       if (v.active === false) return false;
+      if (v.showOnCatalog !== true) return false; // <<<< CHỈ KHI ADMIN BÁO LÊN GIẢM THÌ MỚI HIỆN
       if (v.startDate && todayStr < v.startDate) return false;
       if (v.endDate && todayStr > v.endDate) return false;
       return true;
     });
 
-    if (!activeVouchers.length) return null;
+    if (!activeSaleVouchers.length) return null;
 
     const shoeCode = (shoe.code || ('NK-' + (shoe.id||'').replace('nike-', ''))).toUpperCase();
     const shoeId = (shoe.id || '').toUpperCase();
 
-    // 1. Ưu tiên mã áp dụng riêng cho sản phẩm này
-    const specific = activeVouchers.find(v => 
+    // 1. Ưu tiên mã được Admin báo giảm riêng cho sản phẩm này
+    const specific = activeSaleVouchers.find(v => 
       v.applyScope === 'specific' && 
       Array.isArray(v.applicableProductCodes) && 
       v.applicableProductCodes.some(c => {
@@ -121,12 +125,11 @@
     );
     if (specific) return specific;
 
-    // 2. Tiếp theo là mã giảm giá chung cho tất cả sản phẩm (trừ FREESHIP)
-    const globalDiscounts = activeVouchers.filter(v => v.applyScope === 'all' && v.code !== 'FREESHIP');
+    // 2. Tiếp theo là chương trình giảm giá toàn sàn mà Admin chủ động Báo Lên Web
+    const globalDiscounts = activeSaleVouchers.filter(v => v.applyScope === 'all' && v.code !== 'FREESHIP');
     if (globalDiscounts.length > 0) return globalDiscounts[0];
 
-    const freeShip = activeVouchers.find(v => v.code === 'FREESHIP');
-    return freeShip || null;
+    return null;
   }
   window.getBestVoucherForProduct = getBestVoucherForProduct;
 
@@ -139,6 +142,7 @@
     const todayStr = new Date().toISOString().split('T')[0];
     const active = (liveVouchers || []).filter(v => {
       if (v.active === false) return false;
+      if (v.showOnCatalog !== true) return false; // Chỉ hiện mã Admin báo lên web
       if (v.startDate && todayStr < v.startDate) return false;
       if (v.endDate && todayStr > v.endDate) return false;
       return true;

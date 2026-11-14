@@ -932,12 +932,23 @@ function renderVouchers() {
           ${v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : '0 ₫'}
         </td>
 
-        <!-- Cột 6: Bật/Tắt -->
+        <!-- Cột 6: Báo Lên Web (Sale) -->
+        <td class="py-3 px-4 text-center">
+          <button type="button" onclick="toggleVoucherShowCatalog('${v.code}')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-2xs flex items-center justify-center gap-1 mx-auto ${
+            v.showOnCatalog 
+              ? 'bg-rose-600 text-white hover:bg-rose-700 ring-2 ring-rose-200' 
+              : 'bg-canvas hover:bg-hairline text-muted hover:text-obsidian border border-hairline'
+          }" title="Bấm để Bật hoặc Tắt việc báo giảm giá lên Bộ sưu tập">
+            <span>${v.showOnCatalog ? '📢 Đang Báo Giảm' : '🔒 Chỉ Nhập Mã'}</span>
+          </button>
+        </td>
+
+        <!-- Cột 7: Bật/Tắt Mã -->
         <td class="py-3 px-4 text-center">
           <button type="button" onclick="toggleVoucherActive('${v.code}')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shadow-2xs ${
             v.active ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }" title="Bấm để bật hoặc tắt voucher">
-            ${v.active ? '● Đang Bật' : '○ Tạm Tắt'}
+          }" title="Bấm để kích hoạt hoặc tạm dừng mã voucher">
+            ${v.active ? '● Hoạt động' : '○ Khóa'}
           </button>
         </td>
 
@@ -1063,6 +1074,7 @@ async function submitNewVoucher() {
   const startDate = document.getElementById('voucher-start-date')?.value || '2026-01-01';
   const endDate = document.getElementById('voucher-end-date')?.value || '2026-12-31';
   const applyScope = document.querySelector('input[name="voucher-scope"]:checked')?.value || 'all';
+  const showOnCatalog = document.getElementById('voucher-show-catalog-input')?.checked || false;
 
   const applicableProductCodes = [];
   if (applyScope === 'specific') {
@@ -1102,7 +1114,8 @@ async function submitNewVoucher() {
         endDate,
         applyScope,
         applicableProductCodes,
-        active: true
+        active: true,
+        showOnCatalog
       })
     });
     const data = await res.json();
@@ -1118,6 +1131,26 @@ async function submitNewVoucher() {
     }
   } catch (err) {
     showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+
+async function toggleVoucherShowCatalog(code) {
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers/${code}/toggle-show-catalog`, { method: 'PUT' });
+    const data = await res.json();
+    if (data.success) {
+      if (data.voucher.showOnCatalog) {
+        showToast(`📢 Đã BÁO GIẢM GIÁ mã #${code} lên giao diện Bộ Sưu Tập!`);
+      } else {
+        showToast(`🔒 Đã ẨN mã #${code} khỏi Bộ Sưu Tập (Chỉ giảm khi khách tự nhập mã)!`);
+      }
+      loadVouchers();
+    } else {
+      showToast('Lỗi: ' + data.error);
+    }
+  } catch (err) {
+    showToast('Lỗi mạng: ' + err.message);
   }
 }
 

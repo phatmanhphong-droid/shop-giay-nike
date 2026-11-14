@@ -712,6 +712,7 @@ const server = http.createServer((req, res) => {
         newVoucher.endDate = newVoucher.endDate || '2026-12-31';
         newVoucher.applyScope = newVoucher.applyScope === 'specific' ? 'specific' : 'all';
         newVoucher.applicableProductCodes = Array.isArray(newVoucher.applicableProductCodes) ? newVoucher.applicableProductCodes : [];
+        newVoucher.showOnCatalog = newVoucher.showOnCatalog === true;
 
         let vouchers = readJSON(VOUCHERS_FILE, []);
         vouchers = vouchers.filter(v => v.code !== newVoucher.code);
@@ -725,6 +726,23 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: false, error: err.message }));
       }
     });
+    return;
+  }
+
+  // API: TOGGLE VOUCHER SHOW ON CATALOG (PUT /api/vouchers/:code/toggle-show-catalog)
+  if (req.method === 'PUT' && cleanUrl.includes('/toggle-show-catalog')) {
+    const code = cleanUrl.split('/')[3].toUpperCase();
+    let vouchers = readJSON(VOUCHERS_FILE, []);
+    const v = vouchers.find(x => x.code === code);
+    if (v) {
+      v.showOnCatalog = !v.showOnCatalog;
+      writeJSON(VOUCHERS_FILE, vouchers);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: true, voucher: v }));
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: false, error: 'Không tìm thấy voucher' }));
+    }
     return;
   }
 

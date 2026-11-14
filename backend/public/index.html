@@ -253,8 +253,9 @@
                 <th class="py-3 px-4 text-center">Mức Giảm</th>
                 <th class="py-3 px-4 text-center">Thời Gian Áp Dụng</th>
                 <th class="py-3 px-4 text-center">Đơn Tối Thiểu</th>
+                <th class="py-3 px-4 text-center">Báo Lên Web (Sale)</th>
                 <th class="py-3 px-4 text-center">Trạng Thái</th>
-                <th class="py-3 px-4 text-center">Thao Tác Nhanh</th>
+                <th class="py-3 px-4 text-center">Thao Tác</th>
               </tr>
             </thead>
             <tbody id="vouchers-table-body" class="divide-y divide-hairline">
@@ -724,6 +725,20 @@
           <div id="voucher-products-checklist" class="max-h-40 overflow-y-auto space-y-1.5 pr-1 divide-y divide-hairline">
             <!-- Rendered dynamically -->
           </div>
+        </div>
+
+        <!-- CÔNG TẮC BÁO LÊN WEB BỘ SƯU TẬP -->
+        <div class="pt-2 border-t border-hairline">
+          <label class="flex items-start gap-2.5 p-3 bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 rounded-2xl cursor-pointer hover:bg-rose-100/50 transition-colors">
+            <input type="checkbox" id="voucher-show-catalog-input" class="w-4 h-4 accent-rose-600 rounded mt-0.5">
+            <div>
+              <span class="font-bold text-xs text-rose-950 block">📢 Báo lên web giảm giá trực tiếp trên Bộ Sưu Tập</span>
+              <span class="text-[11px] text-rose-800 leading-snug block mt-0.5">
+                • <strong>Nếu BẬT:</strong> Đôi giày được chọn sẽ hiện giá gạch ngang, giá sale màu đỏ và tag giảm giá ngoài Bộ Sưu Tập.<br>
+                • <strong>Nếu TẮT:</strong> Đôi giày giữ nguyên giá bình thường (chỉ giảm khi khách tự nhập mã lúc thanh toán).
+              </span>
+            </div>
+          </label>
         </div>
       </div>
 

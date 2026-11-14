@@ -1,7 +1,7 @@
 [
   {
     "code": "SALEDONQUA",
-    "description": "toàn bộ sản phẩm - Giảm 50% (Tối đa 2.000.000 ₫)",
+    "description": "Toàn bộ sản phẩm - Giảm 50% (Tối đa 2.000.000 ₫)",
     "type": "percent",
     "value": 50,
     "minOrder": 3,
@@ -10,7 +10,8 @@
     "endDate": "2026-12-14",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true
+    "active": true,
+    "showOnCatalog": false
   },
   {
     "code": "JORDAN500K",
@@ -25,7 +26,8 @@
     "applicableProductCodes": [
       "NK-01"
     ],
-    "active": true
+    "active": true,
+    "showOnCatalog": false
   },
   {
     "code": "AIRFORCE15",
@@ -40,7 +42,8 @@
     "applicableProductCodes": [
       "NK-02"
     ],
-    "active": true
+    "active": true,
+    "showOnCatalog": false
   },
   {
     "code": "NIKE10",
@@ -53,7 +56,8 @@
     "endDate": "2026-12-31",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true
+    "active": true,
+    "showOnCatalog": false
   },
   {
     "code": "FREESHIP",
@@ -66,6 +70,7 @@
     "endDate": "2026-12-31",
     "applyScope": "all",
     "applicableProductCodes": [],
-    "active": true
+    "active": true,
+    "showOnCatalog": false
   }
 ]
