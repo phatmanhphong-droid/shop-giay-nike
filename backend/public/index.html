@@ -135,8 +135,11 @@
       <button type="button" onclick="switchTab('products')" id="tab-btn-products" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
         👟 Quản Lý Sản Phẩm (<span id="tab-product-count">23</span>)
       </button>
+      <button type="button" onclick="switchTab('vouchers')" id="tab-btn-vouchers" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
+        🏷️ Quản Lý Voucher (<span id="tab-voucher-count">4</span>)
+      </button>
       <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
-        ⚙️ Cấu Hình Tài Khoản VietQR
+        ⚙️ Cấu Hình & Telegram
       </button>
       <button type="button" onclick="switchTab('system')" id="tab-btn-system" class="px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider bg-white text-muted hover:text-obsidian border border-hairline transition-all shrink-0">
         🖥️ Trạng Thái Máy Chủ & Docker
@@ -226,7 +229,42 @@
       </div>
     </section>
 
-    <!-- TAB 3: BANK SETTINGS -->
+    <!-- TAB 3: VOUCHERS MANAGEMENT -->
+    <section id="tab-vouchers" class="hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-hairline shadow-sm">
+        <div>
+          <h3 class="font-display font-bold text-base text-obsidian">Danh Sách Mã Giảm Giá (Vouchers)</h3>
+          <p class="text-xs text-muted">Khách hàng nhập mã tại giỏ hàng hoặc bước thanh toán để nhận ưu đãi</p>
+        </div>
+        <button type="button" onclick="openAddVoucherModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-obsidian hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span>Tạo Voucher Mới</span>
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-hairline shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas/60 text-muted uppercase text-[10px] tracking-wider font-bold">
+                <th class="py-3 px-4">Mã Voucher</th>
+                <th class="py-3 px-4">Mô Tả Ưu Đãi</th>
+                <th class="py-3 px-4 text-center">Hình Thức Giảm</th>
+                <th class="py-3 px-4 text-right">Giá Trị</th>
+                <th class="py-3 px-4 text-center">Đơn Tối Thiểu</th>
+                <th class="py-3 px-4 text-center">Trạng Thái</th>
+                <th class="py-3 px-4 text-center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="vouchers-table-body" class="divide-y divide-hairline">
+              <!-- Rendered via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: BANK & TELEGRAM SETTINGS -->
     <section id="tab-settings" class="hidden space-y-6 max-w-2xl bg-white p-6 sm:p-8 rounded-2xl border border-hairline shadow-sm">
       <div>
         <h3 class="font-display font-bold text-lg text-obsidian">Cấu Hình Tài Khoản Nhận Tiền VietQR</h3>
@@ -258,8 +296,49 @@
         <div class="pt-4 flex items-center justify-between border-t border-hairline">
           <span class="text-[11px] text-muted">Dữ liệu được lưu trữ trực tiếp vào cấu hình Backend</span>
           <button type="button" onclick="saveBankConfig()" class="px-6 py-2.5 rounded-full bg-obsidian hover:bg-black text-white font-bold transition-all shadow-md">
-            Lưu Thay Đổi
+            Lưu Tài Khoản VietQR
           </button>
+        </div>
+      </div>
+
+      <!-- TELEGRAM BOT NOTIFICATIONS SECTION -->
+      <div class="pt-6 border-t border-hairline space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-display font-bold text-sm text-obsidian flex items-center gap-2">
+              <span>🤖 Thông Báo Đơn Hàng Qua Telegram Bot</span>
+              <span id="tg-status-badge" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-muted uppercase">Tắt</span>
+            </h4>
+            <p class="text-[11px] text-muted mt-0.5">Tự động bắn tin nhắn đơn hàng mới về Telegram ngay lập tức</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="tg-enabled-input" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          </label>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Telegram Bot Token <span class="text-rose-500">*</span></label>
+            <input type="text" id="tg-token-input" placeholder="Ví dụ: 123456789:ABCdefGhIJKlmNoPQRstuvWxYz" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-mono text-xs focus:outline-none focus:border-obsidian">
+            <p class="text-[10px] text-muted mt-1">Lấy từ @BotFather trên Telegram bằng lệnh /newbot</p>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Telegram Chat ID / Group ID <span class="text-rose-500">*</span></label>
+            <input type="text" id="tg-chatid-input" placeholder="Ví dụ: 123456789 hoặc -100123456789" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-mono text-xs focus:outline-none focus:border-obsidian">
+            <p class="text-[10px] text-muted mt-1">Chat ID của bạn hoặc nhóm nhận đơn (Lấy từ bot @userinfobot)</p>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" onclick="testTelegramNotify()" class="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              <span>Gửi Tin Nhắn Test Thử</span>
+            </button>
+            <button type="button" onclick="saveTelegramConfig()" class="px-5 py-2 rounded-xl bg-obsidian hover:bg-black text-white font-bold text-xs transition-colors">
+              Lưu Cấu Hình Bot
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -474,6 +553,73 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL: ADD VOUCHER (TẠO MÃ GIẢM GIÁ MỚI) -->
+  <div id="add-voucher-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="fixed inset-0 bg-obsidian/60 backdrop-blur-md" onclick="closeAddVoucherModal()"></div>
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-hairline overflow-hidden flex flex-col z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div class="px-6 py-4 border-b border-hairline flex items-center justify-between bg-canvas/60">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+            🏷️
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base text-obsidian">Tạo Mã Giảm Giá Mới</h3>
+            <p class="text-[11px] text-muted">Mã sẽ có hiệu lực ngay lập tức tại giỏ hàng khách</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAddVoucherModal()" class="w-8 h-8 rounded-full bg-white hover:bg-hairline border border-hairline flex items-center justify-center text-obsidian font-bold transition-colors">
+          &times;
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Mã code (Viết liền, không dấu) <span class="text-rose-500">*</span></label>
+          <input type="text" id="voucher-code-input" placeholder="Ví dụ: SALE50, TET2026..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl uppercase font-mono font-bold focus:outline-none focus:border-obsidian">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-obsidian mb-1">Mô tả ưu đãi <span class="text-rose-500">*</span></label>
+          <input type="text" id="voucher-desc-input" placeholder="Ví dụ: Giảm 15% tối đa 300.000 ₫..." class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Loại giảm <span class="text-rose-500">*</span></label>
+            <select id="voucher-type-input" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-semibold focus:outline-none focus:border-obsidian">
+              <option value="percent">Phần trăm (%)</option>
+              <option value="fixed">Số tiền cố định (₫)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Giá trị giảm <span class="text-rose-500">*</span></label>
+            <input type="number" id="voucher-val-input" placeholder="Ví dụ: 10 hoặc 50000" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl font-bold focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Đơn tối thiểu (₫)</label>
+            <input type="number" id="voucher-min-input" value="0" placeholder="0" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          </div>
+          <div>
+            <label class="block font-semibold text-obsidian mb-1">Giảm tối đa (₫, nếu %)</label>
+            <input type="number" id="voucher-max-input" placeholder="0 = Không giới hạn" class="w-full px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian">
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-hairline bg-canvas/40 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeAddVoucherModal()" class="px-5 py-2.5 rounded-full border border-hairline hover:bg-canvas text-xs font-semibold text-muted hover:text-obsidian transition-colors">
+          Hủy Bỏ
+        </button>
+        <button type="button" id="btn-save-voucher" onclick="submitNewVoucher()" class="px-6 py-2.5 rounded-full bg-obsidian hover:bg-black text-white text-xs font-bold transition-all shadow-md flex items-center gap-2">
+          <span>Lưu & Kích Hoạt Voucher</span>
+        </button>
+      </div>
     </div>
   </div>
 

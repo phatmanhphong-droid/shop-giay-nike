@@ -1,0 +1,50 @@
+[
+  {
+    "id": "rev-01",
+    "shoeId": "all",
+    "author": "Nguyễn Hoàng Nam",
+    "avatar": "assets/shoes/jordan1-chicago.png",
+    "rating": 5,
+    "shoeName": "Air Jordan 1 Retro High OG",
+    "size": 42,
+    "date": "12/11/2026",
+    "verified": true,
+    "content": "Chất da bò thật sờ cực thích, form ôm chuẩn chân. Quét mã VietQR chuyển khoản xong shop gọi điện xác nhận liền trong 5 phút. Hộp giày bọc 2 lớp kèm túi tote Nike xịn xò. Cho shop 10/10!"
+  },
+  {
+    "id": "rev-02",
+    "shoeId": "all",
+    "author": "Trần Thị Mai Anh",
+    "avatar": "assets/shoes/airforce1-white.png",
+    "rating": 5,
+    "shoeName": "Air Force 1 '07",
+    "size": 39,
+    "date": "10/11/2026",
+    "verified": true,
+    "content": "Đôi này thì khỏi bàn rồi, màu trắng tinh khôi đi phối đồ gì cũng đỉnh. Đế nâng chiều cao 3.5cm tự nhiên. Giao hàng hỏa tốc 2 ngày là nhận được ở Đồng Nai."
+  },
+  {
+    "id": "rev-03",
+    "shoeId": "all",
+    "author": "Lê Tuấn Hùng",
+    "avatar": "assets/shoes/vaporfly-pink.png",
+    "rating": 5,
+    "shoeName": "Nike ZoomX Vaporfly NEXT% 3",
+    "size": 41,
+    "date": "08/11/2026",
+    "verified": true,
+    "content": "Đệm ZoomX êm và nảy dã man, đĩa carbon trợ lực chạy marathon nhẹ tênh. Màu hồng ngoài đời rực rỡ và bắt mắt hơn cả trên hình web. Rất đáng đồng tiền bát gạo!"
+  },
+  {
+    "id": "rev-04",
+    "shoeId": "all",
+    "author": "Đỗ Quang Minh",
+    "avatar": "assets/shoes/adaptbb-smart.png",
+    "rating": 5,
+    "shoeName": "Nike Adapt BB (Tự Thắt Dây)",
+    "size": 43,
+    "date": "05/11/2026",
+    "verified": true,
+    "content": "Giày công nghệ tự thắt dây độc nhất vô nhị! Động cơ kêu rẹt rẹt cực ngầu, đèn LED đổi màu qua app điện thoại. Đi vào sân bóng ai cũng ngoái nhìn. 5 sao tuyệt đối!"
+  }
+]

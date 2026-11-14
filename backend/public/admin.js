@@ -800,7 +800,7 @@ async function loadSystemHealth() {
 }
 
 function switchTab(tabName) {
-  const tabs = ['orders', 'products', 'settings', 'system'];
+  const tabs = ['orders', 'products', 'vouchers', 'settings', 'system'];
   tabs.forEach(t => {
     const section = document.getElementById(`tab-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -814,6 +814,231 @@ function switchTab(tabName) {
       btn?.classList.remove('bg-obsidian', 'text-white', 'shadow-sm');
     }
   });
+}
+
+// ==========================================================================
+// VOUCHERS MANAGEMENT
+// ==========================================================================
+let allVouchers = [];
+
+async function loadVouchers() {
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers`);
+    if (res.ok) {
+      allVouchers = await res.json();
+      renderVouchers();
+      const countEl = document.getElementById('tab-voucher-count');
+      if (countEl) countEl.textContent = allVouchers.length;
+    }
+  } catch (e) {
+    console.warn('Lỗi tải vouchers:', e);
+  }
+}
+
+function renderVouchers() {
+  const tbody = document.getElementById('vouchers-table-body');
+  if (!tbody) return;
+  if (!allVouchers.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-muted">Chưa có mã voucher nào. Bấm "Tạo Voucher Mới" để thêm!</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = allVouchers.map(v => `
+    <tr class="hover:bg-canvas/50 transition-colors">
+      <td class="py-3 px-4 font-mono font-bold text-obsidian">${v.code}</td>
+      <td class="py-3 px-4 text-obsidian font-medium">${v.description || '-'}</td>
+      <td class="py-3 px-4 text-center">
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.type === 'percent' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+          ${v.type === 'percent' ? 'Phần trăm (%)' : 'Cố định (₫)'}
+        </span>
+      </td>
+      <td class="py-3 px-4 text-right font-bold text-obsidian">
+        ${v.type === 'percent' ? `${v.value}%` : `${v.value.toLocaleString('vi-VN')} ₫`}
+      </td>
+      <td class="py-3 px-4 text-center text-muted">
+        ${v.minOrder ? `${v.minOrder.toLocaleString('vi-VN')} ₫` : 'Không có'}
+      </td>
+      <td class="py-3 px-4 text-center">
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.active ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}">
+          ${v.active ? 'Đang hoạt động' : 'Tạm tắt'}
+        </span>
+      </td>
+      <td class="py-3 px-4 text-center">
+        <button type="button" onclick="deleteVoucher('${v.code}')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold text-xs transition-colors">
+          Xóa
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAddVoucherModal() {
+  const modal = document.getElementById('add-voucher-modal');
+  if (modal) {
+    modal.classList.remove('pointer-events-none', 'opacity-0');
+    modal.classList.add('opacity-100');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeAddVoucherModal() {
+  const modal = document.getElementById('add-voucher-modal');
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+      modal.classList.add('pointer-events-none');
+      document.body.style.overflow = '';
+    }, 250);
+  }
+}
+
+async function submitNewVoucher() {
+  const code = document.getElementById('voucher-code-input')?.value.trim().toUpperCase();
+  const desc = document.getElementById('voucher-desc-input')?.value.trim();
+  const type = document.getElementById('voucher-type-input')?.value || 'percent';
+  const val = parseInt(document.getElementById('voucher-val-input')?.value, 10);
+  const minOrder = parseInt(document.getElementById('voucher-min-input')?.value || 0, 10) || 0;
+  const maxDiscount = parseInt(document.getElementById('voucher-max-input')?.value || 0, 10) || 0;
+
+  if (!code) {
+    showToast('Vui lòng nhập Mã voucher!');
+    return;
+  }
+  if (!desc) {
+    showToast('Vui lòng nhập Mô tả ưu đãi!');
+    return;
+  }
+  if (!val || isNaN(val) || val <= 0) {
+    showToast('Vui lòng nhập Giá trị giảm hợp lệ!');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        description: desc,
+        type,
+        value: val,
+        minOrder,
+        maxDiscount,
+        active: true
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Đã tạo voucher ${code} thành công!`);
+      closeAddVoucherModal();
+      document.getElementById('voucher-code-input').value = '';
+      document.getElementById('voucher-desc-input').value = '';
+      document.getElementById('voucher-val-input').value = '';
+      loadVouchers();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể tạo voucher'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+async function deleteVoucher(code) {
+  if (!confirm(`Bạn có chắc muốn xóa mã voucher "${code}" không?`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/vouchers/${code}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Đã xóa voucher ${code}!`);
+      loadVouchers();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể xóa'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+// ==========================================================================
+// TELEGRAM BOT CONFIGURATION
+// ==========================================================================
+
+async function loadTelegramConfig() {
+  try {
+    const res = await fetch(`${API_BASE}/api/config/telegram`);
+    if (res.ok) {
+      const data = await res.json();
+      const tokenInput = document.getElementById('tg-token-input');
+      const chatIdInput = document.getElementById('tg-chatid-input');
+      const enabledInput = document.getElementById('tg-enabled-input');
+      const badge = document.getElementById('tg-status-badge');
+
+      if (tokenInput) tokenInput.value = data.botToken || '';
+      if (chatIdInput) chatIdInput.value = data.chatId || '';
+      if (enabledInput) enabledInput.checked = !!data.enabled;
+      if (badge) {
+        if (data.enabled) {
+          badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase';
+          badge.textContent = 'Đang bật';
+        } else {
+          badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-muted uppercase';
+          badge.textContent = 'Tắt';
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+async function saveTelegramConfig() {
+  const botToken = document.getElementById('tg-token-input')?.value.trim();
+  const chatId = document.getElementById('tg-chatid-input')?.value.trim();
+  const enabled = !!document.getElementById('tg-enabled-input')?.checked;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/config/telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ botToken, chatId, enabled })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Đã lưu cấu hình Telegram Bot thành công!');
+      loadTelegramConfig();
+    } else {
+      showToast('Lỗi: ' + (data.error || 'Không thể lưu'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
+}
+
+async function testTelegramNotify() {
+  const botToken = document.getElementById('tg-token-input')?.value.trim();
+  const chatId = document.getElementById('tg-chatid-input')?.value.trim();
+
+  if (!botToken || !chatId) {
+    showToast('Vui lòng điền cả Bot Token và Chat ID trước khi test!');
+    return;
+  }
+
+  showToast('Đang gửi tin nhắn test đến Telegram...');
+  try {
+    const res = await fetch(`${API_BASE}/api/telegram/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ botToken, chatId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('🎉 Đã gửi tin nhắn test thành công đến Telegram!');
+    } else {
+      showToast('Lỗi Telegram: ' + (data.error || 'Kiểm tra lại Bot Token / Chat ID'));
+    }
+  } catch (err) {
+    showToast('Lỗi kết nối: ' + err.message);
+  }
 }
 
 function showToast(message) {
@@ -835,6 +1060,8 @@ function showToast(message) {
 window.addEventListener('DOMContentLoaded', () => {
   loadDashboardData();
   loadBankConfig();
+  loadVouchers();
+  loadTelegramConfig();
   // Poll every 10 seconds for real-time updates (silently, without toast error)
   setInterval(() => loadDashboardData(false), 10000);
 });

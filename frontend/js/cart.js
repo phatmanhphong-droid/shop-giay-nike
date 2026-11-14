@@ -22,6 +22,97 @@
   let currentPaymentMethod = 'vietqr';
   let toastTimer = null;
   let lastPlacedOrder = null;
+  let appliedVoucher = null; // { code, discountAmount, description, type, value, maxDiscount }
+
+  function calculateCartTotals() {
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let discountAmount = 0;
+    if (appliedVoucher && subtotal > 0) {
+      if (appliedVoucher.type === 'percent') {
+        discountAmount = Math.round((subtotal * appliedVoucher.value) / 100);
+        if (appliedVoucher.maxDiscount && discountAmount > appliedVoucher.maxDiscount) {
+          discountAmount = appliedVoucher.maxDiscount;
+        }
+      } else if (appliedVoucher.type === 'fixed') {
+        discountAmount = appliedVoucher.value;
+      }
+      if (discountAmount > subtotal) discountAmount = subtotal;
+    }
+    const finalTotal = Math.max(0, subtotal - discountAmount);
+    return { subtotal, discountAmount, finalTotal };
+  }
+
+  async function applyVoucherCode(code, source = 'drawer') {
+    if (!code) {
+      showToast('Vui lòng nhập mã giảm giá!');
+      return;
+    }
+    const { subtotal } = calculateCartTotals();
+    if (subtotal <= 0) {
+      showToast('Giỏ hàng trống! Hãy thêm giày vào giỏ trước.');
+      return;
+    }
+
+    const msgEl = document.getElementById(source === 'drawer' ? 'drawer-voucher-message' : 'checkout-voucher-message');
+    const apiBase = window.API_BASE_URL || (window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000');
+
+    try {
+      const res = await fetch(`${apiBase}/api/vouchers/apply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, orderTotal: subtotal })
+      });
+      const data = await res.json();
+      if (data.success && data.voucher) {
+        appliedVoucher = {
+          code: data.voucher.code,
+          discountAmount: data.discountAmount,
+          description: data.voucher.description,
+          type: data.voucher.type,
+          value: data.voucher.value,
+          maxDiscount: data.voucher.maxDiscount
+        };
+
+        if (msgEl) {
+          msgEl.className = 'text-[11px] mt-1.5 font-bold text-emerald-600 block';
+          msgEl.textContent = `✓ Áp dụng mã ${data.voucher.code}: -${data.discountAmount.toLocaleString('vi-VN')} ₫`;
+        }
+
+        renderCart();
+        renderCheckoutSummary();
+        updateVietQRDetails();
+        showToast(`Đã áp dụng mã ${data.voucher.code}!`);
+      } else {
+        if (msgEl) {
+          msgEl.className = 'text-[11px] mt-1.5 font-bold text-rose-500 block';
+          msgEl.textContent = `✕ ${data.error || 'Mã không hợp lệ hoặc đã hết hạn'}`;
+        }
+        showToast(data.error || 'Mã không hợp lệ!');
+      }
+    } catch (e) {
+      showToast('Lỗi kết nối voucher: ' + e.message);
+    }
+  }
+
+  function quickApplyVoucher(code) {
+    const drawerInput = document.getElementById('drawer-voucher-input');
+    const checkoutInput = document.getElementById('checkout-voucher-input');
+    if (drawerInput) drawerInput.value = code;
+    if (checkoutInput) checkoutInput.value = code;
+    applyVoucherCode(code, 'drawer');
+  }
+
+  function applyDrawerVoucher() {
+    const input = document.getElementById('drawer-voucher-input');
+    const code = input ? input.value.trim().toUpperCase() : '';
+    applyVoucherCode(code, 'drawer');
+  }
+
+  function applyCheckoutVoucher() {
+    const input = document.getElementById('checkout-voucher-input');
+    const code = input ? input.value.trim().toUpperCase() : '';
+    applyVoucherCode(code, 'checkout');
+  }
 
   // Tự động tải cấu hình ngân hàng VietQR mới nhất từ Backend API
   async function fetchLiveBankConfig() {
@@ -153,13 +244,30 @@
   function renderCart() {
     const badgeEl = document.getElementById('cart-badge');
     const listEl = document.getElementById('cart-items-list');
+    const subtotalEl = document.getElementById('cart-subtotal-price');
     const totalEl = document.getElementById('cart-total-price');
+    const discountRow = document.getElementById('cart-discount-row');
+    const discountPriceEl = document.getElementById('cart-discount-price');
+    const voucherCodeEl = document.getElementById('cart-voucher-code');
 
     const totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const { subtotal, discountAmount, finalTotal } = calculateCartTotals();
 
     if (badgeEl) badgeEl.textContent = totalQty;
-    if (totalEl) totalEl.textContent = totalPrice.toLocaleString('vi-VN') + ' ₫';
+    if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString('vi-VN') + ' ₫';
+    if (totalEl) totalEl.textContent = finalTotal.toLocaleString('vi-VN') + ' ₫';
+
+    if (discountRow) {
+      if (appliedVoucher && discountAmount > 0) {
+        discountRow.classList.remove('hidden');
+        discountRow.classList.add('flex');
+        if (voucherCodeEl) voucherCodeEl.textContent = appliedVoucher.code;
+        if (discountPriceEl) discountPriceEl.textContent = `-${discountAmount.toLocaleString('vi-VN')} ₫`;
+      } else {
+        discountRow.classList.add('hidden');
+        discountRow.classList.remove('flex');
+      }
+    }
 
     if (listEl) {
       if (!cartItems.length) {
@@ -267,13 +375,28 @@
     const countEl = document.getElementById('checkout-items-count');
     const subtotalEl = document.getElementById('checkout-subtotal');
     const totalEl = document.getElementById('checkout-total-price');
+    const discountRow = document.getElementById('checkout-discount-row');
+    const discountAmountEl = document.getElementById('checkout-discount-amount');
+    const voucherCodeEl = document.getElementById('checkout-voucher-code');
 
     const totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const { subtotal, discountAmount, finalTotal } = calculateCartTotals();
 
     if (countEl) countEl.textContent = `${totalQty} sản phẩm`;
-    if (subtotalEl) subtotalEl.textContent = totalPrice.toLocaleString('vi-VN') + ' ₫';
-    if (totalEl) totalEl.textContent = totalPrice.toLocaleString('vi-VN') + ' ₫';
+    if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString('vi-VN') + ' ₫';
+    if (totalEl) totalEl.textContent = finalTotal.toLocaleString('vi-VN') + ' ₫';
+
+    if (discountRow) {
+      if (appliedVoucher && discountAmount > 0) {
+        discountRow.classList.remove('hidden');
+        discountRow.classList.add('flex');
+        if (voucherCodeEl) voucherCodeEl.textContent = appliedVoucher.code;
+        if (discountAmountEl) discountAmountEl.textContent = `-${discountAmount.toLocaleString('vi-VN')} ₫`;
+      } else {
+        discountRow.classList.add('hidden');
+        discountRow.classList.remove('flex');
+      }
+    }
 
     if (listEl) {
       listEl.innerHTML = cartItems.map(item => `
@@ -299,16 +422,15 @@
     const accNameEl = document.getElementById('vietqr-acc-name');
     const orderCodeEl = document.getElementById('vietqr-order-code');
 
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const { finalTotal } = calculateCartTotals();
 
     if (bankNameEl) bankNameEl.textContent = BANK_CONFIG.bankName;
     if (accNumEl) accNumEl.textContent = BANK_CONFIG.accountNo;
     if (accNameEl) accNameEl.textContent = BANK_CONFIG.accountName;
     if (orderCodeEl) orderCodeEl.textContent = currentOrderCode;
 
-    // VietQR Public API URL
-    // Format: https://img.vietqr.io/image/<BANK_ID>-<ACCOUNT_NO>-compact2.png?amount=<AMOUNT>&addInfo=<ORDER_CODE>&accountName=<ACCOUNT_NAME>
-    const qrUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNo}-compact2.png?amount=${totalPrice}&addInfo=${encodeURIComponent(currentOrderCode)}&accountName=${encodeURIComponent(BANK_CONFIG.accountName)}`;
+    // VietQR Public API URL with final discounted total
+    const qrUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNo}-compact2.png?amount=${finalTotal}&addInfo=${encodeURIComponent(currentOrderCode)}&accountName=${encodeURIComponent(BANK_CONFIG.accountName)}`;
 
     if (qrImg && qrSpinner) {
       qrSpinner.classList.remove('hidden');
@@ -441,7 +563,7 @@
       return;
     }
 
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const { subtotal, discountAmount, finalTotal } = calculateCartTotals();
 
     const orderData = {
       orderId: currentOrderCode,
@@ -455,7 +577,14 @@
       paymentMethod: currentPaymentMethod,
       paymentMethodLabel: currentPaymentMethod === 'vietqr' ? 'Quét Mã VietQR (Napas247)' : 'Thanh toán khi nhận hàng (COD)',
       items: [...cartItems],
-      totalAmount: totalPrice,
+      subtotal: subtotal,
+      discountAmount: discountAmount,
+      voucher: appliedVoucher ? {
+        code: appliedVoucher.code,
+        discountAmount: discountAmount,
+        description: appliedVoucher.description
+      } : null,
+      totalAmount: finalTotal,
       status: currentPaymentMethod === 'vietqr' ? 'Đã quét mã VietQR • Chờ xác nhận giao dịch' : 'Đã tiếp nhận đơn hàng COD'
     };
 
@@ -491,6 +620,7 @@
 
     // Clear cart
     cartItems = [];
+    appliedVoucher = null;
     saveCart();
 
     // Show Success View
@@ -554,6 +684,13 @@
             <span class="text-muted shrink-0 mr-2">Địa chỉ giao hàng</span>
             <span class="font-semibold text-obsidian text-right">${order.customer.address}</span>
           </div>
+
+          ${order.voucher ? `
+          <div class="flex items-center justify-between border-b border-hairline pb-2.5 text-emerald-700">
+            <span>Mã giảm giá áp dụng</span>
+            <span class="font-bold">${order.voucher.code} (-${(order.voucher.discountAmount || 0).toLocaleString('vi-VN')} ₫)</span>
+          </div>
+          ` : ''}
 
           <div class="flex items-center justify-between pt-1">
             <span class="font-bold text-obsidian">Tổng giá trị đơn hàng</span>
@@ -680,8 +817,9 @@
         </table>
 
         <div class="total-box">
-          <div>Tạm tính: <strong>${order.totalAmount.toLocaleString('vi-VN')} ₫</strong></div>
-          <div>Phí ship: <strong>0 ₫</strong></div>
+          <div>Tạm tính: <strong>${(order.subtotal || order.totalAmount).toLocaleString('vi-VN')} ₫</strong></div>
+          ${order.voucher ? `<div style="color: #059669;">Giảm giá (${order.voucher.code}): <strong>-${(order.voucher.discountAmount || 0).toLocaleString('vi-VN')} ₫</strong></div>` : ''}
+          <div>Phí ship: <strong>0 ₫ (Miễn phí toàn quốc)</strong></div>
           <div style="font-size: 18px; margin-top: 6px;">Tổng thanh toán: <strong style="color: #b91c1c;">${order.totalAmount.toLocaleString('vi-VN')} ₫</strong></div>
         </div>
 
@@ -726,4 +864,8 @@
   window.showToast = showToast;
   window.submitOrder = submitOrder;
   window.printInvoice = printInvoice;
+  window.applyVoucherCode = applyVoucherCode;
+  window.quickApplyVoucher = quickApplyVoucher;
+  window.applyDrawerVoucher = applyDrawerVoucher;
+  window.applyCheckoutVoucher = applyCheckoutVoucher;
 })();

@@ -61,6 +61,15 @@
             class="w-44 lg:w-56 pl-9 pr-4 py-1.5 text-xs bg-white/90 border border-hairline rounded-full focus:outline-none focus:border-obsidian transition-colors">
         </div>
 
+        <!-- Order Tracking Button -->
+        <button type="button" 
+          onclick="window.openTrackingModal()" 
+          class="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white border border-hairline hover:border-obsidian text-xs font-semibold transition-colors" 
+          title="Tra cứu tiến độ giao hàng">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span class="hidden sm:inline">Tra cứu đơn</span>
+        </button>
+
         <!-- Cart Button -->
         <button type="button" 
           onclick="window.toggleCartDrawer(true)" 
@@ -251,7 +260,17 @@
             Tên Giày Nike
           </h3>
 
-          <p id="qv-price" class="font-display font-bold text-2xl text-obsidian mt-1">
+          <!-- Star Rating & Authenticity Badge -->
+          <div class="flex items-center gap-2 mt-1">
+            <div class="flex text-amber-400 text-xs">★★★★★</div>
+            <span class="text-xs font-bold text-obsidian">4.9/5</span>
+            <span class="text-[11px] text-muted">• Đánh giá xác thực</span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+              ✓ Đã kiểm định 100% chính hãng
+            </span>
+          </div>
+
+          <p id="qv-price" class="font-display font-bold text-2xl text-obsidian mt-2">
             0 ₫
           </p>
 
@@ -286,6 +305,17 @@
             </ul>
           </div>
 
+          <!-- Verified Customer Reviews Section -->
+          <div class="mt-5 pt-4 border-t border-hairline">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-obsidian uppercase tracking-wider">Đánh giá thực tế từ khách hàng:</span>
+              <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">100% 5 sao</span>
+            </div>
+            <div id="qv-reviews-list" class="space-y-2 max-h-36 overflow-y-auto pr-1">
+              <!-- Populated by modal.js -->
+            </div>
+          </div>
+
           <!-- Add to Cart Button inside Modal -->
           <div class="mt-6 flex items-center gap-3">
             <button type="button" 
@@ -296,6 +326,49 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ORDER TRACKING MODAL (TRA CỨU TIẾN ĐỘ ĐƠN HÀNG) -->
+  <div id="tracking-modal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6" style="display: none;">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" onclick="window.closeTrackingModal()"></div>
+
+    <!-- Modal Box -->
+    <div class="relative z-10 bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl animate-scale-up border border-hairline" style="background-color: #FFFFFF !important;">
+      <button type="button" 
+        onclick="window.closeTrackingModal()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-canvas hover:bg-hairline flex items-center justify-center transition-colors text-obsidian text-lg font-bold" 
+        aria-label="Đóng popup">
+        &times;
+      </button>
+
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-2xl bg-obsidian text-white flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <h3 class="font-display font-bold text-lg sm:text-xl text-obsidian">Tra Cứu Tiến Độ Đơn Hàng</h3>
+          <p class="text-xs text-muted">Nhập mã đơn hàng (ví dụ: NIKE84920) hoặc số điện thoại người nhận</p>
+        </div>
+      </div>
+
+      <!-- Search Input Form -->
+      <form onsubmit="window.handleTrackOrder(event)" class="flex gap-2 mb-6">
+        <input type="text" 
+          id="tracking-input" 
+          placeholder="Nhập mã đơn hoặc số điện thoại..." 
+          class="flex-1 px-4 py-3 text-xs sm:text-sm bg-canvas border border-hairline rounded-xl focus:outline-none focus:border-obsidian focus:bg-white transition-colors"
+          required />
+        <button type="submit" 
+          class="px-5 py-3 rounded-xl bg-obsidian hover:bg-black text-white text-xs font-bold tracking-wider uppercase transition-colors shrink-0 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span>Tra cứu</span>
+        </button>
+      </form>
+
+      <!-- Results Container -->
+      <div id="tracking-result"></div>
     </div>
   </div>
 
@@ -330,10 +403,45 @@
         <!-- Populated by cart.js -->
       </div>
 
+      <!-- Voucher Section in Drawer -->
+      <div class="px-6 py-3.5 bg-white border-t border-hairline space-y-2">
+        <label class="block text-[11px] font-bold text-obsidian uppercase tracking-wider">Mã Giảm Giá / Voucher:</label>
+        <div class="flex items-center gap-2">
+          <input type="text" 
+            id="drawer-voucher-input" 
+            placeholder="Nhập mã (NIKE10, FREESHIP...)" 
+            class="flex-1 px-3 py-2 text-xs bg-canvas border border-hairline rounded-xl uppercase font-mono font-bold tracking-wider focus:outline-none focus:border-obsidian">
+          <button type="button" 
+            onclick="window.applyDrawerVoucher()" 
+            class="px-4 py-2 bg-obsidian text-white text-xs font-bold rounded-xl hover:bg-black transition-colors shrink-0">
+            Áp dụng
+          </button>
+        </div>
+        <!-- Quick Voucher Pills -->
+        <div class="flex flex-wrap gap-1.5 pt-1">
+          <button type="button" onclick="window.quickApplyVoucher('NIKE10')" class="px-2 py-0.5 rounded-full bg-canvas hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">NIKE10 (-10%)</button>
+          <button type="button" onclick="window.quickApplyVoucher('FREESHIP')" class="px-2 py-0.5 rounded-full bg-canvas hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">FREESHIP (-30k)</button>
+          <button type="button" onclick="window.quickApplyVoucher('WELCOME2026')" class="px-2 py-0.5 rounded-full bg-canvas hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">WELCOME2026 (-50k)</button>
+        </div>
+        <div id="drawer-voucher-message" class="text-[11px] font-medium hidden"></div>
+      </div>
+
       <!-- Drawer Footer -->
       <div class="p-6 border-t border-hairline bg-canvas">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-bold text-muted uppercase">Tổng thanh toán:</span>
+        <!-- Subtotal Row -->
+        <div class="flex items-center justify-between text-xs text-muted mb-1.5">
+          <span>Tạm tính:</span>
+          <span id="cart-subtotal-price" class="font-semibold text-obsidian">0 ₫</span>
+        </div>
+
+        <!-- Voucher Discount Row (hidden by default) -->
+        <div id="cart-discount-row" class="hidden items-center justify-between text-xs text-emerald-600 font-semibold mb-2">
+          <span>Giảm giá (<span id="cart-voucher-code"></span>):</span>
+          <span id="cart-discount-price">-0 ₫</span>
+        </div>
+
+        <div class="flex items-center justify-between mb-4 pt-2 border-t border-hairline">
+          <span class="text-xs font-bold text-obsidian uppercase">Tổng thanh toán:</span>
           <span id="cart-total-price" class="font-display font-extrabold text-xl text-obsidian">0 ₫</span>
         </div>
 
@@ -520,11 +628,38 @@
                 <!-- Injected via cart.js -->
               </div>
 
+              <!-- Voucher Section in Checkout -->
+              <div class="pt-3 border-t border-hairline space-y-2">
+                <label class="block text-[11px] font-bold text-obsidian uppercase">Mã Khuyến Mãi / Voucher:</label>
+                <div class="flex gap-2">
+                  <input type="text" 
+                    id="checkout-voucher-input" 
+                    placeholder="Nhập mã (NIKE10, FREESHIP...)" 
+                    class="flex-1 px-3 py-2 text-xs bg-white border border-hairline rounded-xl uppercase font-mono font-bold tracking-wider focus:outline-none focus:border-obsidian">
+                  <button type="button" 
+                    onclick="window.applyCheckoutVoucher()" 
+                    class="px-4 py-2 bg-obsidian text-white text-xs font-bold rounded-xl hover:bg-black transition-colors shrink-0">
+                    Áp dụng
+                  </button>
+                </div>
+                <!-- Quick Pills -->
+                <div class="flex flex-wrap gap-1.5 pt-0.5">
+                  <button type="button" onclick="window.quickApplyVoucher('NIKE10')" class="px-2 py-0.5 rounded-full bg-white hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">NIKE10 (-10%)</button>
+                  <button type="button" onclick="window.quickApplyVoucher('FREESHIP')" class="px-2 py-0.5 rounded-full bg-white hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">FREESHIP (-30k)</button>
+                  <button type="button" onclick="window.quickApplyVoucher('WELCOME2026')" class="px-2 py-0.5 rounded-full bg-white hover:bg-emerald-50 hover:text-emerald-700 border border-hairline text-[10px] font-semibold text-muted transition-colors">WELCOME2026 (-50k)</button>
+                </div>
+                <div id="checkout-voucher-message" class="text-[11px] font-medium hidden"></div>
+              </div>
+
               <!-- Price calculations -->
               <div class="border-t border-hairline pt-4 mt-4 space-y-2 text-xs">
                 <div class="flex items-center justify-between text-muted">
                   <span>Tạm tính</span>
                   <span id="checkout-subtotal" class="font-semibold text-obsidian">0 ₫</span>
+                </div>
+                <div id="checkout-discount-row" class="hidden items-center justify-between text-emerald-600 font-semibold">
+                  <span>Giảm giá voucher (<span id="checkout-voucher-code"></span>)</span>
+                  <span id="checkout-discount-amount">-0 ₫</span>
                 </div>
                 <div class="flex items-center justify-between text-muted">
                   <span>Phí giao hàng</span>
@@ -576,10 +711,11 @@
   </div>
 
   <!-- LOAD MODULAR JAVASCRIPT FILES IN ORDER -->
-  <script src="js/products.js?v=12"></script>
-  <script src="js/turntable.js?v=12"></script>
-  <script src="js/modal.js?v=12"></script>
-  <script src="js/cart.js?v=12"></script>
-  <script src="js/app.js?v=12"></script>
+  <script src="js/products.js?v=13"></script>
+  <script src="js/turntable.js?v=13"></script>
+  <script src="js/modal.js?v=13"></script>
+  <script src="js/cart.js?v=13"></script>
+  <script src="js/tracking.js?v=13"></script>
+  <script src="js/app.js?v=13"></script>
 </body>
 </html>
