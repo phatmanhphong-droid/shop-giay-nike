@@ -756,24 +756,50 @@
   
   <!-- 1. Floating AI Trigger Button (Bottom Right) -->
   <div class="fixed bottom-6 right-6 z-40 flex items-center gap-2 group">
-    <!-- Tooltip banner -->
-    <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-obsidian border border-hairline shadow-md text-xs font-semibold pointer-events-none group-hover:scale-105 transition-all">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-      <span>Hỏi Trợ Lý AI Nike 24/7</span>
+    <!-- Sleek Glassmorphism Tooltip Badge -->
+    <div onclick="window.toggleAIChat()" class="hidden sm:flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-obsidian/95 backdrop-blur-md text-white border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.25)] text-xs font-medium cursor-pointer hover:bg-black transition-all duration-300 hover:scale-105 select-none">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span class="tracking-tight text-[11px] font-semibold text-zinc-100 flex items-center gap-1">
+        <span>Trợ lý AI Nike</span>
+        <span class="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/20 px-1 py-0.2 rounded">LIVE</span>
+      </span>
     </div>
 
-    <!-- Main Button -->
+    <!-- Main Sleek Button -->
     <button type="button" 
+      id="ai-chat-toggle-btn"
       onclick="window.toggleAIChat()" 
-      class="relative w-14 h-14 rounded-full bg-gradient-to-tr from-obsidian via-zinc-900 to-zinc-800 text-white shadow-2xl hover:shadow-black/40 border border-zinc-700/80 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+      class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-obsidian via-zinc-900 to-zinc-800 text-white shadow-[0_10px_35px_rgba(0,0,0,0.35)] hover:shadow-[0_14px_45px_rgba(0,0,0,0.5)] border border-white/20 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-black/5"
       title="Mở Trợ lý AI Nike tư vấn 24/7"
       aria-label="Mở Trợ lý AI Nike">
       
-      <!-- Nike AI Icon -->
-      <div class="flex flex-col items-center justify-center -space-y-0.5">
-        <span class="text-xl">🤖</span>
-        <span class="text-[8px] font-black tracking-widest text-emerald-400 uppercase font-mono">AI</span>
+      <!-- Open Icon: Modern Minimal AI Sparkle (SVG) -->
+      <div id="ai-icon-open" class="flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.8 8.2C14.2 9.6 15.4 10.8 16.8 11.2L23 13L16.8 14.8C15.4 15.2 14.2 16.4 13.8 17.8L12 24L10.2 17.8C9.8 16.4 8.6 15.2 7.2 14.8L1 13L7.2 11.2C8.6 10.8 9.8 9.6 10.2 8.2L12 2Z" fill="url(#ai-sparkle-btn-grad)" />
+          <path d="M19 2L19.8 4.2C20 4.8 20.5 5.3 21.1 5.5L23.3 6.3L21.1 7.1C20.5 7.3 20 7.8 19.8 8.4L19 10.6L18.2 8.4C18 7.8 17.5 7.3 16.9 7.1L14.7 6.3L16.9 5.5C17.5 5.3 18 4.8 18.2 4.2L19 2Z" fill="#38BDF8" />
+          <defs>
+            <linearGradient id="ai-sparkle-btn-grad" x1="1" y1="2" x2="23" y2="24" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#FFFFFF" />
+              <stop offset="0.6" stop-color="#F1F5F9" />
+              <stop offset="1" stop-color="#94A3B8" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
+
+      <!-- Close Icon (Shown when chat window is active) -->
+      <div id="ai-icon-close" class="hidden items-center justify-center transition-transform duration-300">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </div>
+
+      <!-- Live Online Green Dot -->
+      <span class="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-obsidian ring-1 ring-emerald-400/50"></span>
 
       <!-- Unread Notification Badge -->
       <span id="ai-chat-unread-badge" class="hidden absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-black items-center justify-center border-2 border-white shadow-md animate-bounce">
@@ -788,9 +814,12 @@
     <!-- Header -->
     <div class="px-5 py-3.5 bg-gradient-to-r from-obsidian via-zinc-900 to-zinc-800 text-white flex items-center justify-between border-b border-zinc-700/60 shrink-0">
       <div class="flex items-center gap-3">
-        <div class="relative w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-lg">
-          🤖
-          <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-obsidian"></span>
+        <div class="relative w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-inner">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L13.8 8.2C14.2 9.6 15.4 10.8 16.8 11.2L23 13L16.8 14.8C15.4 15.2 14.2 16.4 13.8 17.8L12 24L10.2 17.8C9.8 16.4 8.6 15.2 7.2 14.8L1 13L7.2 11.2C8.6 10.8 9.8 9.6 10.2 8.2L12 2Z" fill="#FFFFFF" />
+            <path d="M19 2L19.8 4.2C20 4.8 20.5 5.3 21.1 5.5L23.3 6.3L21.1 7.1C20.5 7.3 20 7.8 19.8 8.4L19 10.6L18.2 8.4C18 7.8 17.5 7.3 16.9 7.1L14.7 6.3L16.9 5.5C17.5 5.3 18 4.8 18.2 4.2L19 2Z" fill="#38BDF8" />
+          </svg>
+          <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-obsidian ring-1 ring-emerald-300"></span>
         </div>
         <div>
           <h4 class="font-display font-black text-xs sm:text-sm tracking-tight text-white flex items-center gap-1.5">

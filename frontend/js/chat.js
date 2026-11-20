@@ -37,10 +37,17 @@
       isChatOpen = !isChatOpen;
     }
 
+    const iconOpen = document.getElementById('ai-icon-open');
+    const iconClose = document.getElementById('ai-icon-close');
+    const toggleBtn = document.getElementById('ai-chat-toggle-btn');
+
     if (isChatOpen) {
       box.classList.remove('hidden', 'scale-90', 'opacity-0', 'pointer-events-none');
       box.classList.add('scale-100', 'opacity-100');
       if (badge) badge.classList.add('hidden');
+      if (iconOpen) iconOpen.classList.add('hidden');
+      if (iconClose) { iconClose.classList.remove('hidden'); iconClose.classList.add('flex'); }
+      if (toggleBtn) toggleBtn.classList.add('rotate-90');
       hasInteracted = true;
       setTimeout(() => {
         const input = document.getElementById('ai-chat-input');
@@ -49,6 +56,9 @@
     } else {
       box.classList.remove('scale-100', 'opacity-100');
       box.classList.add('scale-90', 'opacity-0', 'pointer-events-none');
+      if (iconClose) { iconClose.classList.add('hidden'); iconClose.classList.remove('flex'); }
+      if (iconOpen) iconOpen.classList.remove('hidden');
+      if (toggleBtn) toggleBtn.classList.remove('rotate-90');
       setTimeout(() => box.classList.add('hidden'), 200);
     }
   }
@@ -86,8 +96,11 @@
     typingDiv.id = 'ai-typing-indicator';
     typingDiv.className = 'flex items-start gap-2.5 animate-in fade-in duration-200';
     typingDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-obsidian to-zinc-700 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs border border-zinc-600">
-        AI
+      <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-obsidian via-zinc-900 to-zinc-800 text-white flex items-center justify-center shrink-0 shadow-xs border border-white/20 mt-0.5">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.8 8.2C14.2 9.6 15.4 10.8 16.8 11.2L23 13L16.8 14.8C15.4 15.2 14.2 16.4 13.8 17.8L12 24L10.2 17.8C9.8 16.4 8.6 15.2 7.2 14.8L1 13L7.2 11.2C8.6 10.8 9.8 9.6 10.2 8.2L12 2Z" fill="#FFFFFF" />
+          <path d="M19 2L19.8 4.2C20 4.8 20.5 5.3 21.1 5.5L23.3 6.3L21.1 7.1C20.5 7.3 20 7.8 19.8 8.4L19 10.6L18.2 8.4C18 7.8 17.5 7.3 16.9 7.1L14.7 6.3L16.9 5.5C17.5 5.3 18 4.8 18.2 4.2L19 2Z" fill="#38BDF8" />
+        </svg>
       </div>
       <div class="bg-canvas border border-hairline px-3.5 py-2.5 rounded-2xl rounded-tl-sm text-xs text-muted flex items-center gap-1.5 shadow-2xs">
         <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce"></span>
@@ -170,8 +183,11 @@
     }
 
     botDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-obsidian to-zinc-700 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs border border-zinc-600 mt-0.5">
-        AI
+      <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-obsidian via-zinc-900 to-zinc-800 text-white flex items-center justify-center shrink-0 shadow-xs border border-white/20 mt-0.5">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.8 8.2C14.2 9.6 15.4 10.8 16.8 11.2L23 13L16.8 14.8C15.4 15.2 14.2 16.4 13.8 17.8L12 24L10.2 17.8C9.8 16.4 8.6 15.2 7.2 14.8L1 13L7.2 11.2C8.6 10.8 9.8 9.6 10.2 8.2L12 2Z" fill="#FFFFFF" />
+          <path d="M19 2L19.8 4.2C20 4.8 20.5 5.3 21.1 5.5L23.3 6.3L21.1 7.1C20.5 7.3 20 7.8 19.8 8.4L19 10.6L18.2 8.4C18 7.8 17.5 7.3 16.9 7.1L14.7 6.3L16.9 5.5C17.5 5.3 18 4.8 18.2 4.2L19 2Z" fill="#38BDF8" />
+        </svg>
       </div>
       <div class="max-w-[85%] space-y-1.5">
         <div class="bg-canvas border border-hairline text-obsidian text-xs px-3.5 py-2.5 rounded-2xl rounded-tl-sm shadow-2xs leading-relaxed">
