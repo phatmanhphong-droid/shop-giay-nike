@@ -12,6 +12,7 @@ const VOUCHERS_FILE = path.join(__dirname, 'vouchers.json');
 const REVIEWS_FILE = path.join(__dirname, 'reviews.json');
 const TELEGRAM_FILE = path.join(__dirname, 'telegram.json');
 const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
+const { processAIChat } = require('./chat-engine');
 const FINANCE_FILE = path.join(__dirname, 'finance.json');
 const RESTOCK_LOG_FILE = path.join(__dirname, 'restock-history.json');
 const SHOES_ASSETS_DIR = path.join(__dirname, '..', 'frontend', 'assets', 'shoes');
@@ -1325,6 +1326,25 @@ const server = http.createServer((req, res) => {
       'Content-Disposition': `attachment; filename="${filename}"`
     });
     res.end(csv);
+    return;
+  }
+
+  
+  // API: AI SNEAKER CHATBOT (POST /api/chat)
+  if (req.method === 'POST' && cleanUrl === '/api/chat') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { message, history } = JSON.parse(body || '{}');
+        const result = processAIChat(message, history);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
     return;
   }
 

@@ -1,5 +1,17 @@
 [
   {
+    "id": "RESTOCK-1795137307695",
+    "productId": "nike-24",
+    "productCode": "NK-24",
+    "productName": "1234",
+    "addedQty": 50,
+    "previousStock": 89,
+    "newStock": 139,
+    "costPrice": 0,
+    "note": "Nhập thêm lô hàng mới cho 1234",
+    "timestamp": "2026-11-20T01:15:07.695Z"
+  },
+  {
     "id": "RESTOCK-1794648961655",
     "productId": "nike-24",
     "productCode": "NK-24",
